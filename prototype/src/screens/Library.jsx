@@ -215,7 +215,7 @@ function RfpBody({ rfp }) {
   const closeReading = useCallback(() => setReading(false), [])
   // A run in progress outranks whatever an earlier run left in the library.
   const intro = running
-    ? `Now: ${nowLine(run) ?? 'the agent is working on this RFP. The tracker shows each stage as it happens.'}`
+    ? (nowLine(run) ?? 'The agent is working on this RFP. The tracker shows each stage as it happens.')
     : ((headline && shownHeadline(headline)) ?? (run ? operatorVerdict(run) : null) ?? 'The agent has not read this RFP yet. It is in the library, waiting its turn.')
   const deadlines = packet?.deadlines ?? []
   const reasons = qualification?.decision_reasons ?? []
@@ -229,7 +229,14 @@ function RfpBody({ rfp }) {
       {proposal && !testDraft && thumbnail}
       {reading && proposal && <DraftViewer proposal={proposal} onClose={closeReading} />}
       <h1 className="step-title">{rfp.title}</h1>
-      <p className="step-intro">{intro}</p>
+      {running ? (
+        <p className="now-line">
+          <strong>Now</strong>
+          {intro}
+        </p>
+      ) : (
+        <p className="step-intro">{intro}</p>
+      )}
       {run && <RunProgress run={run} packet={packet} />}
 
       <Facts
