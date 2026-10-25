@@ -2696,6 +2696,18 @@ textarea:focus {
   margin-bottom: 4px;
 }
 
+.library-title {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: -6px;
+  padding: 12px 12px 0;
+  border-top: 1px solid var(--rule);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
 .today-mark {
   flex: none;
   display: grid;

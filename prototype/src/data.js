@@ -5,7 +5,7 @@ export const RATE = 175
 export const money = (amount) => '$' + Math.round(amount).toLocaleString('en-US')
 
 export const STAGE_INFO = {
-  new: { label: 'Up next' },
+  new: { label: 'To read' },
   researching: { label: 'Researching' },
   drafting: { label: 'Drafting' },
   ready: { label: 'Ready for you' },
