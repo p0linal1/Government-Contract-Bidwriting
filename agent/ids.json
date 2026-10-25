@@ -1,0 +1,68 @@
+{
+  "environment": {
+    "id": "env_01LmUUZ1NQ11ACeSUnCmPgvT",
+    "name": "cadocary-bids"
+  },
+  "memory_stores": {
+    "rfp-library": {
+      "id": "memstore_01CWkzBJC2w4usssAdixLBxr",
+      "name": "RFP Library",
+      "readme_id": "mem_014wnkYKSadbr5wmS2n2oosA",
+      "fingerprint": "e228aef6a1c480302f046cc9fd65ae5b4f421dc5c48d395e7edd1d1c964c8f41"
+    },
+    "cadocary-facts": {
+      "id": "memstore_01UnB2xsoBPAq6Wh4CfBMNb4",
+      "name": "Cadocary Facts",
+      "readme_id": "mem_01N5Q6CWvHa9DXfEC1M8VLF5",
+      "fingerprint": "d9e2d699c0f2e78dffa89a4d51729c09c837d1c8b182fd53bccb36ef486d4a49"
+    }
+  },
+  "skills": {
+    "rfp-qualifying": {
+      "id": "skill_01Xk737C2Sfe9p2CTe3W9LwR",
+      "version": "skver_01DwhzPBdnBURrwK2XWMim5e",
+      "fingerprint": "37ec2de68e4428b323540aa03f067e83931e4f4cadf92b7aa584d43ea298f7b8"
+    },
+    "rfp-research": {
+      "id": "skill_01LGSdbxsUEDPvrmwh8NTtmG",
+      "version": "skver_01EqzP6NoifVjuUybJZqh6tF",
+      "fingerprint": "9aa1f01b2b93817a4fdbd177d068ac232f0c819a372061e52d08775879ddcfa9"
+    },
+    "proposal-drafting": {
+      "id": "skill_01TGKG2s5xnMWD3MPmV4VqkK",
+      "version": "skver_0145fBRTVy6DbawGwefaxtBF",
+      "fingerprint": "15d6a4e45a53c8fb2c7bcea189dea5e4fc48ef7913dddfd43bb64b55cb3df48a"
+    },
+    "agent-delegation": {
+      "id": "skill_01E8L6koR3vMMXWFfZbzXqtr",
+      "version": "skver_01DZ4JXbHai4VXZNicjXs6v6",
+      "fingerprint": "09d0537e25b725a9743191139e260a1f8085f9cceb0c48453390c03f250b0ccd"
+    }
+  },
+  "agents": {
+    "qualifier": {
+      "id": "agent_01XzDnJSx9KLfEgC1ZraTLPd",
+      "name": "Cadocary Qualifier",
+      "version": 1,
+      "fingerprint": "ab8568f617bb4098f1552dcdedac9d1c229e025073ed1854872b2a414b0f8258"
+    },
+    "researcher": {
+      "id": "agent_01X5VQBCNP6zXWqS54n1tgLk",
+      "name": "Cadocary Researcher",
+      "version": 1,
+      "fingerprint": "bbc2e0ab8d7c72ee9f2ad62ff882b531ad1305e7ad1e00e3e558dc62518a3bf0"
+    },
+    "drafter": {
+      "id": "agent_01EiFfsfSSps41gyUSG52L86",
+      "name": "Cadocary Drafter",
+      "version": 1,
+      "fingerprint": "89034281d473df0c2beeba8480d0626f53127f5a0246fe9ad0fa9eba5da407dc"
+    },
+    "operator": {
+      "id": "agent_01T6ww8wetS3NJNicgfg48Pg",
+      "name": "Cadocary Operator",
+      "version": 1,
+      "fingerprint": "3d104eb85a59b269d9277f8aaf5751d29485cd00f20f5a491e51597630b99ae9"
+    }
+  }
+}
