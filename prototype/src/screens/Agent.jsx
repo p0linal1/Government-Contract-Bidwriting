@@ -1,12 +1,16 @@
 import { Fragment, useEffect, useLayoutEffect, useRef, useState } from 'react'
-import { BADGES, CANVAS, CHECKS, EDGES, FIRST_TEST, LABELS, NODES, NOTES, PORTS, PORT_LABELS, RUNS, STACK, STEPS, SUBS, beatLength, panelFor, sceneAt, stepState, subportLabel, subsOf } from '../agent/graph'
+import { BADGES, CANVAS, CHECKS, EDGES, FIRST_TEST, LABELS, NODES, NOTES, PORTS, PORT_LABELS, RUNS, STACK, STEPS, SUBS, beatLength, liveScene, panelFor, sceneAt, stepState, subportLabel, subsOf } from '../agent/graph'
+import { isRunning, runFacts, stepTime, useLiveRuns } from '../agent/live'
 import { Facts } from '../parts'
 import { Icon } from '../ui'
 
-// The bid agent as a picture: five Claude agents, what each is attached to, and a replay of a
-// sample run. Laptops get the full graph, scaled to fit. Phones get the same parts as a stack.
+// The bid agent as a picture: five Claude agents, what each is attached to, and either the
+// real run the server reports or a replay of a sample run. Laptops get the full graph, scaled
+// to fit. Phones get the same parts as a stack.
 
-const GUIDE = 'Click any part to see what it does. Play a run to watch a replay of a sample run.'
+const GUIDE = 'Click any part to see what it does. Play the sample replay to watch a sample run.'
+
+const PANEL_STATUS = { live: 'In the run happening now', last: 'In the last real run' }
 
 function PanelValue({ value }) {
   if (Array.isArray(value)) {
@@ -313,6 +317,33 @@ function Rail({ scene, onOpen }) {
   )
 }
 
+function LiveRunbar({ run }) {
+  return (
+    <div className="agent-runbar" data-mode={isRunning(run) ? 'live' : 'last'} aria-live="polite">
+      <span className="agent-runbar-tag">{isRunning(run) ? 'Live' : 'Last run'}</span>
+      <span className="agent-runbar-text">{run.title}</span>
+      <span className="agent-runbar-aside">{runFacts(run)}</span>
+    </div>
+  )
+}
+
+function LiveSteps({ run, steps }) {
+  if (!steps.length) return null
+  return (
+    <section className="agent-steps" aria-label={isRunning(run) ? 'Latest steps of the live run' : 'Last steps of the last run'}>
+      <p className="agent-steps-title">{isRunning(run) ? 'Latest steps' : 'How the last run ended'}</p>
+      <ol>
+        {steps.map((step) => (
+          <li key={`${step.at}-${step.text}`}>
+            <time dateTime={step.at}>{stepTime(step.at)}</time>
+            <span>{step.text}</span>
+          </li>
+        ))}
+      </ol>
+    </section>
+  )
+}
+
 function Runbar({ scene }) {
   const { current } = scene
   return (
@@ -359,7 +390,7 @@ function Panel({ id, open, scene, onClose }) {
               {node && !node.planned && (
                 <p className="agent-panel-status" data-status={scene.status[id]}>
                   <StatusChip status={scene.status[id]} />
-                  {scene.started ? 'In the replay of a sample run' : 'Before a run starts'}
+                  {PANEL_STATUS[scene.mode] ?? (scene.started ? 'In the replay of a sample run' : 'Before a run starts')}
                 </p>
               )}
               <p className="agent-panel-lead">{panel.lead}</p>
@@ -379,8 +410,12 @@ export function Agent() {
   const [panelId, setPanelId] = useState(null)
   const [panelOpen, setPanelOpen] = useState(false)
   const returnFocus = useRef(null)
+  const live = useLiveRuns()
   const beats = RUNS[outcome]
-  const scene = sceneAt(outcome, beat)
+  const started = beat >= 0
+  // The newest real run shows until a replay starts, and comes back on Reset.
+  const run = !started && live?.sessions[0]
+  const scene = run ? liveScene(run) : sceneAt(outcome, beat)
 
   useEffect(() => {
     if (!playing) return
@@ -424,7 +459,6 @@ export function Agent() {
     reset()
   }
 
-  const started = beat >= 0
   const openId = panelOpen ? panelId : null
   return (
     <div className="agent">
@@ -434,7 +468,7 @@ export function Agent() {
           <p className="step-intro">
             Five Claude agents work each RFP on their own. The Operator hands out the work, and four helpers read, qualify, research, and draft. Doug reads one finished packet, and nothing is sent without him.
           </p>
-          <p className="agent-intro-note">All five run on Anthropic Managed Agents.</p>
+          <p className="agent-intro-note">All five run on Anthropic Managed Agents. When this page is online, it shows their real runs.</p>
         </div>
         <div className="agent-controls">
           <span className="agent-outcome">
@@ -454,12 +488,13 @@ export function Agent() {
           )}
           <button className="btn btn-primary" onClick={playing ? () => setPlaying(false) : play}>
             <Icon name={playing ? 'stop' : started ? 'replay' : 'play'} size={18} stroke={2.2} />
-            {playing ? 'Stop' : started ? 'Play again' : 'Play a run'}
+            {playing ? 'Stop' : started ? 'Replay again' : 'Play sample replay'}
           </button>
         </div>
       </header>
 
-      <Runbar scene={scene} />
+      {run ? <LiveRunbar run={run} /> : <Runbar scene={scene} />}
+      {run && <LiveSteps run={run} steps={live.steps} />}
       <Rail scene={scene} onOpen={openPanel} />
       <Canvas scene={scene} openId={openId} onOpen={openPanel} />
       <Stack scene={scene} openId={openId} onOpen={openPanel} />
