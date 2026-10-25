@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import { PHASES, buildSteps } from '../bid/flow'
 import { JOBS_BY_ID, TODAY } from '../data'
+import { useLibrary } from '../library'
+import { LiveBids } from './Library'
 import { Morning } from './Morning'
 import { categorize, nextReady } from '../needs'
 import { getResearch } from '../research'
@@ -246,8 +248,11 @@ function BidPane({ job, section }) {
 
 // The whole app: Today and every bid down the left, sectioned by who has the next move. The open
 // bid, or the morning when none is open, fills the rest. On a phone the list is the first screen,
-// so Today opens like a bid does.
+// so Today opens like a bid does. The real RFP Library takes the place of the sample bids when
+// the server answers, unless Settings picks the sample.
 export function Bids({ id, today }) {
+  const { live } = useLibrary()
+  if (live) return <LiveBids id={id} today={today} />
   const job = id && JOBS_BY_ID[id]
   return (
     <div className={`desk ${job || today ? 'has-open' : ''}`}>
