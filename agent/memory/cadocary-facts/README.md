@@ -54,8 +54,10 @@ Listed on the registration (team sourcing profile), not yet approved:
 
 | id | fact | source | approved |
 | --- | --- | --- | --- |
-| prefs.bids_wanted | Software and IT work, Washington buyers, $25,000 and up, at least 7 days to respond | Doug | no |
-| prefs.scale | Small jobs in his range, not very large federal programs | Doug | no |
+| prefs.bids_wanted | Software and IT work, Washington buyers, $1 million to $5 million, at least 7 days to respond. Custom software suits best | Doug | no |
+| prefs.scale | $5 million is a hard limit | Doug | no |
+| prefs.never_bid | Military applications | Doug | no |
+| prefs.staffing | Cadocary uses offshore developers; contracts that allow them are better | Doug | no |
 
 ## Not known yet
 

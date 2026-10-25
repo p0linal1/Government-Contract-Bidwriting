@@ -22,7 +22,7 @@ Cadocary LLC is based in Washington and sells to public defenders, courts, jails
 | PURLPal | Answers questions over large document sets (Medicare plan documents), kept current by a data pipeline |
 | Hotels4Truckers | Web and mobile booking platform for hotels with truck parking |
 
-**Bids Doug wants:** software and IT work in Washington, $25,000 and up, with at least 7 days to respond. Small jobs in his range, not $200 million Air Force contracts.
+**Bids Doug wants:** software and IT work in Washington, $1 million to $5 million, with at least 7 days to respond. Custom software contracts suit Cadocary best. $5 million is a hard limit. Never military applications. Cadocary uses offshore developers, so contracts that allow them are better. (Updated Oct 25 afternoon; replaces "$25,000 and up" from the morning interview.)
 
 ## What Doug said, in his words
 

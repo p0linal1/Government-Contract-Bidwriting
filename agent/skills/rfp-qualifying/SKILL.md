@@ -14,7 +14,7 @@ The goal is a pursue or pass decision, with the reasons a busy owner can act on.
 1. **The reader's RFP sheet** (`sheet.json`): the requirements, deadlines, eligibility rules, scoring, submission, and clues, each with its page and quote. Decide from the sheet. Open the RFP itself only to confirm a quote that drives a hard stop or a close call.
 2. **Cadocary's approved facts** at `/mnt/memory/cadocary-facts/`: what it has built, what it holds, and what Doug wants.
 
-Doug's preferences: software and IT work, Washington buyers, $25,000 and up, and at least 7 days to respond.
+Doug's preferences: software and IT work, Washington buyers, $1 million to $5 million, and at least 7 days to respond. Custom software contracts suit Cadocary best. Cadocary's team includes offshore developers.
 
 ## Hard stops
 
@@ -25,6 +25,8 @@ Any one of these means `pass`, with the quote and page:
 - A license, certification, registration, or insurance level is required that the facts show Cadocary does not hold and cannot get in time.
 - The submission method can't be met in time, such as hand delivery of paper copies.
 - An eligibility rule Cadocary cannot meet, such as a set-aside it doesn't qualify for or required on-site staff it doesn't have.
+- The RFP states a value, budget, or not-to-exceed amount above $5 million. That is Doug's hard limit. A value the RFP doesn't state is not a hard stop; research estimates it later.
+- A military application: a defense buyer, or a purpose tied to weapons, combat, or military operations. Doug never bids these.
 
 If the facts don't say either way, it is not a hard stop. List it under `unknowns`.
 
@@ -41,7 +43,7 @@ Rate each one with the fixed words below, and give evidence for each rating.
 | price_competitiveness | likely, unclear, unlikely | Lowest price wins, or best value, or qualifications only |
 | competition_density | low, medium, high, unknown | How common the product category is and how many vendors serve it |
 
-Weigh the `security_and_compliance` items, such as CJIS, background checks, and hosting location, against what the facts say Cadocary has. A requirement the facts don't cover is an unknown, not a pass.
+Weigh the `security_and_compliance` items, such as CJIS, background checks, and hosting location, against what the facts say Cadocary has. A requirement the facts don't cover is an unknown, not a pass. Look for staffing limits too: US persons or citizens only, no offshore or foreign-national access, or work and data access inside the US. Cadocary's team includes offshore developers. Check whether the facts' access model (for example, only named US staff touch production data) satisfies the clause. If it plainly cannot, it is a hard stop. If it is unclear, rate knockouts `at_risk` and add the clause to `questions_for_buyer`.
 
 ## Output: `qualification.json`
 
