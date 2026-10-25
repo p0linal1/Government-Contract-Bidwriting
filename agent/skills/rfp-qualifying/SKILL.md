@@ -11,7 +11,7 @@ The goal is a pursue or pass decision, with the reasons a busy owner can act on.
 
 ## Read first
 
-1. **The reader's RFP sheet** (`sheet.json`): the requirements, deadlines, eligibility rules, scoring, submission, and clues, each with its page and quote. Decide from the sheet. Open the RFP itself only to confirm a quote that drives a hard stop or a close call.
+1. **The reader's summary** (`summary.md`), then the **RFP sheet** (`sheet.json`): the requirements, deadlines, eligibility rules, scoring, submission, and clues, each with its page and quote. Decide from the sheet. Open the RFP itself only to confirm a quote that drives a hard stop or a close call.
 2. **Cadocary's facts** at `/mnt/memory/cadocary-facts/`: what it has built, what it holds, and what Doug wants. The company-facts skill says how to choose and cite them for this RFP.
 
 Doug's preferences:
@@ -39,9 +39,29 @@ A not-to-exceed amount or contract ceiling is a cap, not the value. A ceiling be
 
 If the facts don't say either way, it is not a hard stop. List it under `unknowns`. The same goes for work that may or may not be military: list it, and note it under `factors.knockouts`.
 
+**Before you call any hard stop, look for another route the RFP allows:**
+
+- reselling or partnering for a required product
+- teaming or subcontracting for a missing qualification
+- a later deadline in an amendment
+
+If the RFP allows a route and the facts are silent on whether Cadocary can take it, it is an unknown, not a stop.
+
 ### When the value isn't stated
 
 It is not a stop. Set `value_check.status` to `unknown`, and put any clues from `budget_clues` (seats, term, the current contract) in `value_check.note`. The researcher estimates the value next, and the operator passes on the RFP if that estimate falls outside the range.
+
+Never pass, even partly, on your own guess of the value. Only a value the RFP states counts against the range, and only the researcher's sourced estimate counts after that.
+
+### Drafts, pre-solicitations, and RFIs
+
+- **A draft RFP or pre-solicitation with no proposal due date:**
+  - If it otherwise fits, decide `pursue` and set the headline to "Watch for the final RFP".
+  - Put the response window for comments or questions in `questions_for_buyer`.
+- **An RFI or sources sought notice:**
+  - Answering is cheap, and it can shape a later solicitation, so the bar is fit, not winning.
+  - Decide `pursue` when the work is squarely in Cadocary's lane. The drafter then writes a short capability response, not a proposal.
+  - Otherwise, decide `pass`.
 
 ## Judgment factors
 
