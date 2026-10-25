@@ -1,6 +1,11 @@
 # Fetched SAM.gov pulls — regenerate with scripts/fetch_sam_opportunities.py
 data/
 
+# Vendor profiles carry a real company's registration details — keep them local.
+# profiles/example.json is the committed template.
+profiles/*.json
+!profiles/example.json
+
 __pycache__/
 *.pyc
 .DS_Store

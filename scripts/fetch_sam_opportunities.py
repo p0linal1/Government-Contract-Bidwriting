@@ -9,8 +9,8 @@ Uses the same public endpoints sam.gov's own search UI calls, so no API key is n
 Both require `Accept: application/hal+json` or they answer 406.
 
 Usage:
-  python3 scripts/fetch_sam_opportunities.py --profile profiles/cadocary.json
-  python3 scripts/fetch_sam_opportunities.py --profile profiles/cadocary.json --no-enrich
+  python3 scripts/fetch_sam_opportunities.py --profile profiles/example.json
+  python3 scripts/fetch_sam_opportunities.py --profile profiles/example.json --no-enrich
 """
 
 import argparse
@@ -174,7 +174,7 @@ CSV_COLUMNS = [
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("--profile", default="profiles/cadocary.json", help="vendor profile JSON")
+    parser.add_argument("--profile", default="profiles/example.json", help="vendor profile JSON")
     parser.add_argument("--out-dir", default="data", help="where to write opportunities.json/.csv")
     parser.add_argument("--no-enrich", action="store_true", help="skip the per-notice detail calls")
     parser.add_argument("--include-inactive", action="store_true", help="also return closed notices")

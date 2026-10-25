@@ -9,7 +9,7 @@ draft a response to them.
 active SAM.gov opportunity carrying one of those codes.
 
 ```bash
-python3 scripts/fetch_sam_opportunities.py --profile profiles/cadocary.json
+python3 scripts/fetch_sam_opportunities.py --profile profiles/example.json
 ```
 
 Stdlib only — no pip install, no API key. It calls the same public endpoints sam.gov's own
@@ -67,5 +67,13 @@ each notice against the profile's capability list, then drafting a response, is 
 
 ### Vendor profiles
 
-`profiles/cadocary.json` holds the codes and capability list from a company's SAM.gov
-registration / capability statement. Copy it to add another business.
+A profile holds the NAICS codes, PSC codes and capability list from a company's SAM.gov
+registration or capability statement. Copy `profiles/example.json` and fill in your own:
+
+```bash
+cp profiles/example.json profiles/mycompany.json
+python3 scripts/fetch_sam_opportunities.py --profile profiles/mycompany.json
+```
+
+Real profiles are gitignored (`profiles/*.json`, with `example.json` the committed template) so
+a company's registration details stay out of the repo.

@@ -1,0 +1,17 @@
+{
+  "_comment": "Template. Copy to profiles/<yourcompany>.json and fill in from your SAM.gov registration or capability statement. Real profiles are gitignored.",
+  "legal_business_name": "Example Software LLC",
+  "uei": "ABCDEFGHIJKL",
+  "cage_code": "00000",
+  "website": "example.com",
+  "city": "Seattle",
+  "state": "WA",
+  "zip": "98101",
+  "naics": ["511210", "541511"],
+  "psc": ["DA10", "D302"],
+  "capabilities": [
+    "Custom software development",
+    "SaaS solutions",
+    "Systems integration"
+  ]
+}
