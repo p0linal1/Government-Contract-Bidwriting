@@ -3265,6 +3265,66 @@ textarea:focus {
   color: var(--muted);
 }
 
+/* A real run from the server: green while it runs, plain once it has finished */
+
+.agent-runbar[data-mode='live'] {
+  border-color: color-mix(in srgb, var(--good) 40%, var(--rule));
+  background: var(--good-wash);
+  color: var(--ink);
+}
+
+.agent-runbar[data-mode='live'] .agent-runbar-tag {
+  background: var(--good);
+  color: var(--on-accent);
+}
+
+.agent-runbar[data-mode='live'] .agent-runbar-text,
+.agent-runbar[data-mode='last'] .agent-runbar-text {
+  font-weight: 700;
+}
+
+.agent-steps {
+  margin-top: 10px;
+  padding: 12px 14px;
+  border: 1px solid var(--rule);
+  border-radius: var(--r2);
+  background: var(--surface);
+  font-size: 13.5px;
+  color: var(--ink-2);
+}
+
+.agent-steps-title {
+  margin-bottom: 6px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.agent-steps ol {
+  display: grid;
+  gap: 4px;
+}
+
+.agent-steps li {
+  display: flex;
+  gap: 12px;
+  min-width: 0;
+}
+
+.agent-steps time {
+  flex: none;
+  width: 64px;
+  font-variant-numeric: tabular-nums;
+  color: var(--muted);
+}
+
+.agent-steps li span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
 /* The steps of a run, which also mark progress during a replay */
 
 .agent-rail {

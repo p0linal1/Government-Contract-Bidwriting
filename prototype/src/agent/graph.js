@@ -612,6 +612,29 @@ export function sceneAt(outcome, beat) {
   }
 }
 
+// A real run from the server, drawn with the same parts as the replay. Each agent's status comes
+// from its thread, and the line to every helper at work moves. `mode` says it is not the replay.
+const LIVE_STATUS = { working: 'working', done: 'done', 'not started': 'idle' }
+const HELPER_LINES = { reader: 'toReader', qualifier: 'toQualifier', researcher: 'toResearcher', drafter: 'toDrafter' }
+const OPERATOR_PARTS = ['opModel', 'opSkill', 'library', 'facts']
+
+export function liveScene(run) {
+  const scene = sceneAt('pursue', -1)
+  const running = run.status === 'running'
+  scene.status.runNow = 'done'
+  for (const [agent, state] of Object.entries(run.agents)) scene.status[agent.toLowerCase()] = LIVE_STATUS[state] ?? 'idle'
+  if (run.status === 'finished') scene.status.packet = 'done'
+
+  for (const [id, line] of Object.entries(HELPER_LINES)) {
+    if (scene.status[id] !== 'working') continue
+    scene.flows[line] = 'fwd'
+    scene.flows.trunk = 'fwd'
+    for (const sub of subsOf(id)) scene.live.add(sub)
+  }
+  if (scene.status.operator === 'working') for (const sub of OPERATOR_PARTS) scene.live.add(sub)
+  return { ...scene, started: true, mode: running ? 'live' : 'last' }
+}
+
 export function stepState(step, scene) {
   const { current } = scene
   if (!current) return undefined
