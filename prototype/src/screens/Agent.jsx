@@ -492,7 +492,7 @@ export function Agent({ sessionId }) {
             <span className="segmented" role="group" aria-label="Sample outcome">
               {['pursue', 'pass'].map((option) => (
                 <button key={option} aria-pressed={outcome === option} disabled={playing} onClick={() => chooseOutcome(option)}>
-                  {option === 'pursue' ? 'Pursue' : 'Pass'}
+                  {option === 'pursue' ? 'Bid' : "Don't bid"}
                 </button>
               ))}
             </span>
