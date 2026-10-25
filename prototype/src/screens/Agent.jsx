@@ -2,7 +2,8 @@ import { Fragment, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { BADGES, CANVAS, CHECKS, EDGES, FIRST_TEST, LABELS, NODES, NOTES, PORTS, PORT_LABELS, RUNS, STACK, STEPS, SUBS, beatLength, liveScene, panelFor, sceneAt, stepState, subportLabel, subsOf } from '../agent/graph'
 import { isRunning, runFacts, useLiveRuns } from '../agent/live'
 import { Steps } from '../agent/Steps'
-import { Facts } from '../parts'
+import { Facts, Mark } from '../parts'
+import { navigate } from '../router'
 import { Icon } from '../ui'
 
 // The bid agent as a picture: five Claude agents, what each is attached to, and either the
@@ -11,7 +12,7 @@ import { Icon } from '../ui'
 
 const GUIDE = 'Click any part to see what it does. Play the sample replay to watch a sample run.'
 
-const PANEL_STATUS = { live: 'In the run happening now', last: 'In the last real run' }
+const PANEL_STATUS = { live: 'In the run happening now', last: 'In the real run shown' }
 
 function PanelValue({ value }) {
   if (Array.isArray(value)) {
@@ -320,13 +321,37 @@ function Rail({ scene, onOpen }) {
   )
 }
 
-function LiveRunbar({ run }) {
+function LiveRunbar({ run, newest }) {
   return (
     <div className="agent-runbar" data-mode={isRunning(run) ? 'live' : 'last'} aria-live="polite">
-      <span className="agent-runbar-tag">{isRunning(run) ? 'Live' : 'Last run'}</span>
+      <span className="agent-runbar-tag">{isRunning(run) ? 'Live' : newest ? 'Last run' : 'Earlier run'}</span>
       <span className="agent-runbar-text">{run.title}</span>
       <span className="agent-runbar-aside">{runFacts(run)}</span>
     </div>
+  )
+}
+
+// The list marks borrow the sidebar's: pulsing while working, a check when finished.
+const RUN_MARK = { running: 'researching', finished: 'submitted', stopped: 'passed' }
+
+function RunPicker({ runs, chosenId, onChoose }) {
+  return (
+    <section className="agent-steps agent-runs" aria-label="Recent runs">
+      <p className="agent-steps-title">Recent runs</p>
+      <ul>
+        {runs.map((run) => (
+          <li key={run.id}>
+            <button className="list-item" aria-current={run.id === chosenId ? 'page' : undefined} onClick={() => onChoose(run.id)}>
+              <Mark stage={RUN_MARK[run.status] ?? 'new'} current={run.id === chosenId} />
+              <span className="list-text">
+                <strong>{run.title}</strong>
+                <span>{runFacts(run)}</span>
+              </span>
+            </button>
+          </li>
+        ))}
+      </ul>
+    </section>
   )
 }
 
@@ -393,18 +418,19 @@ function Panel({ id, open, scene, onClose }) {
   )
 }
 
-export function Agent() {
+export function Agent({ sessionId }) {
   const [outcome, setOutcome] = useState('pursue')
   const [beat, setBeat] = useState(-1)
   const [playing, setPlaying] = useState(false)
   const [panelId, setPanelId] = useState(null)
   const [panelOpen, setPanelOpen] = useState(false)
   const returnFocus = useRef(null)
-  const live = useLiveRuns()
+  const live = useLiveRuns(sessionId)
   const beats = RUNS[outcome]
   const started = beat >= 0
-  // The newest real run shows until a replay starts, and comes back on Reset.
-  const run = !started && live?.sessions[0]
+  // The chosen real run shows until a replay starts, and comes back on Reset.
+  const shown = live?.sessions.find((candidate) => candidate.id === live.session_id)
+  const run = !started && shown
   const scene = run ? liveScene(run) : sceneAt(outcome, beat)
 
   useEffect(() => {
@@ -483,7 +509,17 @@ export function Agent() {
         </div>
       </header>
 
-      {run ? <LiveRunbar run={run} /> : <Runbar scene={scene} />}
+      {live && (
+        <RunPicker
+          runs={live.sessions}
+          chosenId={shown?.id}
+          onChoose={(id) => {
+            reset()
+            navigate(`/agent/${id}`)
+          }}
+        />
+      )}
+      {run ? <LiveRunbar run={run} newest={run.id === live.sessions[0].id} /> : <Runbar scene={scene} />}
       {run && <LiveSteps run={run} steps={live.steps} />}
       <Rail scene={scene} onOpen={openPanel} />
       <Canvas scene={scene} openId={openId} onOpen={openPanel} />

@@ -12,6 +12,13 @@ const fetchLive = (sessionId) =>
     .then((reply) => (reply.ok ? reply.json() : null))
     .catch(() => null)
 
+// With no run chosen, the page follows the newest running run, or else the newest run. The server
+// answers for the newest, so when a different run is working, it is asked again for that one.
+function followed(answer) {
+  const runs = answer?.sessions ?? []
+  return (runs.find(isRunning) ?? runs[0])?.id
+}
+
 export function useLiveRuns(sessionId) {
   const [live, setLive] = useState(null)
 
@@ -22,6 +29,7 @@ export function useLiveRuns(sessionId) {
     const poll = () =>
       fetchLive(sessionId)
         .then((answer) => answer ?? (sessionId ? fetchLive(null) : null))
+        .then((answer) => (!sessionId && answer && followed(answer) !== answer.session_id ? fetchLive(followed(answer)) : answer))
         .then((answer) => !stopped && setLive(answer?.sessions?.length ? answer : null))
     poll()
     const timer = setInterval(poll, POLL_MS)

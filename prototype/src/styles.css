@@ -3325,6 +3325,20 @@ textarea:focus {
   overflow-wrap: anywhere;
 }
 
+.agent-runs ul {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 2px 8px;
+}
+
+.agent-runs .list-item {
+  padding: 7px 10px;
+}
+
+.agent-runs .list-text strong {
+  font-size: 13.5px;
+}
+
 .agent-steps li.agent-step {
   display: block;
 }
