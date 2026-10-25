@@ -13,6 +13,7 @@ SAM.gov notice id.
 
 import argparse
 import hashlib
+import http.client
 import json
 import mimetypes
 import os
@@ -43,16 +44,21 @@ INDEX_FORMAT = "rfp-id | buyer | title | proposal deadline | status"
 # statement of work in the description rather than in a file.
 NOTICE_FILE = "sam-notice.json"
 
-# The agents' results and the proposal. Everything else in a session's outputs is working material:
-# copies and text versions of the RFP's documents, and the Reader's scripts.
+# The agents' results and the proposal. Everything else in a session's files is working material:
+# the mounted documents, their text versions, and the Reader's scripts.
 FINDING_SUFFIXES = (".json", ".md")
+DOUG_STATUSES = ("sent", "won", "lost")
+
+# OSError covers refused and reset connections and, before Python 3.10, socket.timeout; the
+# http.client errors cover a reply cut off partway.
+NETWORK_ERRORS = (OSError, http.client.HTTPException)
 
 
 def send(method, url, *, headers, body=None, shown_as=None):
     """Send one request and return the reply body, waiting out rate limits and overloads.
 
-    A dropped connection is retried only for GET: a POST may have landed, and sending it again could
-    start a second session or upload a file twice.
+    Server errors and dropped connections are retried only for GET: a POST may have landed, and
+    sending it again could start a second session or upload a file twice.
     """
     attempts = 5
     for attempt in range(1, attempts + 1):
@@ -61,11 +67,12 @@ def send(method, url, *, headers, body=None, shown_as=None):
             with urllib.request.urlopen(request, timeout=300) as reply:
                 return reply.read()
         except urllib.error.HTTPError as error:
-            if error.code not in (429, 529) or attempt == attempts:
+            retry = error.code in (429, 529) or (method == "GET" and error.code in (500, 502, 503, 504))
+            if not retry or attempt == attempts:
                 sys.exit(f"{method} {shown_as or url} failed ({error.code}): {error.read().decode()}")
-        except (urllib.error.URLError, TimeoutError) as error:
+        except NETWORK_ERRORS as error:
             if method != "GET" or attempt == attempts:
-                sys.exit(f"{method} {shown_as or url} failed: {error}")
+                sys.exit(f"{method} {shown_as or url} failed: {error!r}")
         time.sleep(2**attempt)
 
 
@@ -97,15 +104,16 @@ def upload(name, content):
     return json.loads(send("POST", f"{API}/files", headers=headers, body=body))["id"]
 
 
-def session_outputs(session_id):
-    files, page = [], None
+def session_files(session_id):
+    """Every file in a session: what the agents wrote to outputs, plus its own copies of mounted files."""
+    files, after = [], None
     while True:
-        query = {"scope_id": session_id, "limit": 100, **({"page": page} if page else {})}
+        query = {"scope_id": session_id, "limit": 1000, **({"after_id": after} if after else {})}
         listing = anthropic("GET", f"files?{urllib.parse.urlencode(query)}")
         files += listing["data"]
-        page = listing.get("next_page")
-        if not listing.get("has_more") or not page:
+        if not listing["has_more"]:
             return files
+        after = listing["last_id"]
 
 
 def sam(tool, arguments):
@@ -227,7 +235,15 @@ def new_record(notice, found_at):
 
 
 def deadline(record):
-    return datetime.fromisoformat(record["deadline"]) if record["deadline"] else None
+    """The deadline as a UTC-aware time, or None when it is missing or unreadable."""
+    if not record["deadline"]:
+        return None
+    try:
+        # Before Python 3.11, fromisoformat rejects a trailing Z.
+        when = datetime.fromisoformat(record["deadline"].replace("Z", "+00:00"))
+    except ValueError:
+        return None
+    return when if when.tzinfo else when.replace(tzinfo=timezone.utc)
 
 
 def deadline_order(record):
@@ -335,8 +351,8 @@ def fetch_documents(rfp_id):
         name = unique_name(attachment["name"], {document["name"] for document in record["documents"]})
         try:
             content = download(attachment["url"])
-        except (urllib.error.URLError, TimeoutError) as error:
-            failed.append({"name": name, "url": attachment["url"], "size_bytes": attachment.get("size_bytes"), "file_id": None, "error": str(error)})
+        except NETWORK_ERRORS as error:
+            failed.append({"name": name, "url": attachment["url"], "size_bytes": attachment.get("size_bytes"), "file_id": None, "error": repr(error)})
             continue
         store(name, attachment["url"], content)
         uploaded += 1
@@ -361,7 +377,12 @@ def parsed_json(outputs, name):
 
 
 def status_after_run(outputs, current):
-    """The step an RFP has reached, from the files a run wrote. A run that stops early leaves it at the next step."""
+    """The step an RFP has reached, from the files a run wrote. A run that stops early leaves it at the next step.
+
+    Doug's outcomes never change, and a run that only read the RFP never moves it back from a later step.
+    """
+    if current in DOUG_STATUSES:
+        return current
     packet = parsed_json(outputs, "packet.json")
     qualification = parsed_json(outputs, "qualification.json")
     if packet:
@@ -372,9 +393,16 @@ def status_after_run(outputs, current):
         return "drafting"
     if qualification:
         return "researching"
-    if "sheet.json" in outputs:
+    if "sheet.json" in outputs and current == "new":
         return "qualifying"
     return current
+
+
+def start_run(record, session_id, steps):
+    """Note a session on the record as soon as it starts, so a second launch can see it is still open."""
+    started_at = datetime.now(timezone.utc).isoformat(timespec="seconds")
+    record["runs"].append({"session_id": session_id, "steps": steps, "started_at": started_at})
+    Library().save_record(record)
 
 
 def save_findings(session_id, rfp_id):
@@ -384,7 +412,7 @@ def save_findings(session_id, rfp_id):
     originals = {document["name"] for document in record["documents"]}
     copied = {finding["from_file_id"] for finding in record["findings"]}
     outputs = {}
-    for output in session_outputs(session_id):
+    for output in session_files(session_id):
         name = output["filename"]
         if not name.endswith(FINDING_SUFFIXES) or name in originals or output["id"] in copied:
             continue
@@ -397,12 +425,16 @@ def save_findings(session_id, rfp_id):
         else:
             finding["file_id"] = upload(name, content)
         record["findings"].append(finding)
-        where = finding.get("memory_path") or f"Files API {finding['file_id']} (too big for a memory)"
+        where = finding.get("memory_path") or f"Files API {finding['file_id']} (too big for a memory; later runs get it attached)"
         print(f"  saved {name} ({len(content):,} bytes) to {where}")
 
     previous = record["status"]
     record["status"] = status_after_run(outputs, previous)
-    record["runs"].append({"session_id": session_id, "saved_at": datetime.now(timezone.utc).isoformat(timespec="seconds"), "status": record["status"]})
+    run = next((run for run in record["runs"] if run["session_id"] == session_id), None)
+    if run is None:
+        run = {"session_id": session_id}
+        record["runs"].append(run)
+    run.update(saved_at=datetime.now(timezone.utc).isoformat(timespec="seconds"), status=record["status"])
     library.save_record(record)
     library.rebuild_index()
     print(f"{rfp_id}: saved {len(outputs)} findings. Status {previous} -> {record['status']}.")
