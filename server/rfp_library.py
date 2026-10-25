@@ -56,11 +56,19 @@ contents = {}
 
 
 def scrubbed(answer):
-    """The answer with every email address, phone number, and street address taken out."""
-    text = json.dumps(answer)
-    for pattern in (EMAIL, PHONE, STREET):
-        text = pattern.sub(REMOVED, text)
-    return json.loads(text)
+    """The answer with every email address, phone number, and street address taken out.
+
+    Each string is scrubbed on its own: scrubbing the JSON text can cut through an escape sequence.
+    """
+    if isinstance(answer, str):
+        for pattern in (EMAIL, PHONE, STREET):
+            answer = pattern.sub(REMOVED, answer)
+        return answer
+    if isinstance(answer, list):
+        return [scrubbed(item) for item in answer]
+    if isinstance(answer, dict):
+        return {key: scrubbed(value) for key, value in answer.items()}
+    return answer
 
 
 def without_notes_to_doug(markdown):

@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react'
 import { runFacts } from '../agent/live'
 import { Steps } from '../agent/Steps'
-import { daysLeftText, firstSentence, groupRfps, rfpStatusLine, shortDate, shownHeadline, shortTime, useLibrary, useRfp } from '../library'
+import { daysLeftText, deadlineText, deadlineTime, firstSentence, groupRfps, pacificDay, rfpStatusLine, shortDate, shownHeadline, shortTime, useLibrary, useRfp } from '../library'
 import { Facts, Mark } from '../parts'
 import { DraftThumbnail, DraftViewer, useProposal } from './DraftBid'
 import { navigate } from '../router'
@@ -198,6 +198,13 @@ function RunProgress({ run, packet }) {
   )
 }
 
+// SAM.gov stores most deadlines in UTC. The packet copies the deadline as the notice wrote it,
+// with the buyer's offset, so it shows the buyer's own time.
+function writtenDeadline(rfp, deadlines) {
+  const sameInstant = deadlines.find((date) => /^\d{4}-\d\d-\d\dT.*[+-]\d\d:\d\d$/.test(date.as_written ?? '') && new Date(date.as_written).getTime() === new Date(rfp.deadline).getTime())
+  return sameInstant?.as_written ?? rfp.deadline
+}
+
 function RfpBody({ rfp }) {
   const { findings, run } = rfp
   const { packet, qualification, research, summary } = findings
@@ -212,10 +219,14 @@ function RfpBody({ rfp }) {
     : ((headline && shownHeadline(headline)) ?? (run ? operatorVerdict(run) : null) ?? 'The agent has not read this RFP yet. It is in the library, waiting its turn.')
   const deadlines = packet?.deadlines ?? []
   const reasons = qualification?.decision_reasons ?? []
+  // A draft for an RFP the agent says not to bid on can only come from a test run, so it sits
+  // under the decision instead of above it.
+  const testDraft = proposal?.recommendation === 'pass'
+  const thumbnail = proposal && <DraftThumbnail proposal={proposal} onOpen={() => setReading(true)} />
 
   return (
     <div className="step-body">
-      {proposal && <DraftThumbnail proposal={proposal} onOpen={() => setReading(true)} />}
+      {proposal && !testDraft && thumbnail}
       {reading && proposal && <DraftViewer proposal={proposal} onClose={closeReading} />}
       <h1 className="step-title">{rfp.title}</h1>
       <p className="step-intro">{intro}</p>
@@ -227,12 +238,13 @@ function RfpBody({ rfp }) {
           { label: 'Recommendation', value: running ? 'Not decided yet. The agent is working on it.' : recommendationText(packet, qualification, run) },
           packet && { label: 'Expected worth', value: worthText(packet.expected_worth), detail: packet.expected_worth?.basis, detailLabel: packet.expected_worth?.confidence && `Confidence ${packet.expected_worth.confidence}.` },
           research && { label: 'Research estimate', value: worthText(research.value_estimate), detail: research.value_estimate.confidence && `Confidence ${research.value_estimate.confidence}.` },
-          { label: 'Proposal deadline', value: rfp.deadline ? `${shortDate(rfp.deadline)}, ${shortTime(rfp.deadline)}` : 'Not given', detail: daysLeftText(rfp.days_left) },
+          { label: 'Proposal deadline', value: rfp.deadline ? deadlineText(rfp.deadline, writtenDeadline(rfp, deadlines)) : 'Not given', detail: daysLeftText(rfp.days_left) },
           { label: 'Buyer', value: rfp.agency ?? 'Not given' },
           { label: 'Kind', value: [rfp.notice_type, rfp.set_aside && `set-aside: ${rfp.set_aside}`].filter(Boolean).join(', ') || 'Not given' },
           rfp.place_of_performance && { label: 'Where', value: rfp.place_of_performance },
         ].filter(Boolean)}
       />
+      {testDraft && thumbnail}
 
       {run && <Steps title={running ? 'Latest steps' : 'How the run ended'} label="Steps of the run on this RFP" steps={run.steps} tour="run-steps" />}
 
@@ -430,7 +442,7 @@ function Today() {
                   <div className={`agenda-row ${rfp.days_left <= 14 ? 'agenda-soon' : ''}`} role="button" tabIndex={0} onClick={open(rfp)} onKeyDown={(event) => event.key === 'Enter' && open(rfp)()}>
                     <span className="agenda-date">
                       <span>{shortDate(rfp.deadline).split(' ')[0]}</span>
-                      <strong>{new Date(rfp.deadline).getDate()}</strong>
+                      <strong>{pacificDay(rfp.deadline)}</strong>
                     </span>
                     <span className="agenda-bid">
                       <strong>{rfp.buyer}</strong>
@@ -438,7 +450,7 @@ function Today() {
                     </span>
                     <span className="agenda-kind kind-due">{rfp.response_kind === 'bid' ? 'Proposals due' : 'Response due'}</span>
                     <span className="agenda-when">
-                      <strong>{shortTime(rfp.deadline)}</strong>
+                      <strong>{deadlineTime(rfp.deadline)}</strong>
                       <span>{daysLeftText(rfp.days_left)}</span>
                     </span>
                     <span className="agenda-source">

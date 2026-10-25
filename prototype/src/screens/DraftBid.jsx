@@ -7,7 +7,7 @@ import { Icon } from '../ui'
 // of its first page, and opens into the whole document.
 
 const NOT_SENT = 'Draft, not sent. Doug reviews and sends it himself.'
-const DONT_BID_NOTE = 'The agent recommends not bidding on this RFP.'
+const TEST_DRAFT = 'Test draft: made in a test run that skipped the bid decision. Normal runs only draft RFPs the agent says to bid on.'
 // The first page needs only the start of the draft.
 const FIRST_PAGE_CHARACTERS = 2500
 
@@ -42,9 +42,9 @@ export function DraftThumbnail({ proposal, onOpen }) {
         </article>
       </button>
       <div className="bid-thumb-text">
-        <strong>Draft bid. Not sent.</strong>
+        <strong>{proposal.recommendation === 'pass' ? 'Test draft. Not sent.' : 'Draft bid. Not sent.'}</strong>
         <span>{sizeText(proposal)}</span>
-        {proposal.recommendation === 'pass' && <span>{DONT_BID_NOTE}</span>}
+        {proposal.recommendation === 'pass' && <span>{TEST_DRAFT}</span>}
         <button className="text-link" onClick={onOpen}>
           Open the bid <Icon name="open" size={12} stroke={2.4} />
         </button>
@@ -104,7 +104,9 @@ export function DraftViewer({ proposal, onClose }) {
         <span className="viewer-doc">
           <Icon name="doc" size={18} />
           <span>
-            <strong>Draft bid: {proposal.title}</strong>
+            <strong>
+              {proposal.recommendation === 'pass' ? 'Test draft' : 'Draft bid'}: {proposal.title}
+            </strong>
             <span>{NOT_SENT}</span>
           </span>
         </span>
@@ -119,7 +121,7 @@ export function DraftViewer({ proposal, onClose }) {
               <span>Cadocary LLC, to {proposal.buyer}</span>
               <span>{NOT_SENT}</span>
             </header>
-            {proposal.recommendation === 'pass' && <p className="bid-advice">{DONT_BID_NOTE}</p>}
+            {proposal.recommendation === 'pass' && <p className="bid-advice">{TEST_DRAFT}</p>}
             <Markdown text={proposal.markdown} />
             <Compliance rows={proposal.compliance} />
           </article>
