@@ -3325,6 +3325,96 @@ textarea:focus {
   overflow-wrap: anywhere;
 }
 
+.agent-steps li.agent-step {
+  display: block;
+}
+
+.agent-step-head {
+  width: 100%;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 2px 0;
+  border: none;
+  background: none;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.agent-step-head > span {
+  flex: 1;
+}
+
+.agent-step-head:hover > span {
+  color: var(--ink);
+}
+
+.agent-step-head svg {
+  flex: none;
+  margin-top: 3px;
+  color: var(--muted);
+}
+
+.agent-step-detail {
+  margin: 4px 0 10px 76px;
+}
+
+.agent-step-label {
+  margin: 6px 0 2px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.agent-step-detail pre {
+  max-height: 280px;
+  overflow: auto;
+  padding: 8px 10px;
+  border-radius: var(--r1);
+  background: var(--chip);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 12px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+/* An RFP's run: the status bar, then its five stages */
+
+.rfp-run {
+  margin: 16px 0 8px;
+}
+
+/* The Agent page hides its rail on narrow screens. An RFP's stages stay. */
+.agent-rail.rfp-stages {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.rfp-stages .agent-rail-item > span:last-child {
+  display: flex;
+  flex-direction: column;
+}
+
+.rfp-stage-note {
+  font-size: 11.5px;
+  color: var(--muted);
+}
+
+@media (max-width: 640px) {
+  .agent-step-detail {
+    margin-left: 0;
+  }
+
+  .agent-rail.rfp-stages {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* The steps of a run, which also mark progress during a replay */
 
 .agent-rail {
@@ -3334,7 +3424,8 @@ textarea:focus {
   gap: 6px;
 }
 
-.agent-rail button {
+.agent-rail button,
+.agent-rail-item {
   width: 100%;
   height: 100%;
   padding: 7px 9px;

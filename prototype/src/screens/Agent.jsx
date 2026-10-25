@@ -1,6 +1,7 @@
 import { Fragment, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { BADGES, CANVAS, CHECKS, EDGES, FIRST_TEST, LABELS, NODES, NOTES, PORTS, PORT_LABELS, RUNS, STACK, STEPS, SUBS, beatLength, liveScene, panelFor, sceneAt, stepState, subportLabel, subsOf } from '../agent/graph'
-import { isRunning, runFacts, stepTime, useLiveRuns } from '../agent/live'
+import { isRunning, runFacts, useLiveRuns } from '../agent/live'
+import { Steps } from '../agent/Steps'
 import { Facts } from '../parts'
 import { Icon } from '../ui'
 
@@ -330,20 +331,7 @@ function LiveRunbar({ run }) {
 }
 
 function LiveSteps({ run, steps }) {
-  if (!steps.length) return null
-  return (
-    <section className="agent-steps" aria-label={isRunning(run) ? 'Latest steps of the live run' : 'Last steps of the last run'}>
-      <p className="agent-steps-title">{isRunning(run) ? 'Latest steps' : 'How the last run ended'}</p>
-      <ol>
-        {steps.map((step) => (
-          <li key={`${step.at}-${step.text}`}>
-            <time dateTime={step.at}>{stepTime(step.at)}</time>
-            <span>{step.text}</span>
-          </li>
-        ))}
-      </ol>
-    </section>
-  )
+  return <Steps title={isRunning(run) ? 'Latest steps' : 'How this run ended'} label={isRunning(run) ? 'Latest steps of the live run' : 'Last steps of this run'} steps={steps} />
 }
 
 function Runbar({ scene }) {

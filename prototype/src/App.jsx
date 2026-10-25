@@ -43,7 +43,7 @@ function Toasts({ currentId }) {
 
 function Screen({ section, id, tab }) {
   if (section === 'settings') return <Settings id={id} />
-  if (section === 'agent') return <Agent />
+  if (section === 'agent') return <Agent sessionId={id} />
   if (id && tab === 'research') return <Research id={id} section="bids" />
   return <Bids id={id} today={section === 'today'} />
 }
