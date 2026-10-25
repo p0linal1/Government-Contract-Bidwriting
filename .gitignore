@@ -14,3 +14,6 @@ cloud/dist/
 
 # Personal dashboard — private, not part of the open-source release
 frontend/
+
+# Teammate guide — contains this deployment's URL
+TEAMMATE-GUIDE.md
