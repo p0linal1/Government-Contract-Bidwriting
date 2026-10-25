@@ -34,7 +34,7 @@ The `sam-research` tools search SAM.gov live and remember nothing between calls.
    - Set `days` to 60, unless the message gives another window. Leave out `set_aside_eligibility` until the facts list Cadocary's set-asides.
    - Results come 40 to a page, nearest deadline first. Call again with `offset` set to `next_offset` until `has_more` is false.
    - Search once per run. Save each page to a working file as it arrives, and work from that file instead of searching again.
-2. **Drop what we have worked.** Our code stores every open notice in the library with status `new`. Skip any notice whose record, `/mnt/memory/rfp-library/rfps/<notice_id>/record.json`, has any other status.
+2. **Drop what we have worked.** Our code stores every open notice in the library with status `new`. Skip any notice that `/mnt/memory/rfp-library/index.md` (or the month files it lists) shows with any other status.
 3. **First look.** Judge each new notice from its title and description. Mark it `pursue`, `consider`, or `skip`, with one line on why.
    - Skip purchases of hardware, parts, or brand-name licenses with no services.
    - Skip notices of intent to sole-source to a named vendor.

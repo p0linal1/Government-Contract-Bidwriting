@@ -35,8 +35,8 @@
     },
     "agent-delegation": {
       "id": "skill_01E8L6koR3vMMXWFfZbzXqtr",
-      "version": "skver_01KZwUbYKCvRXv6bvjnL1Tce",
-      "fingerprint": "b82c296c786c721d9a94adf7e89e979282bc1fb20f68e7842bd0ef265e2d0076"
+      "version": "skver_01EfakKzs3XBd1uZgcYNoaRQ",
+      "fingerprint": "c25e00334d3da551754a88971d3626ead3fbe78f2992a929be52c38d6e09d4bf"
     },
     "rfp-reading": {
       "id": "skill_01FF3hPdJ1nhsLuvYt5R6tyN",
@@ -66,8 +66,8 @@
     "operator": {
       "id": "agent_01T6ww8wetS3NJNicgfg48Pg",
       "name": "Cadocary Operator",
-      "version": 7,
-      "fingerprint": "1a889fe64bdaa7823fc616b991ade7324b6f3b6bdf1cec4def79572cdf302145"
+      "version": 8,
+      "fingerprint": "085a18a61ba8882829dea5185e91a096ee5b35b52e59b4e2b22ceaf8ca2709fc"
     },
     "reader": {
       "id": "agent_01EFdc4RsT6U5vncFsErAm3W",
