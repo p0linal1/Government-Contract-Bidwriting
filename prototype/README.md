@@ -15,7 +15,7 @@ To start the morning over, go to Settings, then Demo data, then Reset the demo. 
 | Today | The morning brief: bids ready for Doug, what the agent is working on, what it skipped, and upcoming deadlines |
 | A bid in the sidebar | That bid's path: Find, Research, Draft, Review. Each step shows the agent's live work, translated into plain English |
 | Review the bid | Why Cadocary is competitive, the expected worth, the calls the agent made, and the proposal page by page with highlights and margin notes |
-| How it works | The workflow: which steps are scripts and which are the agent |
+| Agent | The five Claude agents as a graph. Click any part for what it does, or play a replay of a sample run |
 | Settings | Company facts, products, files the agent reads, and the sources it checks |
 
 Every claim links to its source: the RFP page, a web page, or a Cadocary file.
