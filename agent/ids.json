@@ -8,7 +8,7 @@
       "id": "memstore_01CWkzBJC2w4usssAdixLBxr",
       "name": "RFP Library",
       "readme_id": "mem_014wnkYKSadbr5wmS2n2oosA",
-      "fingerprint": "e228aef6a1c480302f046cc9fd65ae5b4f421dc5c48d395e7edd1d1c964c8f41"
+      "fingerprint": "5ed43b574991190b05597b697adc22966c56db350ff66f941a055a30dfe8b04e"
     },
     "cadocary-facts": {
       "id": "memstore_01UnB2xsoBPAq6Wh4CfBMNb4",
@@ -35,13 +35,13 @@
     },
     "agent-delegation": {
       "id": "skill_01E8L6koR3vMMXWFfZbzXqtr",
-      "version": "skver_01K5eJ96RXMze2u149JyVg9h",
-      "fingerprint": "c57206312adfee17f556b56c5c939b9070c890e052a784fd05d003a86e9034d7"
+      "version": "skver_01KZwUbYKCvRXv6bvjnL1Tce",
+      "fingerprint": "b82c296c786c721d9a94adf7e89e979282bc1fb20f68e7842bd0ef265e2d0076"
     },
     "rfp-reading": {
       "id": "skill_01FF3hPdJ1nhsLuvYt5R6tyN",
-      "version": "skver_01MTB8sZiyH88oys2im3UoLt",
-      "fingerprint": "de7bd1b5e749c772b963ee85758830241183a265be6eff323fcf3c40f6e63f80"
+      "version": "skver_01UAaRFpbw2oBGwYTkXrr7xm",
+      "fingerprint": "96e97d722a0a118fb8854c2126a94f0cf9cb23c56b0f0c88a5dbeba623b1e052"
     }
   },
   "agents": {
@@ -66,14 +66,14 @@
     "operator": {
       "id": "agent_01T6ww8wetS3NJNicgfg48Pg",
       "name": "Cadocary Operator",
-      "version": 6,
-      "fingerprint": "d144de3d1941025001765feea3be8e0e0b0fb6474de0bbf0a7c1306b43073a58"
+      "version": 7,
+      "fingerprint": "1a889fe64bdaa7823fc616b991ade7324b6f3b6bdf1cec4def79572cdf302145"
     },
     "reader": {
       "id": "agent_01EFdc4RsT6U5vncFsErAm3W",
       "name": "Cadocary Reader",
-      "version": 2,
-      "fingerprint": "30ff1ed44eb62dd705543365388adbc1d0167a09943cc6ef83371669ea260d88"
+      "version": 3,
+      "fingerprint": "e6cbe10c43700ed63c68b75a2d73dc5166d9bc39807affe35e00fc1f4b57d9d5"
     }
   },
   "vault": {
