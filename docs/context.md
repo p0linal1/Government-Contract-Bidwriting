@@ -131,7 +131,7 @@ Real examples from our RFP collection:
 
 ## Recommended architecture
 
-This is from the engineering review. The agent shell is built and live (`agent/`): an operator with a delegation skill, plus three helpers (qualifier, researcher, drafter) each with its own skill, an environment, and two memory stores (RFP Library and Cadocary Facts). It differs from the review in one way: the qualifier also does the checking, as in the team's original plan, instead of a separate checker agent. The record tools, code checks, session launcher, and the `pull_new_rfps` connection are not built yet.
+This is from the engineering review. The agent shell is built and live (`agent/`): an operator with a delegation skill, plus three helpers (qualifier, researcher, drafter) each with its own skill, an environment, and two memory stores (RFP Library and Cadocary Facts). It differs from the review in one way: the qualifier also does the checking, as in the team's original plan, instead of a separate checker agent. The operator pulls RFPs itself through Polina's hosted SAM.gov tool, with its access code kept in an Anthropic vault. A test on Oct 25 searched 95 notices, judged each one, and opened the 5 worth a look, for 82 cents. Not built yet: the code that stores intake results in the RFP Library, the record tools, the code checks, and the session launcher.
 
 - **One Managed Agents session per RFP,** started by our backend after sourcing. A scheduled deployment sends the same starting message every day, so it can't hand the agent "today's RFP". One session per RFP also gives each bid its own spending cap, live feed, and failure.
 - **Agents:** an operator plus four helpers (qualifier, researcher, checker, drafter), all on Opus 5.5 with effort set to high. The checker starts fresh each time. On the operator, workflows and inline agents are turned off, so it can use only these four agents.
@@ -207,7 +207,7 @@ The full reference is `docs/managed-agents.md`. The facts that matter most:
 ## Suggested split of the work
 
 - **Doug and facts:** the facts sheet, the three-award research test, and the questions for Doug. Start here: `docs/fact-sheet.md`.
-- **Platform:** the agent shell is done (`agent/`). Next: connect `pull_new_rfps` to the sourcing scripts, load RFP documents into the Files API and the RFP Library, set up the record tools endpoint, and launch one session for one RFP.
+- **Platform:** the agent shell is done (`agent/`), and the operator pulls RFPs through Polina's tool. Next: code that stores each intake result (records in the RFP Library, files in the Files API), the record tools endpoint, and one session per RFP.
 - **Checks and sourcing:** the code checks, a deadline parser with time zones, and SAM.gov (already underway in this repo).
 - **App:** connect the prototype screens (`prototype/`) to the real event feed and the finished packet.
 

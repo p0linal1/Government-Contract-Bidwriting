@@ -35,8 +35,8 @@
     },
     "agent-delegation": {
       "id": "skill_01E8L6koR3vMMXWFfZbzXqtr",
-      "version": "skver_01DZ4JXbHai4VXZNicjXs6v6",
-      "fingerprint": "09d0537e25b725a9743191139e260a1f8085f9cceb0c48453390c03f250b0ccd"
+      "version": "skver_014ivWTsB7FYuZnJWbTuUYhN",
+      "fingerprint": "416b84d4ddbf5a8888f163fa0aa7265cd46c44e4b66518f4eed7ef8393b900dc"
     }
   },
   "agents": {
@@ -61,8 +61,12 @@
     "operator": {
       "id": "agent_01T6ww8wetS3NJNicgfg48Pg",
       "name": "Cadocary Operator",
-      "version": 1,
-      "fingerprint": "3d104eb85a59b269d9277f8aaf5751d29485cd00f20f5a491e51597630b99ae9"
+      "version": 3,
+      "fingerprint": "ef82e4a0568e8eaec2c2d3b6876d97ee77dc096c6bf3515363b88c1629398c21"
     }
+  },
+  "vault": {
+    "id": "vlt_011CgPbapGAjXK8CLwTsHJyK",
+    "sam_credential_id": "vcrd_01LRGzsqjMVnLySGgBvLaHZk"
   }
 }
