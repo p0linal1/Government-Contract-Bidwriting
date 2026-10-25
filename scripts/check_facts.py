@@ -10,8 +10,8 @@ Every fact has exactly five parts:
      "approved": false, "expires": "2027-06-30" or null}
 
 Record "unknown" as the value rather than guessing. Ids follow the Cadocary Facts memory store
-(agent/memory/cadocary-facts/README.md): company.*, product.*, prefs.*, and so on. Company facts
-already in profile.json (legal name, UEI, CAGE, website, location, NAICS, PSC, capabilities) stay
+(agent/memory/cadocary-facts/README.md): company.*, product.*, work.*, prefs.*, and so on. Company
+facts already in profile.json (legal name, UEI, CAGE, website, location, NAICS, PSC, capabilities) stay
 there and are not repeated here.
 
 Inputs:
@@ -43,6 +43,7 @@ SECTIONS = (
     "insurance",
     "security",
     "product",
+    "work",
     "past_performance",
     "references",
     "team",

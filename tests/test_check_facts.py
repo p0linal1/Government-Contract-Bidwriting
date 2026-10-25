@@ -1,6 +1,7 @@
 """Offline tests for the facts sheet checker."""
 
 import json
+import re
 import subprocess
 import sys
 from datetime import date
@@ -28,6 +29,18 @@ def test_example_sheet_is_valid_and_claims_nothing():
     example = json.loads((ROOT / "facts.example.json").read_text(encoding="utf-8"))
     assert check_facts.validate(example) == []
     assert check_facts.usable(example) == {}
+
+
+def test_example_products_and_client_work_exist_in_the_memory_store():
+    readme = (ROOT / "agent" / "memory" / "cadocary-facts" / "README.md").read_text(encoding="utf-8")
+    store_ids = re.findall(r"^\| ([a-z0-9_]+(?:\.[a-z0-9_]+)+) \|", readme, re.MULTILINE)
+    store_items = {store_id.rsplit(".", 1)[0] for store_id in store_ids}
+    example = json.loads((ROOT / "facts.example.json").read_text(encoding="utf-8"))
+    for row in example["facts"]:
+        section, _, rest = row["id"].partition(".")
+        if section in ("product", "work"):
+            item = f"{section}.{rest.split('.', 1)[0]}"
+            assert "." in rest and item in store_items, row["id"]
 
 
 def test_well_formed_sheet_has_no_problems():

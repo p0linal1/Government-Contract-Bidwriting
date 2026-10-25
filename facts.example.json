@@ -1,12 +1,12 @@
 {
   "_comment": "Copy to facts.json and fill it in with Doug (docs/fact-sheet.md). facts.json is gitignored: it holds his prices and references. Every value below is made up or unknown. Check it with: python3 scripts/check_facts.py",
 
-  "_shape": "Each fact: id (section.name), value (\"unknown\" if not known; never guess), source (who or what said it, and when), approved (true only after Doug has read it), expires (YYYY-MM-DD for anything that runs out, else null). Ids follow the Cadocary Facts memory store (agent/memory/cadocary-facts/README.md). Legal name, UEI, CAGE, website, location, NAICS, PSC, and capabilities come from profile.json and are not repeated here.",
+  "_shape": "Each fact: id (section.name), value (\"unknown\" if not known; never guess), source (who or what said it, and when), approved (true only after Doug has read it), expires (YYYY-MM-DD for anything that runs out, else null). Ids follow the Cadocary Facts memory store (agent/memory/cadocary-facts/README.md): what the products do and the client work Cadocary built are already there, so this sheet holds only what is still missing. Legal name, UEI, CAGE, website, location, NAICS, PSC, and capabilities come from profile.json and are not repeated here.",
 
   "facts": [
     {"id": "company.legal_status", "value": "Washington limited liability company", "source": "made up", "approved": false, "expires": null},
     {"id": "company.ein", "value": "unknown", "source": "not asked yet", "approved": false, "expires": null},
-    {"id": "company.primary_contact", "value": {"name": "Example Owner", "title": "Principal", "phone": "unknown", "email": "unknown"}, "source": "made up", "approved": false, "expires": null},
+    {"id": "company.point_of_contact", "value": {"name": "Example Owner", "title": "Principal", "phone": "unknown", "email": "unknown"}, "source": "made up", "approved": false, "expires": null},
     {"id": "company.address", "value": "100 Example St, Richland, WA 99352", "source": "made up", "approved": false, "expires": null},
     {"id": "company.wa_ubi", "value": "unknown", "source": "not asked yet", "approved": false, "expires": null},
     {"id": "company.sam_registration", "value": "Active", "source": "made up", "approved": false, "expires": "2027-03-01"},
@@ -35,11 +35,13 @@
     {"id": "security.data_retention", "value": "unknown", "source": "not asked yet", "approved": false, "expires": null},
     {"id": "security.accessibility", "value": "unknown", "source": "not asked yet", "approved": false, "expires": null},
 
-    {"id": "product.docketbot", "value": {"does": "Back-office tools for Washington public defenders: intake, conflicts, court dates, caseloads", "live_customers": "unknown", "hosting": "unknown", "covers": "unknown"}, "source": "docs/context.md", "approved": false, "expires": null},
-    {"id": "product.clientcheck", "value": {"does": "Watches the state court records system for new charges against clients", "live_customers": "unknown", "hosting": "unknown", "covers": "unknown"}, "source": "docs/context.md", "approved": false, "expires": null},
-    {"id": "product.spendlogic", "value": {"does": "Builds procurement compliance documents for federal contractors from templates", "live_customers": "unknown", "hosting": "unknown", "covers": "unknown"}, "source": "docs/context.md", "approved": false, "expires": null},
-    {"id": "product.purlpal", "value": {"does": "Answers questions over large document sets (Medicare plan documents), kept current by a data pipeline", "live_customers": "unknown", "hosting": "unknown", "covers": "unknown"}, "source": "docs/context.md", "approved": false, "expires": null},
-    {"id": "product.hotels4truckers", "value": {"does": "Web and mobile booking platform for hotels with truck parking", "live_customers": "unknown", "hosting": "unknown", "covers": "unknown"}, "source": "docs/context.md", "approved": false, "expires": null},
+    {"id": "product.docketbot.live_customers", "value": "unknown", "source": "not asked yet", "approved": false, "expires": null},
+    {"id": "product.clientcheck.live_customers", "value": "unknown", "source": "not asked yet", "approved": false, "expires": null},
+    {"id": "product.highlighter.live_customers", "value": "unknown", "source": "not asked yet", "approved": false, "expires": null},
+
+    {"id": "work.spendlogic.contract", "value": {"dates": "unknown", "value_usd": "unknown", "may_name_client": "unknown"}, "source": "not asked yet", "approved": false, "expires": null},
+    {"id": "work.hotels4truckers.contract", "value": {"dates": "unknown", "value_usd": "unknown", "may_name_client": "unknown"}, "source": "not asked yet", "approved": false, "expires": null},
+    {"id": "work.purlpal.contract", "value": {"dates": "unknown", "value_usd": "unknown", "may_name_client": "unknown"}, "source": "not asked yet", "approved": false, "expires": null},
 
     {"id": "past_performance.example_county_defender", "value": {"client": "Example County Office of Public Defense", "dates": "2024-01 to 2025-12", "value_usd": 48000, "scope": "Case intake and conflicts module", "result": "Intake time cut from 20 to 8 minutes", "may_name_client": false}, "source": "made up", "approved": false, "expires": null},
 
@@ -54,9 +56,12 @@
     {"id": "pricing.payment_terms", "value": "unknown", "source": "not asked yet", "approved": false, "expires": null},
     {"id": "pricing.discounts", "value": "unknown", "source": "not asked yet", "approved": false, "expires": null},
 
-    {"id": "prefs.bids_wanted", "value": {"work": "software and IT", "region": "Washington", "min_value_usd": 25000, "min_days_to_respond": 7}, "source": "Doug, Oct 25 (docs/context.md)", "approved": false, "expires": null},
-    {"id": "prefs.scale", "value": "Small jobs in his range, not very large federal programs", "source": "Doug, Oct 25 (docs/context.md)", "approved": false, "expires": null},
-    {"id": "prefs.never_bid", "value": "unknown", "source": "not asked yet", "approved": false, "expires": null},
+    {"id": "prefs.value_range", "value": {"min_usd": 1000000, "max_usd": 5000000, "max_is_hard_limit": true}, "source": "Doug, Oct 25", "approved": false, "expires": null},
+    {"id": "prefs.no_military", "value": "No military applications", "source": "Doug, Oct 25", "approved": false, "expires": null},
+    {"id": "prefs.work_type", "value": "Software and IT work. Custom software contracts suit Cadocary best", "source": "Doug, Oct 25", "approved": false, "expires": null},
+    {"id": "prefs.offshore_staff", "value": "Cadocary uses offshore developers, so contracts that allow them are better", "source": "Doug, Oct 25", "approved": false, "expires": null},
+    {"id": "prefs.location", "value": "Washington buyers preferred; federal buyers allowed", "source": "Doug, Oct 25", "approved": false, "expires": null},
+    {"id": "prefs.response_time", "value": {"min_days_to_respond": 7}, "source": "Doug, Oct 25", "approved": false, "expires": null},
     {"id": "prefs.max_travel", "value": "unknown", "source": "not asked yet", "approved": false, "expires": null},
     {"id": "prefs.unacceptable_terms", "value": "unknown", "source": "not asked yet", "approved": false, "expires": null},
 
