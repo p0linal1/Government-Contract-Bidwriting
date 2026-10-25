@@ -27,6 +27,8 @@ Every fact needs the same five parts, so code can check claims against the sheet
 
 `profile.json` already holds the legal name, NAICS codes, set-aside eligibility, capabilities, and exclusions. Agree with Alyssa and Polina whether the facts sheet extends that file or sits beside it. Don't keep the same fact in two places.
 
+**Built:** the sheet sits beside the profile, in a gitignored `facts.json`. Fact ids use the same names as the agent's Cadocary Facts memory store (`agent/memory/cadocary-facts/README.md`): `company.*`, `product.*`, `work.*` (client projects), `prefs.*`, plus one prefix per remaining section below, such as `insurance.*` and `references.*`. The company facts `profile.json` already holds (legal name, UEI, CAGE, website, location, NAICS, PSC, capabilities) are not repeated. Start from `facts.example.json`, which has every section below with made-up or unknown values. `python3 scripts/check_facts.py` rejects a malformed sheet: a missing part, an empty value instead of "unknown", insurance or a certification with no expiry, a reference with no `permission_date`, or a fact the profile already holds. It also lists what is still unknown or unapproved, which is the agenda for the next talk with Doug. `--usable` prints only the approved, known, unexpired facts. That output, and nothing else, is what the agent gets. The section 12 awards go in the same file under `research_test` and never reach the agent. (Proposed by the facts lane; Alyssa and Polina to confirm.)
+
 ## Sections to fill
 
 1. **Company identity**
@@ -97,12 +99,14 @@ The open questions for Doug, most important first, are in `docs/questions-for-do
 
 ## Also ask Doug
 
-- [ ] What is FGA, and can we see one sample breakdown?
-- [ ] How many RFPs a month fit him, how many does he submit, and how many hours does each take?
-- [ ] Does he have past bids, won or lost, with the winning price?
-- [ ] Has he tried GovDash, Sweetspot, or Cleatus? If he quit one, why?
-- [ ] Is one early message OK when a buyer-question deadline or mandatory meeting would otherwise be missed?
-- [ ] Can bidkit's code go in this repo?
+Answered Oct 25:
+
+- [x] What is FGA, and can we see one sample breakdown? **Forget FGA. It uses SAM.gov, which this repo already covers.**
+- [x] How many RFPs a month fit him, how many does he submit, and how many hours does each take? **Not relevant. We are building only the research skill.**
+- [x] Does he have past bids, won or lost, with the winning price? **Yes, two.** Collect them into `facts.json` under `research_test` (gitignored; prices stay private).
+- [x] Has he tried GovDash, Sweetspot, or Cleatus? If he quit one, why? **No.**
+- [x] Is one early message OK when a buyer-question deadline or mandatory meeting would otherwise be missed? **No.** The agent sends nothing early.
+- [x] Can bidkit's code go in this repo? **Yes.** Still keep its saved portal logins out.
 
 ## Rules while doing this
 
