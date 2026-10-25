@@ -45,7 +45,13 @@ export const TOUR_STEPS = [
     route: `/bids/${DOT_RFP}`,
     target: '[data-tour="rfp-facts"]',
     title: 'Research and a draft',
-    text: 'This one went further. Research estimated what it is worth, with sources, and the draft is written. The draft stays private to Doug.',
+    text: 'This one went further. Research estimated what it is worth, with sources, and the agent wrote a draft bid.',
+  },
+  {
+    route: `/bids/${DOT_RFP}`,
+    target: '[data-tour="open-bid"]',
+    title: 'Open the bid',
+    text: 'Open the bid to read the full draft, with every blank marked for Doug. Nothing in it is sent until he says so.',
   },
   {
     route: '/agent',
