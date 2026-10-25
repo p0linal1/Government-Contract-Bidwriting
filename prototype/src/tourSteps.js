@@ -19,8 +19,8 @@ export const TOUR_STEPS = [
   {
     route: '/bids',
     target: '[data-tour="group-passed"]',
-    title: 'Passed',
-    text: 'The RFPs the agent worked today and decided to pass on. Each one shows its reason in one line.',
+    title: 'Not bidding',
+    text: 'The RFPs the agent worked today and decided not to bid on, each with its reason in one line.',
   },
   {
     route: `/bids/${VA_RFP}`,
@@ -32,7 +32,7 @@ export const TOUR_STEPS = [
     route: `/bids/${VA_RFP}`,
     target: '[data-tour="rfp-reasons"]',
     title: 'The decision and why',
-    text: 'The agent recommends passing on this one. Every reason quotes the RFP, with the page it came from.',
+    text: 'The agent recommends not bidding on this one. Every reason quotes the RFP, with the page it came from.',
   },
   {
     route: `/bids/${VA_RFP}`,
@@ -64,7 +64,7 @@ export const TOUR_STEPS = [
     open: '[data-tour="node-qualifier"]',
     target: '[data-tour="agent-panel"]',
     title: 'Inside an agent',
-    text: 'Click any agent to see its model, its skill, and the tools it can use. This is the Qualifier, which decides go or no-go.',
+    text: "Click any agent to see its model, its skill, and the tools it can use. This is the Qualifier, which decides bid or don't bid.",
   },
   {
     route: '/today',
