@@ -11,14 +11,16 @@ The goal is a proposal Doug can send after one read. It answers every requiremen
 
 ## Read first
 
-1. `qualification.json`:
+1. `sheet.json` (the reader's RFP sheet):
    - the requirements list
    - the evaluation criteria and weights
    - the page limit and what counts toward it
-   - the submission format and required forms
-2. `research.json`: why Cadocary is competitive, and the price.
-3. `/mnt/memory/cadocary-facts/`: everything you may say about Cadocary.
-4. The RFP's instructions to proposers. They decide the structure.
+   - the submission method, format rules, and required forms
+   - amendments to acknowledge, and contract terms to flag
+2. `qualification.json`: why Cadocary should pursue it, and the judgment factors.
+3. `research.json`: why Cadocary is competitive, and the price.
+4. `/mnt/memory/cadocary-facts/`: everything you may say about Cadocary.
+5. The RFP's instructions to proposers. They decide the structure.
 
 ## Rules
 
@@ -63,4 +65,4 @@ Write to the output folder the operator names:
 }
 ```
 
-There must be one compliance row for every requirement in the qualification.
+There must be one compliance row for every requirement in the sheet.

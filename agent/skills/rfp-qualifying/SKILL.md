@@ -1,18 +1,18 @@
 ---
 name: rfp-qualifying
-description: How to qualify a government RFP for Cadocary. Covers hard stops, judgment factors, every requirement and deadline, and the qualification format. Also how to check another agent's research or draft. Use whenever the operator asks you to qualify an RFP or check work.
+description: How to decide whether Cadocary should pursue a government RFP, from the reader's RFP sheet and Cadocary's facts. Covers hard stops, judgment factors, and the qualification format. Also how to check another agent's research or draft. Use whenever the operator asks you to qualify an RFP or check work.
 ---
 
 # Qualifying an RFP
 
 Version 0. It will be refined from the study of about 100 real RFPs (common items, things to look for, and rare but fatal traps).
 
-The goal is two things: a pursue or pass decision with its reasons, and the full list of requirements that everything later is checked against.
+The goal is a pursue or pass decision, with the reasons a busy owner can act on. Only RFPs you mark `pursue` go on to research and drafting, which are the expensive steps.
 
 ## Read first
 
-1. The whole RFP, every page, including attachments and addenda. Scope often hides in an attachment, and addenda change dates and page limits.
-2. Cadocary's approved facts at `/mnt/memory/cadocary-facts/`: what it has built, what it holds, and what Doug wants.
+1. **The reader's RFP sheet** (`sheet.json`): the requirements, deadlines, eligibility rules, scoring, submission, and clues, each with its page and quote. Decide from the sheet. Open the RFP itself only to confirm a quote that drives a hard stop or a close call.
+2. **Cadocary's approved facts** at `/mnt/memory/cadocary-facts/`: what it has built, what it holds, and what Doug wants.
 
 Doug's preferences: software and IT work, Washington buyers, $25,000 and up, and at least 7 days to respond.
 
@@ -32,38 +32,16 @@ If the facts don't say either way, it is not a hard stop. List it under `unknown
 
 Rate each one with the fixed words below, and give evidence for each rating.
 
-| Factor | Ratings | What to look at |
+| Factor | Ratings | What to look at in the sheet |
 | --- | --- | --- |
-| knockouts | clear, at_risk, fails, unknown | Every mandatory requirement against the facts |
-| incumbent | none, weak, strong, unknown | A current vendor named, "replace our existing system", integration with a named product |
-| past_performance | strong, partial, none, unknown | Cadocary's products and projects in the facts that match the scope |
-| evaluation_fit | favors_us, neutral, against_us, unknown | The scoring criteria and weights, and how they play to Cadocary's strengths |
+| knockouts | clear, at_risk, fails, unknown | Every `mandatory` requirement and every `eligibility` rule, against the facts |
+| incumbent | none, weak, strong, unknown | `incumbent_clues`: a current vendor named, "replace" language, integration with a named product |
+| past_performance | strong, partial, none, unknown | `scope` against Cadocary's products and projects in the facts |
+| evaluation_fit | favors_us, neutral, against_us, unknown | `evaluation` criteria and weights, and how they play to Cadocary's strengths |
 | price_competitiveness | likely, unclear, unlikely | Lowest price wins, or best value, or qualifications only |
 | competition_density | low, medium, high, unknown | How common the product category is and how many vendors serve it |
 
-## Justice-sector requirements to look for
-
-These are common in jail, court, and public defense software:
-
-- CJIS security (the FBI's rules for criminal justice data), including policies, audits, and staff fingerprinting
-- background checks for anyone with data access
-- where data is hosted (in the US, in the state, or in a government cloud) and who owns it
-- cyber and professional liability insurance above the usual limits
-- integration with an existing jail, court, or records system named in the RFP
-- public records and data retention rules
-- accessibility standards
-
-## Deadlines
-
-Capture every one as written, with its page:
-
-- buyer question deadline
-- intent-to-submit
-- pre-proposal meeting, and whether it is mandatory
-- proposal deadline
-- anything else
-
-Copy the time zone exactly as written. If the RFP says "PST" on a date that falls in daylight time, say so in `note`.
+Weigh the `security_and_compliance` items, such as CJIS, background checks, and hosting location, against what the facts say Cadocary has. A requirement the facts don't cover is an unknown, not a pass.
 
 ## Output: `qualification.json`
 
@@ -71,18 +49,9 @@ Copy the time zone exactly as written. If the RFP says "PST" on a date that fall
 {
   "rfp_id": "",
   "decision": "pursue | pass",
-  "decision_reasons": [{"reason": "", "cite": {"doc": "", "page": 0, "quote": ""}}],
+  "headline": "One sentence a busy owner can act on.",
+  "decision_reasons": [{"reason": "", "requirement_ids": [], "cite": {"doc": "", "page": 0, "quote": ""}}],
   "hard_stops": [{"rule": "", "cite": {"doc": "", "page": 0, "quote": ""}}],
-  "requirements": [
-    {"id": "R1", "text": "", "kind": "mandatory | scored | format | form | submission", "cite": {"doc": "", "page": 0, "quote": ""}}
-  ],
-  "evaluation": {
-    "method": "lowest_price | best_value | qualifications_only | unknown",
-    "criteria": [{"name": "", "weight": "", "cite": {"doc": "", "page": 0, "quote": ""}}]
-  },
-  "deadlines": [{"kind": "questions | intent_to_submit | pre_proposal_meeting | proposal | other", "as_written": "", "mandatory": true, "note": "", "cite": {"doc": "", "page": 0, "quote": ""}}],
-  "submission": {"method": "email | portal | paper | mixed", "copies": "", "separate_cost_volume": false, "signatures_required": false, "details": "", "cite": {"doc": "", "page": 0, "quote": ""}},
-  "page_limit": {"pages": null, "what_counts": "", "cite": {"doc": "", "page": 0, "quote": ""}},
   "factors": {
     "knockouts": {"rating": "", "evidence": "", "note": ""},
     "incumbent": {"rating": "", "name": "", "evidence": "", "note": ""},
@@ -96,7 +65,7 @@ Copy the time zone exactly as written. If the RFP says "PST" on a date that fall
 }
 ```
 
-Every `quote` is the exact words from that page. Never paraphrase inside `quote`.
+Every `quote` is the exact words from that page, copied from the sheet or the RFP. Never paraphrase inside `quote`.
 
 ## Checking another agent's work
 
@@ -112,11 +81,11 @@ When the operator asks you to check work, start fresh. Don't lean on your earlie
 
 **Draft** (`draft.json` and the proposal files):
 
-- Every requirement in your `requirements` list appears in the compliance matrix with a section and page.
-- The page count is within the limit, using the RFP's rules for what counts.
+- Every requirement in the sheet's `requirements` list appears in the compliance matrix with a section and page.
+- The page count is within the sheet's `page_limit`, using its rule for what counts.
 - Every claim about Cadocary maps to a fact id that exists in the facts.
 - The price matches the research.
-- Required forms are listed, and anything needing a signature is an open item for Doug.
+- Every form in the sheet's `required_forms` is listed, and anything needing a signature is an open item for Doug.
 
 Write `check-<target>-<round>.json`:
 
