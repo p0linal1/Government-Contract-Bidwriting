@@ -1,0 +1,6 @@
+# Fetched SAM.gov pulls — regenerate with scripts/fetch_sam_opportunities.py
+data/
+
+__pycache__/
+*.pyc
+.DS_Store
