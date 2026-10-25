@@ -2,7 +2,9 @@
 
 An AI bid agent for a small government software vendor. Overnight, it finds RFPs, reads them, decides which ones the company can win, researches what they're worth, and drafts the proposal. The owner reads one finished bid and decides whether to send it.
 
-![The Library and the morning brief](docs/images/screenshot.png)
+**Live app:** https://cadocary-bids-875086386085.us-west1.run.app. Click **Start walkthrough** in the top right for a guided tour of today's real runs.
+
+![A real federal RFP the agent turned down, with its reasons](docs/images/rfp.png)
 
 ## The problem
 
@@ -18,6 +20,8 @@ What he asked for: "I want artificial intelligence, not artificial asking if I'm
 - **Researches** what the contract is worth and who won similar ones, with a source for every number. It says "not found" rather than guess.
 - **Drafts the proposal** only from Cadocary's facts, and hands Doug one packet: why the bid is competitive, what it's worth, the draft, and every call it made. Nothing is sent without him.
 
+![A draft bid, with every blank Doug must fill highlighted](docs/images/bid.png)
+
 ## How it works
 
 Five Claude agents run on [Anthropic Managed Agents](https://platform.claude.com/docs/en/managed-agents/overview). An Operator (Opus 5.5) runs each RFP and hands the work to four helpers, each with its own skill: a Reader on Sonnet 5.5, then a Qualifier, a Researcher, and a Drafter on Opus 5.5. Code does every search, download, and save, and the agents only make judgment calls. None of them can send anything.
@@ -28,7 +32,12 @@ More: [`docs/context.md`](docs/context.md) has the full story and decisions, and
 
 ## Try it
 
-- **The app:** open [`prototype/click-through.html`](prototype/click-through.html) with a double-click. It is a clickable version with sample bids, plus one real RFP (City of Lakewood).
+- **The live app:** https://cadocary-bids-875086386085.us-west1.run.app.
+  - The Library lists every RFP the agent found.
+  - Each RFP page shows its stage tracker, its decision with quoted reasons, and every tool call the agent made.
+  - The Agent page shows the five agents, lit from any recent run.
+  - Start walkthrough explains each part.
+- **Offline:** open [`prototype/click-through.html`](prototype/click-through.html) with a double-click. It shows the same app with sample bids.
 - **The agents:** with the keys in place (see [`agent/README.md`](agent/README.md)):
   ```bash
   python3 agent/library.py sync                          # save every open SAM.gov notice
@@ -37,26 +46,35 @@ More: [`docs/context.md`](docs/context.md) has the full story and decisions, and
 
 ## What is real and what is not yet
 
-- **Real and tested:**
+- **Real and tested on October 25:**
   - the five agents and their skills
   - the hosted SAM.gov search
-  - the RFP library
+  - the RFP library of 148 open notices
   - the run launcher
-  - every step on real federal RFPs
-- **First full draft:** for a Transportation Department RFI, written in 18 minutes for $6.38. It is saved in the RFP library.
-  - The research estimated about $650,000, with low confidence, so the agent recommended passing, under Doug's $1 million floor.
-  - The draft invents no references, staff, or certifications. It marks 9 items for Doug to fill in.
-- **The online app:** the Agent page shows real runs live.
-- **Sample data:** the bids in the app, except the City of Lakewood RFP.
+  - the live app
+- **Six real federal RFPs worked today, with no steering.** Each got a "don't bid" decision with quoted reasons:
+  - military work
+  - an off-the-shelf product Cadocary doesn't make
+  - a veteran-owned set-aside
+  - a 10-year national contract
+  - a platform outside its products
+- **One full draft:** a Transportation Department RFI response, researched and drafted in 18 minutes for $6.38. The research estimated about $650,000 with low confidence, under Doug's $1 million floor, so the agent recommends not bidding. The draft invents no references, staff, or certifications, and marks every blank for Doug.
+- **Sample data:** only behind Settings, Demo data, and in the offline click-through.
 - **Not built yet:**
-  - Washington sources (WEBS, Public Purchase)
   - the 6 AM schedule
+  - a "Run now" button and a login for the app
+  - Washington sources (WEBS, Public Purchase)
   - watching for the buyer's reply
   - code checks on every citation
 
 ## Team
 
-TEAM_PLACEHOLDER
+- **Sheffield Peterson:** product, the agents on Managed Agents, and the app
+- **Polina Loukiantchikov:** the SAM.gov search tool and its hosting on AWS
+- **Alyssa Caples:** the SAM.gov search pipeline and its filters
+- **Atharva Rane:** the research skill, Doug's preferences, and the facts sheet
+
+With Doug, owner of Cadocary LLC, who brought the problem.
 
 Built at the Seattle AI Week Claude Impact Lab, October 25, 2026.
 
