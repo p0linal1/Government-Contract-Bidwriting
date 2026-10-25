@@ -31,13 +31,13 @@ export function Tone({ tone }) {
 
 // Label on the left, what was found on the right, the source chip and its exact words under it.
 // Grouped tables leave a repeated label blank so each group reads as one block.
-export function Facts({ job, rows, foldLabel, grouped }) {
+export function Facts({ job, rows, foldLabel, grouped, tour }) {
   const [unfolded, setUnfolded] = useState(false)
   const research = job && getResearch(job)
   const folded = rows.filter((row) => row.folded).length
   const shown = unfolded ? rows : rows.filter((row) => !row.folded)
   return (
-    <dl className="facts">
+    <dl className="facts" data-tour={tour}>
       {shown.map((row, i) => {
         const pages = row.cite && research.sources[row.cite.src]?.pages
         const repeat = grouped && i > 0 && shown[i - 1].label === row.label

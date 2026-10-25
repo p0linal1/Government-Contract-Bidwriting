@@ -1,12 +1,18 @@
 import { Fragment, useEffect, useLayoutEffect, useRef, useState } from 'react'
-import { BADGES, CANVAS, CHECKS, EDGES, FIRST_TEST, LABELS, NODES, NOTES, PORTS, PORT_LABELS, RUNS, STACK, STEPS, SUBS, beatLength, panelFor, sceneAt, stepState, subportLabel, subsOf } from '../agent/graph'
-import { Facts } from '../parts'
+import { BADGES, CANVAS, CHECKS, EDGES, FIRST_TEST, LABELS, NODES, NOTES, PORTS, PORT_LABELS, RUNS, STACK, STEPS, SUBS, beatLength, liveScene, panelFor, sceneAt, stepState, subportLabel, subsOf } from '../agent/graph'
+import { isRunning, runFacts, useLiveRuns } from '../agent/live'
+import { Steps } from '../agent/Steps'
+import { Facts, Mark } from '../parts'
+import { navigate } from '../router'
 import { Icon } from '../ui'
 
-// The bid agent as a picture: five Claude agents, what each is attached to, and a replay of a
-// sample run. Laptops get the full graph, scaled to fit. Phones get the same parts as a stack.
+// The bid agent as a picture: five Claude agents, what each is attached to, and either the
+// real run the server reports or a replay of a sample run. Laptops get the full graph, scaled
+// to fit. Phones get the same parts as a stack.
 
-const GUIDE = 'Click any part to see what it does. Play a run to watch a replay of a sample run.'
+const GUIDE = 'Click any part to see what it does. Play the sample replay to watch a sample run.'
+
+const PANEL_STATUS = { live: 'In the run happening now', last: 'In the real run shown' }
 
 function PanelValue({ value }) {
   if (Array.isArray(value)) {
@@ -44,6 +50,7 @@ function NodeCard({ id, scene, selected, onOpen, onCanvas }) {
   return (
     <button
       className={`agent-node ${kind} ${selected ? 'selected' : ''}`}
+      data-tour={`node-${id}`}
       data-status={scene.status[id]}
       style={onCanvas && { left: node.x, top: node.y, width: node.w, height: node.h }}
       aria-label={`${node.title}: ${node.sub}. Show details.`}
@@ -123,7 +130,7 @@ function LoopNote({ id, scene }) {
     <div className={`agent-loopnote ${checkState(id, scene)}`}>
       <Icon name="replay" size={18} />
       <span>
-        <strong>The Qualifier {check.title.toLowerCase()}</strong>
+        <strong>{check.title}</strong>
         <span className="agent-check-round">{scene.checks[id]}</span>
       </span>
     </div>
@@ -186,10 +193,12 @@ function Legend() {
         Attached to an agent: its model, skill, memory, and tools
       </span>
       <span>
-        <svg width="36" height="16" aria-hidden="true">
-          <path className="agent-key-line is-loop" d="M3 8C9 1 27 1 33 8C27 15 9 15 3 8z" />
+        <svg width="36" height="12" aria-hidden="true">
+          <path className="agent-key-head" d="M9 1.5L1 6L9 10.5z" />
+          <line className="agent-key-line is-helper" x1="9" y1="6" x2="27" y2="6" />
+          <path className="agent-key-head" d="M27 1.5L35 6L27 10.5z" />
         </svg>
-        The Qualifier checks the work, up to 2 rounds
+        The Operator hands work to a helper and gets it back
       </span>
       <span>
         <span className="agent-badge">1</span>
@@ -214,7 +223,7 @@ function Canvas({ scene, openId, onOpen }) {
   }, [])
 
   return (
-    <section className="agent-frame" ref={frame} aria-label="Diagram of the bid agent">
+    <section className="agent-frame" ref={frame} aria-label="Diagram of the bid agent" data-tour="agent-map">
       <div className="agent-fit" style={{ width: CANVAS.width * scale, height: CANVAS.height * scale }}>
         <div className="agent-canvas" style={{ width: CANVAS.width, height: CANVAS.height, transform: `scale(${scale})` }}>
           <Wires scene={scene} />
@@ -259,7 +268,7 @@ function Canvas({ scene, openId, onOpen }) {
 
 function Stack({ scene, openId, onOpen }) {
   return (
-    <div className="agent-stack">
+    <div className="agent-stack" data-tour="agent-map">
       {STACK.map((item) => (
         <section key={item.step ?? item.label} className={`agent-st ${item.attached ? 'is-attached' : ''}`}>
           <div className="agent-st-rail">{item.step ? <StepBadge step={item.step} scene={scene} /> : <span className="agent-st-dot" />}</div>
@@ -313,6 +322,44 @@ function Rail({ scene, onOpen }) {
   )
 }
 
+function LiveRunbar({ run, newest }) {
+  return (
+    <div className="agent-runbar" data-mode={isRunning(run) ? 'live' : 'last'} aria-live="polite">
+      <span className="agent-runbar-tag">{isRunning(run) ? 'Live' : newest ? 'Last run' : 'Earlier run'}</span>
+      <span className="agent-runbar-text">{run.title}</span>
+      <span className="agent-runbar-aside">{runFacts(run)}</span>
+    </div>
+  )
+}
+
+// The list marks borrow the sidebar's: pulsing while working, a check when finished.
+const RUN_MARK = { running: 'researching', finished: 'submitted', stopped: 'passed' }
+
+function RunPicker({ runs, chosenId, onChoose }) {
+  return (
+    <section className="agent-steps agent-runs" aria-label="Recent runs" data-tour="agent-runs">
+      <p className="agent-steps-title">Recent runs</p>
+      <ul>
+        {runs.map((run) => (
+          <li key={run.id}>
+            <button className="list-item" aria-current={run.id === chosenId ? 'page' : undefined} onClick={() => onChoose(run.id)}>
+              <Mark stage={RUN_MARK[run.status] ?? 'new'} current={run.id === chosenId} />
+              <span className="list-text">
+                <strong>{run.title}</strong>
+                <span>{runFacts(run)}</span>
+              </span>
+            </button>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )
+}
+
+function LiveSteps({ run, steps }) {
+  return <Steps title={isRunning(run) ? 'Latest steps' : 'How this run ended'} label={isRunning(run) ? 'Latest steps of the live run' : 'Last steps of this run'} steps={steps} />
+}
+
 function Runbar({ scene }) {
   const { current } = scene
   return (
@@ -340,7 +387,7 @@ function Panel({ id, open, scene, onClose }) {
   return (
     <>
       <div className={`agent-scrim ${open ? 'show' : ''}`} onClick={onClose} />
-      <aside className={`agent-panel ${open ? 'open' : ''}`} role="dialog" aria-modal="false" aria-labelledby="agent-panel-title">
+      <aside className={`agent-panel ${open ? 'open' : ''}`} data-tour={open ? 'agent-panel' : undefined} role="dialog" aria-modal="false" aria-labelledby="agent-panel-title">
         {panel && (
           <>
             <div className="agent-panel-head">
@@ -359,7 +406,7 @@ function Panel({ id, open, scene, onClose }) {
               {node && !node.planned && (
                 <p className="agent-panel-status" data-status={scene.status[id]}>
                   <StatusChip status={scene.status[id]} />
-                  {scene.started ? 'In the replay of a sample run' : 'Before a run starts'}
+                  {PANEL_STATUS[scene.mode] ?? (scene.started ? 'In the replay of a sample run' : 'Before a run starts')}
                 </p>
               )}
               <p className="agent-panel-lead">{panel.lead}</p>
@@ -372,15 +419,20 @@ function Panel({ id, open, scene, onClose }) {
   )
 }
 
-export function Agent() {
+export function Agent({ sessionId }) {
   const [outcome, setOutcome] = useState('pursue')
   const [beat, setBeat] = useState(-1)
   const [playing, setPlaying] = useState(false)
   const [panelId, setPanelId] = useState(null)
   const [panelOpen, setPanelOpen] = useState(false)
   const returnFocus = useRef(null)
+  const live = useLiveRuns(sessionId)
   const beats = RUNS[outcome]
-  const scene = sceneAt(outcome, beat)
+  const started = beat >= 0
+  // The chosen real run shows until a replay starts, and comes back on Reset.
+  const shown = live?.sessions.find((candidate) => candidate.id === live.session_id)
+  const run = !started && shown
+  const scene = run ? liveScene(run) : sceneAt(outcome, beat)
 
   useEffect(() => {
     if (!playing) return
@@ -424,7 +476,6 @@ export function Agent() {
     reset()
   }
 
-  const started = beat >= 0
   const openId = panelOpen ? panelId : null
   return (
     <div className="agent">
@@ -434,7 +485,7 @@ export function Agent() {
           <p className="step-intro">
             Five Claude agents work each RFP on their own. The Operator hands out the work, and four helpers read, qualify, research, and draft. Doug reads one finished packet, and nothing is sent without him.
           </p>
-          <p className="agent-intro-note">All five run on Anthropic Managed Agents.</p>
+          <p className="agent-intro-note">All five run on Anthropic Managed Agents. When this page is online, it shows their real runs.</p>
         </div>
         <div className="agent-controls">
           <span className="agent-outcome">
@@ -442,7 +493,7 @@ export function Agent() {
             <span className="segmented" role="group" aria-label="Sample outcome">
               {['pursue', 'pass'].map((option) => (
                 <button key={option} aria-pressed={outcome === option} disabled={playing} onClick={() => chooseOutcome(option)}>
-                  {option === 'pursue' ? 'Pursue' : 'Pass'}
+                  {option === 'pursue' ? 'Bid' : "Don't bid"}
                 </button>
               ))}
             </span>
@@ -454,12 +505,23 @@ export function Agent() {
           )}
           <button className="btn btn-primary" onClick={playing ? () => setPlaying(false) : play}>
             <Icon name={playing ? 'stop' : started ? 'replay' : 'play'} size={18} stroke={2.2} />
-            {playing ? 'Stop' : started ? 'Play again' : 'Play a run'}
+            {playing ? 'Stop' : started ? 'Replay again' : 'Play sample replay'}
           </button>
         </div>
       </header>
 
-      <Runbar scene={scene} />
+      {live && (
+        <RunPicker
+          runs={live.sessions}
+          chosenId={shown?.id}
+          onChoose={(id) => {
+            reset()
+            navigate(`/agent/${id}`)
+          }}
+        />
+      )}
+      {run ? <LiveRunbar run={run} newest={run.id === live.sessions[0].id} /> : <Runbar scene={scene} />}
+      {run && <LiveSteps run={run} steps={live.steps} />}
       <Rail scene={scene} onOpen={openPanel} />
       <Canvas scene={scene} openId={openId} onOpen={openPanel} />
       <Stack scene={scene} openId={openId} onOpen={openPanel} />

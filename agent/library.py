@@ -345,10 +345,12 @@ def fetch_documents(rfp_id):
     if notice["url"] not in stored:
         store(NOTICE_FILE, notice["url"], json.dumps(notice, indent=2).encode())
         uploaded += 1
-    for attachment in notice["attachments"]:
+    for number, attachment in enumerate(notice["attachments"], start=1):
         if attachment["url"] in stored:
             continue
-        name = unique_name(attachment["name"], {document["name"] for document in record["documents"]})
+        # SAM.gov leaves the name empty on some attachments.
+        given = attachment.get("name") or f"attachment-{number}"
+        name = unique_name(given, {document["name"] for document in record["documents"]})
         try:
             content = download(attachment["url"])
         except NETWORK_ERRORS as error:
