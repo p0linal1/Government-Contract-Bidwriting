@@ -44,8 +44,9 @@ HEADERS = {
     "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
 }
 
-# SAM's notice-type codes. RFIs have no type of their own: agencies post them as Sources Sought or
-# Special Notices, which is why both are in the default set.
+# SAM's notice-type codes. Only the responsive ones are requested by default: a Special Notice is
+# usually an industry day or a notice of intent with nothing to respond to, so it is left out even
+# though a few RFIs are posted that way.
 NOTICE_TYPES = {
     "o": "Solicitation",
     "k": "Combined Synopsis/Solicitation",
@@ -57,7 +58,7 @@ NOTICE_TYPES = {
     "u": "Justification",
     "g": "Sale of Surplus Property",
 }
-RESPONSIVE_TYPES = "o,k,p,r,s,i"
+RESPONSIVE_TYPES = "o,k,p,r,i"
 
 DEFAULT_PROFILE = "profile.json"
 

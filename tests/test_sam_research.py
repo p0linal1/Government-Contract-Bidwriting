@@ -102,9 +102,10 @@ def test_filter_drops_awarded_expired_cancelled_and_info_only(tmp_path):
     assert out["dropped"]["already awarded"] == 1
 
 
-def test_filter_keeps_rfis_posted_as_special_notices(tmp_path):
-    out = run_filter(tmp_path, [notice("rfi", notice_type="Special Notice")])
-    assert out["opportunities"][0]["response_kind"] == "market research"
+def test_filter_drops_special_notices(tmp_path):
+    out = run_filter(tmp_path, [notice("industry-day", notice_type="Special Notice")])
+    assert out["opportunities"] == []
+    assert out["dropped"]["not responsive (Special Notice)"] == 1
 
 
 def test_filter_set_aside_eligibility(tmp_path):

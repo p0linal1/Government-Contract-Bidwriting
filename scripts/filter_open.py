@@ -27,14 +27,14 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from fetch_sam_opportunities import CSV_COLUMNS, write_csv  # noqa: E402
 
 # Notice types you can act on, and what acting on them means. Award Notices, Justifications and
-# Sales of Surplus are information only. RFIs are posted as Sources Sought or Special Notices.
+# Sales of Surplus are information only. Special Notices are too, in practice: industry days and
+# notices of intent, where the handful of real RFIs among them is not worth the noise.
 RESPONSE_KIND = {
     "Solicitation": "bid",
     "Combined Synopsis/Solicitation": "bid",
     "Presolicitation": "pre-bid",
     "Intent to Bundle Requirements (DoD- Funded)": "pre-bid",
     "Sources Sought": "market research",
-    "Special Notice": "market research",
 }
 
 # Set-aside values that restrict who may bid. Anything not listed here (blank, "NONE", or a code
