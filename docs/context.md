@@ -22,7 +22,9 @@ Cadocary LLC is based in Washington and sells to public defenders, courts, jails
 | PURLPal | Answers questions over large document sets (Medicare plan documents), kept current by a data pipeline |
 | Hotels4Truckers | Web and mobile booking platform for hotels with truck parking |
 
-**Bids Doug wants:** software and IT work in Washington, $25,000 and up, with at least 7 days to respond. Small jobs in his range, not $200 million Air Force contracts.
+The website, read on Oct 25, lists only DocketBot, ClientCheck, and Highlighter (in-browser document search) as Cadocary's own products. It presents SpendLogic, Hotels4Truckers, and PURLPal as client projects Cadocary designed and built. The agents' facts follow the site (`agent/memory/cadocary-facts/README.md`).
+
+**Bids Doug wants** (updated Oct 25): software and IT work, contracts priced between $1 million and $5 million, no military applications, and at least 7 days to respond. Washington buyers are preferred, and federal work is allowed, since the pipeline searches SAM.gov. This replaces "$25,000 and up".
 
 ## What Doug said, in his words
 
@@ -40,7 +42,8 @@ Cadocary LLC is based in Washington and sells to public defenders, courts, jails
 - **The agent makes the small calls itself.** It doesn't stop to ask about questions for the buyer, references, and similar things. It lists them for him at the end.
 - **Research must answer two things.** Is Cadocary a competitive bidder, and why? The "why" feeds the draft. And what is the contract worth? Many RFPs leave the value out.
 - **Pricing comes from research on comparable past contracts.**
-- **Preload the agent with Cadocary's website, past projects, and everyone's resume.**
+- **Preload the agent with Cadocary's website, past projects, and everyone's resume.** The website is loaded. Past projects and resumes are still to come (`docs/questions-for-doug.md`).
+- **Facts depend on the bid.** No standard fact file fits every RFP. Which past projects, references, staff, and claims to use depends on the bid. The `company-facts` skill teaches the Qualifier and Drafter to choose them per RFP.
 - **He wants a clean web app, not email.** Found RFPs go on the left, each showing whether it is being researched or drafted, and a bid surfaces when it is complete. Email can't easily carry approve buttons.
 - **He wants a ranked list of the best bids.**
 - **Rejected drafts cost nothing,** because he simply won't send them.

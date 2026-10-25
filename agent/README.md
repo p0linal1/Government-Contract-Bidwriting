@@ -1,14 +1,14 @@
 # Bid agent
 
-The shell of Cadocary's bid agent on Claude Managed Agents. One operator agent hands the work to four helper agents, and each agent has one skill that holds its know-how. All of it is live in the team's Anthropic workspace. In the Claude Console, open Managed Agents and then Cadocary Operator.
+The shell of Cadocary's bid agent on Claude Managed Agents. One operator agent hands the work to four helper agents, and each agent has skills that hold its know-how. All of it is live in the team's Anthropic workspace. In the Claude Console, open Managed Agents and then Cadocary Operator.
 
-| Agent | Job | Skill | Tools |
+| Agent | Job | Skills | Tools |
 | --- | --- | --- | --- |
 | Cadocary Operator | Pulls new RFPs, hands out the work, checks each result, and writes the packet Doug reads | `agent-delegation` | read, write, glob, grep, and Polina's SAM.gov tool (`search_opportunities`, `get_notice`) |
 | Cadocary Reader | Reads an RFP's attached documents, converts them to text, and fills the RFP sheet every later step works from. Runs on Sonnet 5.5 | `rfp-reading` | read, write, glob, grep, bash, web fetch |
-| Cadocary Qualifier | Decides pursue or pass from the sheet and Cadocary's facts, and checks the other agents' work | `rfp-qualifying` | read, write, glob, grep |
+| Cadocary Qualifier | Decides pursue or pass from the sheet and Cadocary's facts, and checks the other agents' work | `rfp-qualifying`, `company-facts` | read, write, glob, grep |
 | Cadocary Researcher | Finds what the contract is worth, comparable past awards, the incumbent, and a price, each with a source | `rfp-research` | read, write, glob, grep, web search, web fetch |
-| Cadocary Drafter | Writes the proposal from the qualification, the research, and the approved facts | `proposal-drafting` | read, write, edit, glob, grep |
+| Cadocary Drafter | Writes the proposal from the qualification, the research, and the approved facts | `proposal-drafting`, `company-facts` | read, write, edit, glob, grep |
 
 Settings on every agent:
 
@@ -20,7 +20,7 @@ Settings on every agent:
 ## Storage in the cloud
 
 - **RFP Library** (memory store): every RFP found so far, plus earlier findings. `library.py` fills it (below). The layout is in `memory/rfp-library/README.md`.
-- **Cadocary Facts** (memory store): everything the agents may say about Cadocary. It currently holds the registration details from the team's sourcing profile, the products, and Doug's preferences, none of them approved yet. Doug's facts sheet fills the rest (`docs/fact-sheet.md`).
+- **Cadocary Facts** (memory store): everything the agents may say about Cadocary. It holds the registration details, what cadocary.com and Doug's capability statement say (each fact with its page), and Doug's preferences, none of them approved yet. Contact details and the street address live in a gitignored `memory/cadocary-facts/private.md`, which `setup.py` loads as `/private.md` only on a machine that has it. The `company-facts` skill teaches the Qualifier and Drafter to choose the facts that fit each bid. Doug's answers to `docs/questions-for-doug.md` fill the rest.
 - **RFP documents:** these go in the Files API, because they are too big for memory. A run gets them under `/mnt/session/uploads/<rfp-id>/`.
 - **Vault** (`Cadocary bid agent`): holds the access code for Polina's SAM.gov tool. Anthropic adds it to each call, so no agent ever sees it.
 - **Environment:** `cadocary-bids`, a cloud sandbox with open networking so the researcher can search. Since no agent has bash, web search, web fetch, and our own tools are the only ways out.

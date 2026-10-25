@@ -8,3 +8,6 @@ __pycache__/
 *.pyc
 .DS_Store
 .claude/settings.local.json
+
+# Cadocary facts that must stay out of the public repo: contacts and the street address.
+agent/memory/cadocary-facts/private.md
