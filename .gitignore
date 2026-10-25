@@ -8,3 +8,9 @@ __pycache__/
 *.pyc
 .DS_Store
 .claude/settings.local.json
+
+# Lambda build output — rebuild with cloud/build.sh
+cloud/dist/
+
+# Personal dashboard — private, not part of the open-source release
+frontend/

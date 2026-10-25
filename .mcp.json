@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "sam-research": {
+      "command": "python3",
+      "args": ["scripts/mcp_server.py"]
+    }
+  }
+}

@@ -66,6 +66,52 @@ def set_aside_blocked(set_aside, eligible):
     return set_aside in RESTRICTED_SET_ASIDES and set_aside not in eligible
 
 
+def filter_rows(rows, eligible=None, now=None, days=None, include_no_deadline=False, keep_awarded=False):
+    """Keep the rows a vendor can still respond to; return (kept, {reason: count dropped}).
+
+    Kept rows gain `days_left` and `response_kind`, and come back nearest deadline first.
+    """
+    now = now or datetime.now(timezone.utc)
+    kept, dropped = [], {}
+
+    def drop(reason):
+        dropped[reason] = dropped.get(reason, 0) + 1
+
+    for row in rows:
+        if row.get("is_canceled"):
+            drop("cancelled")
+            continue
+        kind = RESPONSE_KIND.get(row.get("notice_type"))
+        if kind is None:
+            drop(f"not responsive ({row.get('notice_type')})")
+            continue
+        if row.get("award") and not keep_awarded:
+            drop("already awarded")
+            continue
+        if set_aside_blocked(row.get("set_aside"), eligible):
+            drop(f"set-aside not eligible ({row.get('set_aside')})")
+            continue
+        deadline = parse_date(row.get("response_date"))
+        if deadline is None:
+            if not include_no_deadline:
+                drop("no deadline")
+                continue
+            row["days_left"] = None
+        else:
+            if deadline < now:
+                drop("deadline passed")
+                continue
+            days_left = (deadline - now).days
+            if days is not None and days_left > days:
+                drop(f"deadline beyond {days} days")
+                continue
+            row["days_left"] = days_left
+        row["response_kind"] = kind
+        kept.append(row)
+    kept.sort(key=lambda r: (r.get("days_left") is None, r.get("days_left")))
+    return kept, dropped
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--in-file", default="data/opportunities.json")
@@ -91,42 +137,9 @@ def main():
         eligible = set(eligible)
 
     now = datetime.now(timezone.utc)
-    kept, dropped = [], {}
-
-    def drop(reason):
-        dropped[reason] = dropped.get(reason, 0) + 1
-
-    for row in payload["opportunities"]:
-        if row.get("is_canceled"):
-            drop("cancelled")
-            continue
-        kind = RESPONSE_KIND.get(row.get("notice_type"))
-        if kind is None:
-            drop(f"not responsive ({row.get('notice_type')})")
-            continue
-        if row.get("award") and not args.keep_awarded:
-            drop("already awarded")
-            continue
-        if set_aside_blocked(row.get("set_aside"), eligible):
-            drop(f"set-aside not eligible ({row.get('set_aside')})")
-            continue
-        deadline = parse_date(row.get("response_date"))
-        if deadline is None:
-            if not args.include_no_deadline:
-                drop("no deadline")
-                continue
-            row["days_left"] = None
-        else:
-            days_left = (deadline - now).days
-            if deadline < now:
-                drop("deadline passed")
-                continue
-            if args.days is not None and days_left > args.days:
-                drop(f"deadline beyond {args.days} days")
-                continue
-            row["days_left"] = days_left
-        row["response_kind"] = kind
-        kept.append(row)
+    kept, dropped = filter_rows(
+        payload["opportunities"], eligible, now, args.days, args.include_no_deadline, args.keep_awarded
+    )
 
     seen_path = Path(args.seen_file)
     seen = json.loads(seen_path.read_text()) if seen_path.exists() else {}
@@ -138,8 +151,6 @@ def main():
         row["is_new"] = first_seen == fetched_at
     seen_path.parent.mkdir(parents=True, exist_ok=True)
     seen_path.write_text(json.dumps(seen, indent=2, sort_keys=True))
-
-    kept.sort(key=lambda r: (r.get("days_left") is None, r.get("days_left")))
 
     out_dir = Path(args.out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)

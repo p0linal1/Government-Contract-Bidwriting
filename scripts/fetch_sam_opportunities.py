@@ -269,6 +269,66 @@ def write_csv(path, rows, columns):
             writer.writerow(flat)
 
 
+def collect(profile, include_no_deadline=False, all_notices=False, include_inactive=False, enrich_rows=True,
+            workers=6, log=lambda msg: print(msg, file=sys.stderr)):
+    """Search SAM for a profile's codes and return (rows, fetched_at), enriched unless told not to.
+
+    `profile` needs only `naics` and/or `psc` lists. Raises ValueError if it has neither.
+    """
+    fields = [(f, [str(c) for c in profile.get(f) or []]) for f in ("naics", "psc")]
+    fields = [(f, codes) for f, codes in fields if codes]
+    if not fields:
+        raise ValueError("profile lists no naics or psc codes")
+
+    now = datetime.now(timezone.utc)
+    if all_notices:
+        queries = [{"notice_types": None, "response_from": None}]
+    else:
+        queries = [{"notice_types": RESPONSIVE_TYPES, "response_from": now.strftime("%Y-%m-%dT%H:%M:%S+00:00")}]
+        if include_no_deadline:
+            queries.append({"notice_types": RESPONSIVE_TYPES, "response_from": None, "no_deadline_only": True})
+
+    by_notice, matches = {}, {}
+    for field, codes in fields:
+        for query in queries:
+            results = search(field, codes, query["notice_types"], query["response_from"], include_inactive)
+            if query.get("no_deadline_only"):
+                results = [r for r in results if not r.get("responseDate")]
+            log(f"  {field}={','.join(codes)}: {len(results)}")
+            for record in results:
+                notice_id = record.get("_id")
+                if not notice_id:
+                    continue
+                by_notice[notice_id] = record
+                # Search results don't say which code hit; the detail call narrows this later.
+                matches.setdefault(notice_id, set()).add(f"{field.upper()} {'/'.join(sorted(codes))}")
+
+    rows = [flatten(record, matches[nid]) for nid, record in by_notice.items()]
+    log(f"{len(rows)} unique notices")
+
+    if enrich_rows and rows:
+        log(f"fetching detail and award status for {len(rows)} notices...")
+        with ThreadPoolExecutor(max_workers=workers) as pool:
+            rows = list(pool.map(enrich, rows))
+        failed = sum(1 for r in rows if r.get("enrich_error"))
+        if failed:
+            log(f"  {failed} detail lookups failed")
+        awarded = sum(1 for r in rows if r.get("award"))
+        if awarded:
+            log(f"  {awarded} already have an award recorded against them")
+        # Narrow matched_by to the codes that actually appear on the notice.
+        wanted = {f: set(codes) for f, codes in fields}
+        for row in rows:
+            hits = [f"NAICS {c}" for c in row.get("naics_codes") or [] if c in wanted.get("naics", ())]
+            if row.get("psc_code") in wanted.get("psc", ()):
+                hits.append(f"PSC {row['psc_code']}")
+            if hits:
+                row["matched_by"] = sorted(hits)
+
+    rows.sort(key=lambda r: r.get("response_date") or "9999")
+    return rows, now
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--profile", default=DEFAULT_PROFILE, help="vendor profile JSON (default: profile.json)")
@@ -289,58 +349,17 @@ def main():
     args = parser.parse_args()
 
     profile = load_profile(args.profile)
-    fields = [(f, [str(c) for c in profile.get(f) or []]) for f in ("naics", "psc")]
-    fields = [(f, codes) for f, codes in fields if codes]
-    if not fields:
-        sys.exit(f"{args.profile} lists no naics or psc codes")
-
-    now = datetime.now(timezone.utc)
-    if args.all_notices:
-        queries = [{"notice_types": None, "response_from": None}]
-    else:
-        queries = [{"notice_types": RESPONSIVE_TYPES, "response_from": now.strftime("%Y-%m-%dT%H:%M:%S+00:00")}]
-        if args.include_no_deadline:
-            queries.append({"notice_types": RESPONSIVE_TYPES, "response_from": None, "no_deadline_only": True})
-
-    by_notice, matches = {}, {}
-    for field, codes in fields:
-        for query in queries:
-            results = search(field, codes, query["notice_types"], query["response_from"], args.include_inactive)
-            if query.get("no_deadline_only"):
-                results = [r for r in results if not r.get("responseDate")]
-            print(f"  {field}={','.join(codes)}: {len(results)}", file=sys.stderr)
-            for record in results:
-                notice_id = record.get("_id")
-                if not notice_id:
-                    continue
-                by_notice[notice_id] = record
-                code_set = set(codes)
-                # Search results don't say which code hit; the detail call fills naics_codes later.
-                matches.setdefault(notice_id, set()).add(f"{field.upper()} {'/'.join(sorted(code_set))}")
-
-    rows = [flatten(record, matches[nid]) for nid, record in by_notice.items()]
-    print(f"{len(rows)} unique notices", file=sys.stderr)
-
-    if not args.no_enrich and rows:
-        print(f"fetching detail and award status for {len(rows)} notices...", file=sys.stderr)
-        with ThreadPoolExecutor(max_workers=args.workers) as pool:
-            rows = list(pool.map(enrich, rows))
-        failed = sum(1 for r in rows if r.get("enrich_error"))
-        if failed:
-            print(f"  {failed} detail lookups failed", file=sys.stderr)
-        awarded = sum(1 for r in rows if r.get("award"))
-        if awarded:
-            print(f"  {awarded} already have an award recorded against them", file=sys.stderr)
-        # Narrow matched_by to the codes that actually appear on the notice.
-        wanted = {f: set(codes) for f, codes in fields}
-        for row in rows:
-            hits = [f"NAICS {c}" for c in row.get("naics_codes") or [] if c in wanted.get("naics", ())]
-            if row.get("psc_code") in wanted.get("psc", ()):
-                hits.append(f"PSC {row['psc_code']}")
-            if hits:
-                row["matched_by"] = sorted(hits)
-
-    rows.sort(key=lambda r: r.get("response_date") or "9999")
+    try:
+        rows, now = collect(
+            profile,
+            include_no_deadline=args.include_no_deadline,
+            all_notices=args.all_notices,
+            include_inactive=args.include_inactive,
+            enrich_rows=not args.no_enrich,
+            workers=args.workers,
+        )
+    except ValueError as exc:
+        sys.exit(f"{args.profile}: {exc}")
 
     out_dir = Path(args.out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)

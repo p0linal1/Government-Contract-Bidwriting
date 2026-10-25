@@ -67,8 +67,9 @@ scripts/render_report.py             validates scores, writes data/ranked.json +
 The agent (`.claude/agents/sam-researcher.md`) only makes the judgment call. Every SAM.gov request
 and every output file comes from a script, so the result doesn't depend on how the model phrased
 things. `render_report.py` refuses to publish if any open notice is unscored or a score is
-malformed. `.claude/settings.json` limits the agent to running those four scripts and writing its
-scores file.
+malformed. The agent reaches the pipeline only through five tools served by `scripts/mcp_server.py`
+(registered in `.mcp.json`): `search_sam`, `pending_notices`, `save_scores`, `render_report` and
+`read_report`. It has no shell or file access.
 
 The SAM.gov endpoints are the public ones sam.gov's own search page uses, so there's no API key. They
 answer `406` unless the request sends `Accept: application/hal+json`.
@@ -102,6 +103,38 @@ it.
   for past-award and competitor research (slow)
 - `filter_open.py --days 30` limits to deadlines in the next 30 days
 - `filter_open.py --keep-awarded` / `--ignore-set-aside` turn off those two filters
+
+## Host it as a remote tool on AWS
+
+`cloud/` deploys the search as an MCP server on AWS Lambda, so anyone you give a token can call it
+from Claude Code or any MCP client. It has no `profile.json` and keeps no state: each caller passes
+their own codes, and their own agent judges fit.
+
+| Tool | Does |
+|---|---|
+| `search_opportunities(naics, psc, set_aside_eligibility, days)` | Open notices for those codes, with awarded, expired and ineligible ones removed |
+| `get_notice(notice_id)` | Full description, contacts, any award, and download links for the RFP attachments |
+
+```bash
+brew install awscli && aws configure      # or: aws configure sso && aws sso login
+cloud/deploy.sh                           # creates the secret, role, function and URL; prints a token
+cloud/smoke.sh <url> <token>              # auth, handshake, and one real search
+cloud/tokens.sh add alice                 # one token per caller; cloud/tokens.sh revoke alice
+```
+
+Callers add it with:
+
+```bash
+claude mcp add --transport http sam-research <url> --header "Authorization: Bearer <token>"
+```
+
+It runs on a Lambda Function URL rather than API Gateway because API Gateway cuts requests off at
+30 seconds and a broad search can take longer. The function rejects any request without a valid
+token and logs each call's caller name (never the token) to
+CloudWatch. Re-running `cloud/deploy.sh` ships new code without touching tokens.
+
+Handing it to someone building an agent? Send them
+[cloud/AGENT-INTEGRATION.md](cloud/AGENT-INTEGRATION.md), the URL, and their own token.
 
 ## Tests
 
