@@ -18,5 +18,6 @@ The full project context, including Doug's decisions, the plan, what the reviews
 - Scripts do every fetch and file write. Agents only make judgment calls.
 - No agent may send, submit, upload, or email a bid. Doug sends.
 - The agent may only claim what is on Doug's approved facts sheet. Every number carries a source or a "guess" label.
-- Never commit Doug's real facts, prices, logins, or any key. Real files stay gitignored, like `profile.json`.
+- Never commit prices, logins, or any key. `profile.json` is tracked on purpose — it holds only
+  public SAM.gov registration data (UEI, CAGE, codes, capabilities). Nothing else real goes in.
 - When a team decision in `docs/context.md` gets made, update that page.

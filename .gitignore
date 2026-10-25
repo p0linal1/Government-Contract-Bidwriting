@@ -1,9 +1,6 @@
 # Fetched SAM.gov pulls and agent reports — regenerate with bin/sam-research.sh
 data/
 
-# Your own vendor profile. Shared repo ships profile.example.json.
-profile.json
-
 # Local dev virtualenv for the tests (see requirements-dev.txt).
 .venv/
 

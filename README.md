@@ -9,14 +9,14 @@ set aside for someone else, and ranks what's left against what your business doe
 You need Python 3.9+ (standard library only) and [Claude Code](https://claude.com/claude-code).
 
 ```bash
-cp profile.example.json profile.json     # then set your NAICS codes — the only file you edit
 bin/sam-research.sh                      # or, inside Claude Code: /sam-research
 open data/report.md
 ```
 
 `profile.json` holds your NAICS codes, optional PSC codes, the set-asides you qualify for, and a
-plain-language list of capabilities the agent scores against. It is gitignored, so your codes never
-land in the shared repo.
+plain-language list of capabilities the agent scores against. It is the only file you edit. The one
+in this repo is Cadocary's, built from its public SAM.gov registration; copy
+`profile.example.json` over it to point the pipeline at a different business.
 
 No Claude Code? `bin/sam-research.sh --no-agent` does the pull and filtering and leaves an unranked
 `data/open_opportunities.csv`.

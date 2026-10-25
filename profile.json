@@ -1,0 +1,48 @@
+{
+  "_comment": "The one file you edit. Everything else the research agent needs it reads from SAM.gov. Copy profile.example.json over this to start a different business.",
+  "legal_business_name": "Cadocary LLC",
+  "_registration": "From your SAM.gov registration. These identify the business on anything you submit.",
+  "uei": "KMG3ZA6PAPK3",
+  "cage_code": "230S6",
+  "website": "cadocary.com",
+  "city": "Richland",
+  "state": "WA",
+  "zip": "99352",
+  "_naics": "NAICS codes from your SAM.gov registration. One search covers all of them.",
+  "naics": [
+    "511210",
+    "518210",
+    "541511",
+    "541519"
+  ],
+  "_psc": "Optional Product Service Codes. Leave [] to search by NAICS only. D302 and D308 are registered but return no active notices, so they are left out of the search.",
+  "psc": [
+    "7A20",
+    "DA10",
+    "DA01"
+  ],
+  "_set_aside_eligibility": "Set-asides you can bid on, by SAM code: SBA/SBP small business, 8A/8AN 8(a), HZC/HZS HUBZone, SDVOSBC/SDVOSBS service-disabled veteran, WOSB/WOSBSS women-owned, EDWOSB/EDWOSBSS economically disadvantaged WOSB, VSA/VSS veteran, ISBEE/IEE Indian economic enterprise. Unrestricted notices are always kept. Delete this key to skip set-aside filtering entirely.",
+  "set_aside_eligibility": [
+    "SBA",
+    "SBP"
+  ],
+  "_capabilities": "What you actually do, in plain words. The agent scores each notice's fit against this list, so be specific: 'Django and React web apps' beats 'software'.",
+  "capabilities": [
+    "Custom software development",
+    "Commercial software licensing and publishing",
+    "SaaS solutions",
+    "Cloud computing and data storage",
+    "Web hosting and data processing",
+    "Application development and hosting",
+    "Systems integration",
+    "API development",
+    "Database management",
+    "Software maintenance and support",
+    "Technology consulting and digital transformation"
+  ],
+  "_exclusions": "Optional: work you never want surfaced even when the codes match, e.g. hardware resale. The agent marks these skip.",
+  "exclusions": [
+    "Hardware or parts procurement",
+    "On-site staffing outside the US"
+  ]
+}
