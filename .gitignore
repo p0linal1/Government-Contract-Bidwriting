@@ -4,6 +4,9 @@ data/
 # Your own vendor profile. Shared repo ships profile.example.json.
 profile.json
 
+# Local dev virtualenv for the tests (see requirements-dev.txt).
+.venv/
+
 __pycache__/
 *.pyc
 .DS_Store

@@ -105,8 +105,12 @@ it.
 
 ## Tests
 
+The pipeline itself is stdlib-only, so the tests are the only thing that needs an install. One
+virtualenv keeps it off your system Python:
+
 ```bash
-python3 -m pytest -q tests/
+python3 -m venv .venv && .venv/bin/python -m pip install -r requirements-dev.txt
+.venv/bin/python -m pytest -q tests/
 ```
 
-Offline; nothing calls SAM.gov.
+Offline; nothing calls SAM.gov. 18 tests, under a second.
