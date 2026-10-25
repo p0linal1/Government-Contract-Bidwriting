@@ -14,7 +14,9 @@
       "id": "memstore_01UnB2xsoBPAq6Wh4CfBMNb4",
       "name": "Cadocary Facts",
       "readme_id": "mem_01N5Q6CWvHa9DXfEC1M8VLF5",
-      "fingerprint": "26a78a965e99b82b5c9dddf2bfed9a8f14c1613ea69bd0429e4101e3e5d21c42"
+      "fingerprint": "af357758c90897de81ca9c410a01e5dc7ec0ac3fbcd6ee498b296c96a7620e9e",
+      "private_id": "mem_01LhGYVPL75yKpeJ46qFBsph",
+      "private_fingerprint": "e24be51edc9ffcd889a5f7a4a473fdc4f87c39058337e0ec91d5c77a58610eef"
     }
   },
   "skills": {
@@ -45,16 +47,16 @@
     },
     "company-facts": {
       "id": "skill_01Gjc1Ggof1GiJ3hhY37ibfM",
-      "version": "skver_01JfEJZcCuycyzTcUKBpCfFb",
-      "fingerprint": "9a142c05479f0a3b0f9753fdeb5b2bcfc93b430c2991020e8e5bbe326ac6078c"
+      "version": "skver_016SEJLygvqQfzUpSSXKopqN",
+      "fingerprint": "b4d3cefe39503778789068da1b44abcb7222f0533edaa08bd7e853138eaa60a8"
     }
   },
   "agents": {
     "qualifier": {
       "id": "agent_01XzDnJSx9KLfEgC1ZraTLPd",
       "name": "Cadocary Qualifier",
-      "version": 3,
-      "fingerprint": "a195a70e4f5ca633dcb9542fb6a5a1e912d3e74560c8a897ab9eb3188af2b681"
+      "version": 4,
+      "fingerprint": "355f767ce1ffb3109e84f3f41a998a66dc52d3831f963564ea0914a056280341"
     },
     "researcher": {
       "id": "agent_01X5VQBCNP6zXWqS54n1tgLk",
@@ -65,14 +67,14 @@
     "drafter": {
       "id": "agent_01EiFfsfSSps41gyUSG52L86",
       "name": "Cadocary Drafter",
-      "version": 3,
-      "fingerprint": "559d3e525867e6e1d11b854234a1bfedbcf6c185fe48bd922a2e074a1a93ad02"
+      "version": 4,
+      "fingerprint": "de2acf26e8c0995e0717b2aaf02d9c0e7428ed81eca770776807be88e8d80981"
     },
     "operator": {
       "id": "agent_01T6ww8wetS3NJNicgfg48Pg",
       "name": "Cadocary Operator",
-      "version": 9,
-      "fingerprint": "d8f5c04e46b89b74d3697f028f80a82b2061299d6788d11b1476dbca10daba3c"
+      "version": 10,
+      "fingerprint": "c03c28e3d5fa967159260afec5364098a1a2eb41bf4cd8fae04a08bcb83129e3"
     },
     "reader": {
       "id": "agent_01EFdc4RsT6U5vncFsErAm3W",
