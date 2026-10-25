@@ -101,6 +101,8 @@ When the operator asks you to check work, start fresh. Don't lean on your earlie
 - Every claim about Cadocary maps to a fact id that exists in the facts, and says no more than that fact. A client's reported result must still read as the client's.
 - The price matches the research.
 - Every form in the sheet's `required_forms` is listed, and anything needing a signature is an open item for Doug.
+- No template markers are left in the proposal (`{{`, `}}`, `<!--`), and every `[MISSING: ...]` and `[SIGNATURE: ...]` marker appears in `open_items`.
+- `commitments` lists every price, validity period, schedule, person, certification, reference, and contract exception in the proposal.
 
 Write `check-<target>-<round>.json`:
 
