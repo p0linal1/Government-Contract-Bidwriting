@@ -9,7 +9,7 @@ export const CATEGORIES = [
   { id: 'ready', title: 'Ready for you', icon: 'doc', stages: ['ready'], needsYou: true },
   { id: 'drafting', title: 'Drafting', icon: 'agent', stages: ['drafting'] },
   { id: 'researching', title: 'Researching', icon: 'agent', stages: ['researching'] },
-  { id: 'new', title: 'Up next', icon: 'search', stages: ['new'] },
+  { id: 'new', title: 'To read', icon: 'search', stages: ['new'] },
   { id: 'notcompetitive', title: 'Skipped by the agent', icon: 'close', stages: ['notcompetitive'] },
   { id: 'done', title: 'Done', icon: 'check', stages: ['submitted', 'awarded', 'passed', 'lost'] },
 ]
@@ -25,7 +25,7 @@ export function categorize(state) {
 export function shortStatus(job, progress) {
   switch (progress.stage) {
     case 'new':
-      return `Found on ${PORTALS[job.source].name}. Researched next.`
+      return `Found on ${PORTALS[job.source].name}. Read next.`
     case 'ready':
       return 'Drafted. Review and upload.'
     case 'notcompetitive':

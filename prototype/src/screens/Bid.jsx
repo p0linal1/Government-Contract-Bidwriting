@@ -14,9 +14,10 @@ import { Hint, Icon } from '../ui'
 function BidList({ section, currentId }) {
   const { state } = useStore()
   const lists = categorize(state)
+  const total = lists.reduce((sum, list) => sum + list.entries.length, 0)
 
   return (
-    <nav className="desk-list" aria-label="Bids">
+    <nav className="desk-list" aria-label="Library">
       <button className="list-item list-today" aria-current={currentId ? undefined : 'page'} onClick={() => navigate('/today')}>
         <span className="today-mark">
           <Icon name="calendar" size={14} stroke={2.2} />
@@ -26,6 +27,9 @@ function BidList({ section, currentId }) {
           <span>{TODAY}</span>
         </span>
       </button>
+      <h2 className="library-title">
+        Library <span className="count">{total} RFPs</span>
+      </h2>
       {lists
         .filter((list) => list.entries.length > 0)
         .map((list) => (

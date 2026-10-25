@@ -209,7 +209,7 @@ export function Morning() {
             {working.length > 0 ? (
               <p>
                 <strong>{working[0].job.buyer}:</strong> {liveAction(working[0].job, working[0].progress)}.
-                {upNext.length > 0 && ` ${upNext.length} more ${upNext.length === 1 ? 'bid is' : 'bids are'} up next.`}
+                {upNext.length > 0 && ` ${upNext.length} more ${upNext.length === 1 ? 'bid is' : 'bids are'} waiting to be read.`}
               </p>
             ) : (
               <p>Nothing running right now. It checks for new bids again tomorrow at 6:00 AM.</p>
