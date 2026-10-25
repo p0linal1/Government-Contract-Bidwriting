@@ -8,3 +8,10 @@ __pycache__/
 *.pyc
 .DS_Store
 .claude/settings.local.json
+
+# Doug's facts sheet: his prices, references, and insurance. Shared repo ships facts.example.json.
+facts.json
+
+# Doug's real past bids and proposals. Private: never commit.
+*Proposal*.pdf
+*proposal*.pdf

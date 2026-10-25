@@ -113,4 +113,4 @@ python3 -m venv .venv && .venv/bin/python -m pip install -r requirements-dev.txt
 .venv/bin/python -m pytest -q tests/
 ```
 
-Offline; nothing calls SAM.gov. 18 tests, under a second.
+Offline; nothing calls SAM.gov. 32 tests, under a second.

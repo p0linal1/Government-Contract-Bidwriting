@@ -27,7 +27,7 @@ Cadocary LLC is based in Washington and sells to public defenders, courts, jails
 ## What Doug said, in his words
 
 - Finding RFPs, researching them, and writing bids are three jobs he is in the loop on today. He wants out of all three.
-- A paid service already sends him "FGA" bid breakdowns. "What this has created is a chore." He wants the bid written, not another breakdown. (Nobody has confirmed what FGA stands for yet. Ask him.)
+- A paid service already sends him "FGA" bid breakdowns. "What this has created is a chore." He wants the bid written, not another breakdown. (Decided Oct 25: forget FGA. It uses SAM.gov, which this repo already covers.)
 - "I want artificial intelligence, not artificial asking if I'm right."
 - "If it's done twenty minutes of work and now it's asking me a question, that's not going to be good for me. But if it's done eight hours, getting all the way to the end, and then it's just the final 'am I completely full of shit here', then it's worth it for me to read all of that."
 - "There's no downside to failure. There's incredible upside to success. The limiting factor is how much time you're asking of the user."
@@ -58,7 +58,7 @@ Doug already wrote a Python pipeline he calls bidkit. It is not in this repo. It
 - runs five pass/fail gates: intake, value, pricing, fit, and go/no-go
 - assembles the PDF
 
-The plan is to turn these scripts into tools the agent can call. They would likely run as a server Cadocary hosts, so the portal logins never leave Cadocary. Ask Doug before putting any of bidkit in this repo.
+The plan is to turn these scripts into tools the agent can call. They would likely run as a server Cadocary hosts, so the portal logins never leave Cadocary. Decided Oct 25: bidkit's code may go in this repo, but its saved portal logins may not.
 
 ## The plan the team agreed on
 
@@ -165,7 +165,7 @@ This is from the engineering review. The agent shell is built and live (`agent/`
 | 5 | Who checks the work | Code checks first, then a fresh checker agent. Drop Codex |
 | 6 | What the agent may claim | Only what is on Doug's facts sheet, with prices built from his price list |
 | 7 | Hard stops | A short list in code, each showing its quote, and Doug can override |
-| 8 | One early notice | Allowed only when a buyer-question deadline, mandatory meeting, or intent-to-submit would otherwise be missed. Needs Doug's OK |
+| 8 | One early notice | **Decided Oct 25: no.** The agent sends nothing early, even when a buyer-question deadline or mandatory meeting would be missed |
 | 9 | Who sends | No agent ever sends. The agent prepares the packet and a checklist, and Doug submits |
 | 10 | Doug's buttons | Send, Fix this, and Pass with a one-line reason |
 | 11 | Doug's main screen | A "ready for you" message first, with the live agent view one click behind |
@@ -230,7 +230,7 @@ The full reference is `docs/managed-agents.md`. The facts that matter most:
 | WEBS | Washington's state bid site. State agencies must post there, and many cities and counties do too |
 | Public Purchase | A bid site many cities and counties use |
 | SAM.gov | The federal government's contract site |
-| FGA | The paid bid service Doug uses. Exact name unconfirmed |
+| FGA | The paid bid service Doug uses. It draws on SAM.gov; the team decided Oct 25 not to build on it |
 | CJIS | The FBI's security rules for criminal justice data. Common in jail and court software bids |
 | NAICS | Industry codes used to search for federal contracts |
 | Set-aside | A contract reserved for a type of small business |
