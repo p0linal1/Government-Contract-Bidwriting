@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react'
 import { runFacts } from '../agent/live'
 import { Steps } from '../agent/Steps'
-import { daysLeftText, deadlineText, deadlineTime, firstSentence, groupRfps, pacificDay, rfpStatusLine, shortDate, shownHeadline, shortTime, useLibrary, useRfp } from '../library'
+import { daysLeftText, deadlineText, nowLine, deadlineTime, firstSentence, groupRfps, pacificDay, rfpStatusLine, shortDate, shownHeadline, shortTime, useLibrary, useRfp } from '../library'
 import { Facts, Mark } from '../parts'
 import { DraftThumbnail, DraftViewer, useProposal } from './DraftBid'
 import { navigate } from '../router'
@@ -215,7 +215,7 @@ function RfpBody({ rfp }) {
   const closeReading = useCallback(() => setReading(false), [])
   // A run in progress outranks whatever an earlier run left in the library.
   const intro = running
-    ? 'The agent is working on this RFP now. The tracker shows each stage as it happens, and every step below opens to show what it did.'
+    ? `Now: ${nowLine(run) ?? 'the agent is working on this RFP. The tracker shows each stage as it happens.'}`
     : ((headline && shownHeadline(headline)) ?? (run ? operatorVerdict(run) : null) ?? 'The agent has not read this RFP yet. It is in the library, waiting its turn.')
   const deadlines = packet?.deadlines ?? []
   const reasons = qualification?.decision_reasons ?? []

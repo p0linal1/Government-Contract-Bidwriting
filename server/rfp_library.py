@@ -200,7 +200,8 @@ def build_library():
         records = [json.loads(text) for text in pool.map(read, record_memories)]
     sessions = rfp_runs()
     runs = {
-        rfp_id: run_summary(session, 1 if session["status"] in RUNNING else 0)
+        # A running session's latest steps carry what its agents last said, for the list's Now line.
+        rfp_id: run_summary(session, live.STEP_COUNT if session["status"] in RUNNING else 0)
         for rfp_id, session in newest_by_rfp(sessions).items()
     }
     now = datetime.now(timezone.utc)

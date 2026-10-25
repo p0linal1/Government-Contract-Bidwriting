@@ -7,7 +7,7 @@ import { Icon } from '../ui'
 // of its first page, and opens into the whole document.
 
 const NOT_SENT = 'Draft, not sent. Doug reviews and sends it himself.'
-const TEST_DRAFT = 'Test draft: made in a test run that skipped the bid decision. Normal runs only draft RFPs the agent says to bid on.'
+const TEST_DRAFT = "Practice draft: we told the agent to write this one anyway, to show what a draft looks like. Its real decision is don't bid."
 // The first page needs only the start of the draft.
 const FIRST_PAGE_CHARACTERS = 2500
 
@@ -42,7 +42,7 @@ export function DraftThumbnail({ proposal, onOpen }) {
         </article>
       </button>
       <div className="bid-thumb-text">
-        <strong>{proposal.recommendation === 'pass' ? 'Test draft. Not sent.' : 'Draft bid. Not sent.'}</strong>
+        <strong>{proposal.recommendation === 'pass' ? 'Practice draft. Not sent.' : 'Draft bid. Not sent.'}</strong>
         <span>{sizeText(proposal)}</span>
         {proposal.recommendation === 'pass' && <span>{TEST_DRAFT}</span>}
         <button className="text-link" onClick={onOpen}>
@@ -105,7 +105,7 @@ export function DraftViewer({ proposal, onClose }) {
           <Icon name="doc" size={18} />
           <span>
             <strong>
-              {proposal.recommendation === 'pass' ? 'Test draft' : 'Draft bid'}: {proposal.title}
+              {proposal.recommendation === 'pass' ? 'Practice draft' : 'Draft bid'}: {proposal.title}
             </strong>
             <span>{NOT_SENT}</span>
           </span>
