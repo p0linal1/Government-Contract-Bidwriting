@@ -25,8 +25,8 @@
     },
     "rfp-research": {
       "id": "skill_01LGSdbxsUEDPvrmwh8NTtmG",
-      "version": "skver_01EqzP6NoifVjuUybJZqh6tF",
-      "fingerprint": "9aa1f01b2b93817a4fdbd177d068ac232f0c819a372061e52d08775879ddcfa9"
+      "version": "skver_01Bjm5T1WcEENaBszEL8yfur",
+      "fingerprint": "374f271b454997cae55e807c69ee92c25f30e716c2753473337086c57b77d89f"
     },
     "proposal-drafting": {
       "id": "skill_01TGKG2s5xnMWD3MPmV4VqkK",
@@ -54,8 +54,8 @@
     "researcher": {
       "id": "agent_01X5VQBCNP6zXWqS54n1tgLk",
       "name": "Cadocary Researcher",
-      "version": 1,
-      "fingerprint": "bbc2e0ab8d7c72ee9f2ad62ff882b531ad1305e7ad1e00e3e558dc62518a3bf0"
+      "version": 2,
+      "fingerprint": "2b2e72ab35c64712ed020c1b7dd818e775fd3523916c570d17c2dc66d43f7eca"
     },
     "drafter": {
       "id": "agent_01EiFfsfSSps41gyUSG52L86",
@@ -66,8 +66,8 @@
     "operator": {
       "id": "agent_01T6ww8wetS3NJNicgfg48Pg",
       "name": "Cadocary Operator",
-      "version": 5,
-      "fingerprint": "f10809c57ab38d228b9d36099cf6e5d37335fb7ce4a21b8c9005b1e5b86cae98"
+      "version": 6,
+      "fingerprint": "d144de3d1941025001765feea3be8e0e0b0fb6474de0bbf0a7c1306b43073a58"
     },
     "reader": {
       "id": "agent_01EFdc4RsT6U5vncFsErAm3W",
