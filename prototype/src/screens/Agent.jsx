@@ -127,7 +127,7 @@ function LoopNote({ id, scene }) {
     <div className={`agent-loopnote ${checkState(id, scene)}`}>
       <Icon name="replay" size={18} />
       <span>
-        <strong>The Qualifier {check.title.toLowerCase()}</strong>
+        <strong>{check.title}</strong>
         <span className="agent-check-round">{scene.checks[id]}</span>
       </span>
     </div>
@@ -190,10 +190,12 @@ function Legend() {
         Attached to an agent: its model, skill, memory, and tools
       </span>
       <span>
-        <svg width="36" height="16" aria-hidden="true">
-          <path className="agent-key-line is-loop" d="M3 8C9 1 27 1 33 8C27 15 9 15 3 8z" />
+        <svg width="36" height="12" aria-hidden="true">
+          <path className="agent-key-head" d="M9 1.5L1 6L9 10.5z" />
+          <line className="agent-key-line is-helper" x1="9" y1="6" x2="27" y2="6" />
+          <path className="agent-key-head" d="M27 1.5L35 6L27 10.5z" />
         </svg>
-        The Qualifier checks the work, up to 2 rounds
+        The Operator hands work to a helper and gets it back
       </span>
       <span>
         <span className="agent-badge">1</span>

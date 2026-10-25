@@ -3451,9 +3451,8 @@ textarea:focus {
   stroke-dasharray: 5 4;
 }
 
-.agent-key-line.is-loop {
-  stroke-dasharray: 4 3;
-  stroke-width: 1.6;
+.agent-key-line.is-helper {
+  stroke-dasharray: 7 6;
 }
 
 .agent-key-head {
@@ -3488,17 +3487,12 @@ textarea:focus {
   stroke-dasharray: 7 6;
 }
 
-.agent-wire.check {
-  stroke-width: 1.75;
-  stroke-dasharray: 5 5;
-}
-
 .agent-wire.main,
-.agent-wire.check {
+.agent-wire.hand-out {
   marker-end: url(#agent-arrow);
 }
 
-.agent-wire.both {
+.agent-wire.hand-back {
   marker-start: url(#agent-arrow);
 }
 
@@ -3518,11 +3512,20 @@ textarea:focus {
 }
 
 .agent-wire.flow.main,
-.agent-wire.flow.check {
+.agent-wire.flow.hand-out {
   marker-end: url(#agent-arrow-live);
 }
 
-.agent-wire.flow.both {
+/* A moving line keeps only the arrow that points the way the work is going. */
+.agent-wire.flow.back.hand-out {
+  marker-end: none;
+}
+
+.agent-wire.flow.hand-back {
+  marker-start: none;
+}
+
+.agent-wire.flow.back.hand-back {
   marker-start: url(#agent-arrow-live);
 }
 

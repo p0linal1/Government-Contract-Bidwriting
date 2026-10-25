@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import { navigate, useRoute } from './router'
+import { LibraryProvider, useLibrary } from './library'
 import { Agent } from './screens/Agent'
 import { Bids } from './screens/Bid'
 import { Research } from './screens/Research'
@@ -10,6 +11,7 @@ import { Icon } from './ui'
 
 function Toasts({ currentId }) {
   const { state, dispatch } = useStore()
+  const { live } = useLibrary()
   const latest = state.toasts.at(-1)
 
   useEffect(() => {
@@ -18,8 +20,9 @@ function Toasts({ currentId }) {
     return () => clearTimeout(timer)
   }, [latest, dispatch])
 
-  // No need to announce a change to the bid already on screen.
-  if (!latest || (currentId && latest.to?.endsWith(`/${currentId}`))) return null
+  // No need to announce a change to the bid already on screen. The sample bids' news means
+  // nothing while the app shows the real library.
+  if (live || !latest || (currentId && latest.to?.endsWith(`/${currentId}`))) return null
   return (
     <div className="toast" role="status">
       <span className="toast-text">{latest.text}</span>
@@ -50,29 +53,31 @@ export function App() {
   const section = ['settings', 'today', 'agent'].includes(route.section) ? route.section : 'bids'
 
   return (
-    <SourceProvider>
-      <header className="topbar">
-        <button className="wordmark" onClick={() => navigate('/bids')}>
-          Cadocary
-        </button>
-        <div className="topbar-actions">
-          <button className="top-button" aria-label="Agent" aria-current={section === 'agent' ? 'page' : undefined} onClick={() => navigate('/agent')}>
-            <Icon name="agent" size={20} stroke={1.8} />
-            <span>Agent</span>
+    <LibraryProvider>
+      <SourceProvider>
+        <header className="topbar">
+          <button className="wordmark" onClick={() => navigate('/bids')}>
+            Cadocary
           </button>
-          <button className="top-button" aria-label="Settings" aria-current={section === 'settings' ? 'page' : undefined} onClick={() => navigate('/settings')}>
-            <Icon name="settings" size={20} stroke={1.8} />
-            <span>Settings</span>
-          </button>
-        </div>
-      </header>
+          <div className="topbar-actions">
+            <button className="top-button" aria-label="Agent" aria-current={section === 'agent' ? 'page' : undefined} onClick={() => navigate('/agent')}>
+              <Icon name="agent" size={20} stroke={1.8} />
+              <span>Agent</span>
+            </button>
+            <button className="top-button" aria-label="Settings" aria-current={section === 'settings' ? 'page' : undefined} onClick={() => navigate('/settings')}>
+              <Icon name="settings" size={20} stroke={1.8} />
+              <span>Settings</span>
+            </button>
+          </div>
+        </header>
 
-      {/* Bids keep their list mounted while switching bids, so the list does not jump back to the top. */}
-      <main className="screen" key={['settings', 'agent'].includes(section) ? section : `bids/${route.tab ?? ''}`}>
-        <Screen section={section} id={route.id} tab={route.tab} />
-      </main>
+        {/* Bids keep their list mounted while switching bids, so the list does not jump back to the top. */}
+        <main className="screen" key={['settings', 'agent'].includes(section) ? section : `bids/${route.tab ?? ''}`}>
+          <Screen section={section} id={route.id} tab={route.tab} />
+        </main>
 
-      <Toasts currentId={route.id} />
-    </SourceProvider>
+        <Toasts currentId={route.id} />
+      </SourceProvider>
+    </LibraryProvider>
   )
 }

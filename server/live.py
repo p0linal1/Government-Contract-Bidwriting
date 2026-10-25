@@ -36,8 +36,8 @@ finished_threads = {}
 finished_steps = {}
 
 
-def anthropic(path):
-    headers = {"x-api-key": os.environ["ANTHROPIC_API_KEY"], "anthropic-version": "2023-06-01", "anthropic-beta": BETA}
+def anthropic(path, beta=BETA):
+    headers = {"x-api-key": os.environ["ANTHROPIC_API_KEY"], "anthropic-version": "2023-06-01", "anthropic-beta": beta}
     with urllib.request.urlopen(urllib.request.Request(f"{API}/{path}", headers=headers), timeout=30) as reply:
         return json.loads(reply.read())
 

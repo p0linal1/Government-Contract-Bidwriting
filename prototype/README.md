@@ -36,6 +36,8 @@ npm run build:click-through     # rebuilds click-through.html after a change
 
 The app is live at https://cadocary-bids-875086386085.us-west1.run.app. There, the Agent page shows the bid agent's real runs: it asks the small server in `server/` every 5 seconds, lights each agent from its real status, and lists the latest steps in plain English. When nothing is running, it shows the last run. The sample replay is still one click away. The offline `click-through.html` has no server, so it shows the replay alone.
 
+The rest of the app reads the real RFP Library the same way. `/api/library` lists every stored SAM.gov notice with the newest run on each, and `/api/rfp/<id>` gives one RFP's packet, qualification, research, and summary. The sidebar groups them (working now, ready for you, to read, passed), Today counts them, and opening one shows the agent's reasons with their quotes and pages. The app has no login, so these answers carry only the fields the pages show, never a draft, and the server strips email addresses, phone numbers, and street addresses. Settings, Demo data, switches back to the sample bids for the recorded walkthrough. When the server does not answer, as in `click-through.html`, the app shows the sample bids on its own.
+
 The server keeps the Anthropic key to itself; the browser never sees it. To run it on a laptop, from the repo root:
 
 ```bash

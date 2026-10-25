@@ -1,4 +1,5 @@
 import { COMPANY } from '../data'
+import { useLibrary } from '../library'
 import { Choice, Facts } from '../parts'
 import { navigate } from '../router'
 import { useStore } from '../store'
@@ -71,10 +72,21 @@ function Appearance() {
 
 function Demo() {
   const { dispatch } = useStore()
+  const { reach, sample, setSample } = useLibrary()
+  const reachable = reach === 'live'
   return (
     <>
       <h1 className="step-title">Demo data</h1>
-      <p className="step-intro">Every bid here is sample data. Resetting starts the morning over.</p>
+      <p className="step-intro">
+        {reachable
+          ? "Live data shows the real RFPs from SAM.gov and what the agent found. Sample data shows the made-up bids from the recorded walkthrough."
+          : 'The RFP Library cannot be reached from here, so the app shows the sample bids.'}
+      </p>
+      <div className="choices" role="radiogroup" aria-label="Which bids to show">
+        <Choice label="Live data" note="The real RFP Library" selected={reachable && !sample} disabled={!reachable} onChoose={() => setSample(false)} />
+        <Choice label="Sample data" note="The sample bids from the walkthrough" selected={!reachable || sample} onChoose={() => setSample(true)} />
+      </div>
+      <p className="step-intro">Resetting starts the sample morning over.</p>
       <div className="alternates">
         <button className="btn btn-secondary" onClick={() => dispatch({ type: 'reset' })}>
           Reset the demo
@@ -90,7 +102,7 @@ const PAGES = [
   { id: 'files', title: 'Files', note: `${COMPANY.files.length} files the agent reads`, Page: Files },
   { id: 'sources', title: 'Where it looks', note: `${COMPANY.watching.length} sources, checked nightly`, Page: Sources },
   { id: 'appearance', title: 'Appearance', note: 'Type, color, and corners', Page: Appearance },
-  { id: 'demo', title: 'Demo data', note: 'Start the morning over', Page: Demo },
+  { id: 'demo', title: 'Demo data', note: 'Live or sample bids', Page: Demo },
 ]
 
 export function Settings({ id }) {
