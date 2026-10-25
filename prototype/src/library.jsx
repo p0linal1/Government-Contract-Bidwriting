@@ -121,7 +121,46 @@ export function firstSentence(headline) {
   return sentence.charAt(0).toUpperCase() + sentence.slice(1)
 }
 
-export const shortDate = (iso) => new Date(iso).toLocaleDateString([], { month: 'short', day: 'numeric' })
+// Doug works in Pacific time, so deadlines are shown in it, next to the buyer's own time when the
+// deadline was written in another US zone.
+const PACIFIC = 'America/Los_Angeles'
+const US_ZONES = [
+  ['Eastern', 'America/New_York'],
+  ['Central', 'America/Chicago'],
+  ['Mountain', 'America/Denver'],
+  ['Pacific', PACIFIC],
+  ['Alaska', 'America/Anchorage'],
+  ['Hawaii', 'Pacific/Honolulu'],
+]
+
+export const shortDate = (iso) => new Date(iso).toLocaleDateString('en-US', { timeZone: PACIFIC, month: 'short', day: 'numeric' })
+
+const timeIn = (date, zone) => date.toLocaleTimeString('en-US', { timeZone: zone, hour: 'numeric', minute: '2-digit' })
+
+const zoneOffset = (date, zone) =>
+  new Intl.DateTimeFormat('en-US', { timeZone: zone, timeZoneName: 'longOffset' }).formatToParts(date).find((part) => part.type === 'timeZoneName')?.value
+
+// The US zone a deadline was written in, from its UTC offset on that date. None for UTC, which
+// is how SAM.gov stores most deadlines, so the buyer's own zone is unknown.
+function writtenZone(written) {
+  const offset = written.match(/([+-]\d\d:\d\d)$/)?.[1]
+  if (!offset || offset === '+00:00') return null
+  const date = new Date(written)
+  return US_ZONES.find(([, zone]) => zoneOffset(date, zone) === `GMT${offset}`) ?? null
+}
+
+// "8:00 AM Pacific (11:00 AM Eastern, as written)". `written` is the deadline as the buyer gave it,
+// when that is known separately.
+export function deadlineTime(iso, written = iso) {
+  const pacific = `${timeIn(new Date(iso), PACIFIC)} Pacific`
+  const zone = /^\d{4}-\d\d-\d\dT/.test(written) ? writtenZone(written) : null
+  return zone && zone[0] !== 'Pacific' ? `${pacific} (${timeIn(new Date(written), zone[1])} ${zone[0]}, as written)` : pacific
+}
+
+export const deadlineText = (iso, written) => `${shortDate(iso)}, ${deadlineTime(iso, written)}`
+
+// The day of the month in Pacific time, for the date badges.
+export const pacificDay = (iso) => new Date(iso).toLocaleDateString('en-US', { timeZone: PACIFIC, day: 'numeric' })
 
 export const shortTime = (iso) => new Date(iso).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })
 
@@ -138,5 +177,5 @@ export function rfpStatusLine(rfp) {
   if (rfp.status === 'passed' && rfp.headline) return firstSentence(rfp.headline)
   if (rfp.status === 'ready_for_doug') return 'Packet ready. Read it and decide.'
   if (!rfp.deadline) return 'No deadline given'
-  return `Due ${shortDate(rfp.deadline)}. ${daysLeftText(rfp.days_left)}.`
+  return `Due ${deadlineText(rfp.deadline)}. ${daysLeftText(rfp.days_left)}.`
 }
