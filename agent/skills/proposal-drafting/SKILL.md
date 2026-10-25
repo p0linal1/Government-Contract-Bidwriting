@@ -24,7 +24,7 @@ The goal is a proposal Doug can send after one read. It answers every requiremen
 
 ## Rules
 
-- **Claims about Cadocary.** Past projects, clients, references, staff, certifications, insurance, and numbers come only from the facts. Record the fact id for each in `cadocary_claims`. If a fact isn't there, don't write it. Add it to `open_items`.
+- **Claims about Cadocary.** Past projects, clients, references, staff, certifications, insurance, and numbers come only from the facts. Record the fact id for each in `cadocary_claims`. If a fact isn't there, don't write it. Add it to `open_items`. The company-facts skill says which facts fit this RFP and how to word the question for Doug.
 - **References.** List a reference only if the facts record their permission to be named.
 - **Price.** Use only `price_recommendation` from the research. If it is `null`, leave a clearly marked blank and add it to `open_items`.
 - **Structure.** Follow the RFP's section order, headings, and numbering. Evaluators score against their own outline.

@@ -100,6 +100,8 @@ function DocumentViewer({ job, given, cite }) {
   const passages = (research && citationsBySource(research)[cite.src]) ?? [cite]
   const isFromCadocary = doc.kind === 'Cadocary file'
   const lastPage = useRef(cite.page)
+  const closeButton = useRef(null)
+  const canvas = useRef(null)
   const direction = cite.page >= lastPage.current ? 'forward' : 'back'
   // Paging through a real document shows each page plainly, with no passage marked.
   const turnTo = (page) => show({ job, doc: given, cite: { src: cite.src, page, section: '', quote: '' } })
@@ -107,6 +109,17 @@ function DocumentViewer({ job, given, cite }) {
   useEffect(() => {
     lastPage.current = cite.page
   }, [cite.page])
+
+  // A modal dialog holds focus while it is open. Without this, focus stays on the chip or link
+  // that opened it, and closing with Escape leaves a focus ring on that link.
+  useEffect(() => {
+    closeButton.current?.focus({ preventScroll: true })
+  }, [])
+
+  // On a long page the quoted passage can sit below the fold, so bring it into view.
+  useEffect(() => {
+    canvas.current?.querySelector('mark')?.scrollIntoView({ block: 'center' })
+  }, [cite.page, cite.quote])
 
   useEffect(() => {
     const onKey = (event) => event.key === 'Escape' && close()
@@ -148,7 +161,7 @@ function DocumentViewer({ job, given, cite }) {
             Original PDF <Icon name="open" size={12} stroke={2.4} />
           </a>
         )}
-        <button className="viewer-close" aria-label="Close document" onClick={close}>
+        <button className="viewer-close" aria-label="Close document" onClick={close} ref={closeButton}>
           <Icon name="close" size={20} />
         </button>
       </header>
@@ -171,7 +184,7 @@ function DocumentViewer({ job, given, cite }) {
           </ul>
         </aside>
 
-        <div className="viewer-canvas">
+        <div className="viewer-canvas" ref={canvas}>
           <article className={`pdf-page turn-${direction}`} key={`${cite.page}-${cite.quote}`}>
             <div className="pdf-head">
               <span>{isFromCadocary ? 'Cadocary LLC' : job ? `${job.buyer} · ${job.agency}` : doc.from}</span>

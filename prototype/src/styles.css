@@ -3135,401 +3135,1199 @@ textarea:focus {
   align-self: center;
 }
 
-/* How it works: the workflow in three lanes, you, the agent, and the scripts it runs */
+/* Agent: the bid agent as an n8n-style graph, with a side panel and a replay of a sample run */
 
-.screen:has(.how) {
-  max-width: 1080px;
+.screen:has(.agent) {
+  max-width: 1280px;
   padding-inline: 20px;
 }
 
-.how {
-  display: flex;
-  flex-direction: column;
+/* The canvas colors come from the theme, so every look gets a matching canvas. */
+.agent {
+  --agent-line: color-mix(in srgb, var(--muted) 58%, var(--bg));
+  --agent-line-soft: color-mix(in srgb, var(--muted) 40%, var(--bg));
+  --agent-dot: color-mix(in srgb, var(--muted) 30%, var(--bg));
+  --agent-canvas: color-mix(in srgb, var(--chip) 40%, var(--bg));
+  --agent-lift: 0 1px 2px color-mix(in srgb, var(--ink) 5%, transparent), 0 4px 14px color-mix(in srgb, var(--ink) 5%, transparent);
   padding-block: 8px 48px;
 }
 
-.how-head {
+/* Field notes already draws graph paper, so the canvas lets it show instead of adding dots. */
+[data-theme='field'] .agent {
+  --agent-canvas: var(--bg);
+}
+
+.agent-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 18px 32px;
+}
+
+.agent-head-text {
   display: grid;
   gap: 4px;
   max-width: 680px;
 }
 
-.how .step-intro {
+.agent .step-intro {
   font-size: 16px;
   color: var(--ink-2);
 }
 
-.how > .facts {
-  margin-top: 20px;
-}
-
-.how-legend {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px 18px;
-  margin-top: 22px;
-  font-size: 13px;
-  color: var(--ink-2);
-}
-
-.how-legend span {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-}
-
-.how-swatch {
-  width: 14px;
-  height: 14px;
-  border: 1.5px solid;
-  border-radius: 4px;
-}
-
-.how-swatch.how-agent {
-  border-color: var(--accent);
-  background: var(--surface);
-}
-
-.how-swatch.how-you {
-  border-color: var(--warn);
-  background: var(--warn-wash);
-}
-
-.how-swatch.how-script {
-  border-color: var(--good);
-  background: var(--good-wash);
-}
-
-.how-swatch.how-hosted {
-  border-color: var(--muted);
-  border-style: dashed;
-}
-
-.how-lanes,
-.how-step {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr) minmax(0, 1fr);
-  column-gap: 28px;
-}
-
-.how-lanes {
-  position: sticky;
-  top: 0;
-  z-index: 3;
-  margin-top: 22px;
-  padding-block: 10px;
-  border-bottom: 1px solid var(--rule);
-  background: var(--bg);
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.07em;
-  text-transform: uppercase;
-}
-
-.lane-you {
-  color: var(--warn);
-}
-
-.lane-agent {
-  color: var(--accent-ink);
-  text-align: center;
-}
-
-.lane-tools {
-  color: var(--good);
-}
-
-.how-phase-head {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 4px 12px;
-  margin-top: 28px;
-  padding-bottom: 8px;
-  border-bottom: 1px solid var(--rule);
-}
-
-.how-phase-head h2 {
-  font-size: 20px;
-  font-weight: 800;
-  letter-spacing: -0.01em;
-}
-
-.how-phase-head p {
+.agent-intro-note {
   font-size: 14px;
   color: var(--muted);
 }
 
-.how-step {
-  position: relative;
+.agent-controls {
+  display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  padding-block: 9px;
+  gap: 10px 12px;
 }
 
-/* The agent's line runs down the middle lane: one unit of the grid is a third and a quarter. */
-.how-step::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: calc((100% - 56px) / 3.25 * 1.625 + 27px);
-  width: 2px;
-  background: var(--rule);
-}
-
-.how-card {
-  position: relative;
-  z-index: 1;
-  display: grid;
-  gap: 4px;
-  padding: 13px 16px;
-  border: 1.5px solid var(--rule);
-  border-radius: var(--r3);
-  background: var(--surface);
-}
-
-.how-card h3 {
-  margin: 0;
-  font-size: 15.5px;
-  font-weight: 700;
-  line-height: 1.3;
-}
-
-.how-card p {
-  font-size: 14px;
-  color: var(--ink-2);
-}
-
-.how-tag.how-tag-agent {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  background: var(--accent-wash);
-  color: var(--accent-ink);
-}
-
-.how-card.how-agent {
-  grid-column: 2;
-  border-color: color-mix(in srgb, var(--accent) 40%, var(--rule));
-}
-
-.how-card.how-you {
-  grid-column: 1;
-  border-color: color-mix(in srgb, var(--warn) 45%, var(--rule));
-  background: var(--warn-wash);
-}
-
-.how-tag {
-  justify-self: start;
-  padding: 2px 9px;
-  border-radius: 999px;
-  background: var(--surface);
-  color: var(--warn);
-  font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-}
-
-.how-handoff {
-  grid-column: 2;
-  position: relative;
-  z-index: 1;
-  justify-self: center;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 5px 12px;
-  border: 1.5px dashed color-mix(in srgb, var(--warn) 55%, var(--rule));
-  border-radius: 999px;
-  background: var(--bg);
-  color: var(--warn);
-  font-size: 12.5px;
+.agent-controls .btn {
+  gap: 8px;
+  min-height: 44px;
   font-weight: 700;
   white-space: nowrap;
 }
 
-.how-tools {
-  grid-column: 3;
+.agent-outcome {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.agent .segmented button:disabled {
+  opacity: 0.6;
+}
+
+/* The line under the head: a guide at rest, the replay's caption while it plays */
+
+.agent-runbar {
+  margin-top: 18px;
+  min-height: 46px;
+  padding: 9px 14px;
   display: flex;
-  flex-wrap: wrap;
-  align-content: center;
+  align-items: center;
+  gap: 12px;
+  border: 1px solid var(--rule);
+  border-radius: var(--r2);
+  background: var(--surface);
+  font-size: 14px;
+  color: var(--ink-2);
+}
+
+.agent-runbar[data-mode='replay'] {
+  border-color: color-mix(in srgb, var(--accent) 40%, var(--rule));
+  background: var(--accent-wash);
+  color: var(--ink);
+}
+
+.agent-runbar-tag {
+  flex: none;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: var(--chip);
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.agent-runbar[data-mode='replay'] .agent-runbar-tag {
+  background: var(--accent);
+  color: var(--on-accent);
+}
+
+.agent-runbar-step {
+  flex: none;
+  font-weight: 800;
+  color: var(--accent-ink);
+}
+
+.agent-runbar-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.agent-runbar-aside {
+  flex: none;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+/* The steps of a run, which also mark progress during a replay */
+
+.agent-rail {
+  margin-top: 8px;
+  display: grid;
+  grid-template-columns: repeat(8, minmax(0, 1fr));
   gap: 6px;
 }
 
-.how-chip {
-  display: inline-flex;
+.agent-rail button {
+  width: 100%;
+  height: 100%;
+  padding: 7px 9px;
+  display: flex;
   align-items: center;
-  padding: 3px 9px;
-  border: 1.5px solid transparent;
-  border-radius: 7px;
-  font-size: 12.5px;
+  gap: 8px;
+  border: 1px solid var(--rule);
+  border-radius: var(--r2);
+  background: var(--surface);
+  font-size: 13px;
   font-weight: 700;
-  cursor: default;
+  line-height: 1.2;
+  color: var(--ink-2);
+  text-align: left;
+  transition:
+    border-color 200ms ease,
+    opacity 200ms ease;
 }
 
-.how-chip.how-script {
-  border-color: color-mix(in srgb, var(--good) 35%, transparent);
+.agent-rail button:hover {
+  border-color: var(--rule-strong);
+}
+
+.agent-rail-num {
+  flex: none;
+  width: 20px;
+  height: 20px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--chip);
+  color: var(--ink-2);
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.agent-rail [data-state='current'] {
+  border-color: var(--accent);
+  color: var(--ink);
+}
+
+.agent-rail [data-state='current'] .agent-rail-num {
+  background: var(--accent);
+  color: var(--on-accent);
+}
+
+.agent-rail [data-state='done'] .agent-rail-num {
   background: var(--good-wash);
   color: var(--good);
 }
 
-.how-chip.how-source {
-  border-color: var(--rule-strong);
-  background: var(--surface);
-  color: var(--ink-2);
+.agent-rail [data-state='skipped'] {
+  opacity: 0.5;
+  text-decoration: line-through;
 }
 
-.how-chip.how-hosted {
-  border-style: dashed;
-  border-color: var(--muted);
+/* The canvas: a dot grid with the graph scaled to fit */
+
+.agent-frame {
+  margin-top: 8px;
+  border: 1px solid var(--rule);
+  border-radius: var(--r3);
+  background-color: var(--agent-canvas);
+  background-image: radial-gradient(circle, var(--agent-dot) 1.1px, transparent 1.6px);
+  background-size: 20px 20px;
+  background-position: 10px 10px;
+  overflow: hidden;
+}
+
+[data-theme='field'] .agent-frame {
+  background-color: transparent;
+  background-image: none;
+}
+
+.agent-fit {
+  position: relative;
+  margin: 8px auto;
+}
+
+.agent-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform-origin: 0 0;
+}
+
+.agent-legend {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 22px;
+  padding: 11px 18px;
+  border-top: 1px solid var(--rule);
+  background: var(--surface);
+  font-size: 12.5px;
   color: var(--muted);
 }
 
-.how-checks {
-  display: grid;
-  gap: 6px;
-  margin-top: 8px;
-  counter-reset: check;
+.agent-legend > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
 }
 
-.how-checks li {
-  display: grid;
-  grid-template-columns: 22px minmax(0, 1fr);
-  column-gap: 8px;
-  font-size: 13.5px;
-  counter-increment: check;
+.agent-key-line {
+  fill: none;
+  stroke: var(--agent-line);
+  stroke-width: 2;
 }
 
-.how-checks li::before {
-  content: counter(check);
-  grid-row: span 2;
+.agent-key-line.is-dashed {
+  stroke: var(--agent-line-soft);
+  stroke-width: 1.5;
+  stroke-dasharray: 5 4;
+}
+
+.agent-key-line.is-loop {
+  stroke-dasharray: 4 3;
+  stroke-width: 1.6;
+}
+
+.agent-key-head {
+  fill: var(--agent-line);
+}
+
+/* Lines */
+
+.agent-wires {
+  position: absolute;
+  inset: 0;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.agent-wire {
+  fill: none;
+  stroke: var(--agent-line);
+  stroke-width: 2;
+  transition:
+    stroke 200ms ease,
+    opacity 200ms ease;
+}
+
+.agent-wire.attach {
+  stroke: var(--agent-line-soft);
+  stroke-width: 1.5;
+  stroke-dasharray: 5 5;
+}
+
+.agent-wire.helper {
+  stroke-dasharray: 7 6;
+}
+
+.agent-wire.check {
+  stroke-width: 1.75;
+  stroke-dasharray: 5 5;
+}
+
+.agent-wire.main,
+.agent-wire.check {
+  marker-end: url(#agent-arrow);
+}
+
+.agent-wire.both {
+  marker-start: url(#agent-arrow);
+}
+
+.agent-wire.live {
+  stroke: var(--accent);
+}
+
+.agent-wire.flow {
+  stroke: var(--accent);
+  stroke-width: 2.25;
+  stroke-dasharray: 7 6;
+  animation: agent-march 0.8s linear infinite;
+}
+
+.agent-wire.flow.back {
+  animation-direction: reverse;
+}
+
+.agent-wire.flow.main,
+.agent-wire.flow.check {
+  marker-end: url(#agent-arrow-live);
+}
+
+.agent-wire.flow.both {
+  marker-start: url(#agent-arrow-live);
+}
+
+.agent-wire.dim {
+  opacity: 0.3;
+}
+
+.agent-arrow-head {
+  fill: var(--agent-line);
+}
+
+.agent-arrow-head.live {
+  fill: var(--accent);
+}
+
+@keyframes agent-march {
+  to {
+    stroke-dashoffset: -26;
+  }
+}
+
+/* Cards */
+
+.agent-node {
+  position: absolute;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px;
+  border: 1.5px solid var(--rule-strong);
+  border-radius: var(--r3);
+  background: var(--surface);
+  box-shadow: var(--agent-lift);
+  color: var(--ink);
+  text-align: left;
+  transition:
+    border-color 200ms ease,
+    box-shadow 200ms ease,
+    opacity 200ms ease;
+}
+
+.agent-node:hover {
+  border-color: var(--agent-line);
+}
+
+.agent-node.is-agent {
+  border-color: color-mix(in srgb, var(--accent) 38%, var(--rule-strong));
+}
+
+.agent-node.is-planned {
+  border-style: dashed;
+  background: color-mix(in srgb, var(--surface) 55%, var(--agent-canvas));
+  box-shadow: none;
+}
+
+.agent-node.selected,
+.agent-sub.selected {
+  outline: 2px solid var(--ink-2);
+  outline-offset: 3px;
+}
+
+.agent-node-icon {
+  flex: none;
+  width: 36px;
+  height: 36px;
   display: grid;
   place-items: center;
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  background: var(--accent-wash);
-  color: var(--accent-ink);
-  font-size: 12px;
-  font-weight: 800;
-}
-
-.how-checks strong {
-  font-weight: 700;
-}
-
-.how-checks span {
+  border-radius: var(--r2);
+  background: var(--chip);
   color: var(--ink-2);
 }
 
-@media (max-width: 820px) {
-  .how-lanes {
-    display: none;
-  }
-
-  .how-step {
-    grid-template-columns: minmax(0, 1fr);
-    row-gap: 8px;
-    padding-left: 20px;
-  }
-
-  .how-step::before {
-    left: 5px;
-  }
-
-  .how-card.how-agent,
-  .how-card.how-you,
-  .how-handoff,
-  .how-tools {
-    grid-column: 1;
-  }
-
-  .how-handoff {
-    justify-self: start;
-  }
-
+.agent-node-icon.is-round {
+  border-radius: 50%;
 }
 
-/* The proposal, first thing on the page */
+.is-agent .agent-node-icon {
+  background: var(--accent-wash);
+  color: var(--accent-ink);
+}
 
-.how-proposal {
+.is-planned .agent-node-icon {
+  background: transparent;
+  box-shadow: inset 0 0 0 1.5px var(--rule-strong);
+  color: var(--muted);
+}
+
+.agent-node-text {
+  min-width: 0;
   display: grid;
-  gap: 10px;
-  margin-top: 20px;
-  padding: 20px 22px;
-  border: 1.5px solid color-mix(in srgb, var(--accent) 35%, var(--rule));
-  border-radius: var(--r3);
+  gap: 1px;
+}
+
+.agent-node-title {
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.agent-node-sub {
+  font-size: 13px;
+  line-height: 1.35;
+  color: var(--muted);
+}
+
+.agent-node.is-large {
+  padding: 16px 18px;
+  gap: 14px;
+}
+
+.agent-node.is-large .agent-node-icon {
+  width: 44px;
+  height: 44px;
+}
+
+.agent-node.is-large .agent-node-title {
+  font-size: 17.5px;
+}
+
+.agent-node.is-large .agent-node-sub {
+  font-size: 14px;
+}
+
+.agent-node[data-status='working'] {
+  border-color: var(--accent);
+  animation: agent-glow 1.6s ease-out infinite;
+}
+
+.agent-node[data-status='skipped'] {
+  opacity: 0.5;
+  border-style: dashed;
+  box-shadow: none;
+}
+
+@keyframes agent-glow {
+  from {
+    box-shadow: var(--agent-lift), 0 0 0 0 color-mix(in srgb, var(--accent) 45%, transparent);
+  }
+  to {
+    box-shadow: var(--agent-lift), 0 0 0 12px color-mix(in srgb, var(--accent) 0%, transparent);
+  }
+}
+
+/* The status chip on a card's top edge */
+
+.agent-status {
+  position: absolute;
+  top: -11px;
+  right: 12px;
+  height: 21px;
+  padding: 0 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  border: 1px solid var(--rule-strong);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+}
+
+.agent-status::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--rule-strong);
+}
+
+.agent-status svg {
+  display: none;
+}
+
+[data-status='working'] > .agent-status {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: var(--on-accent);
+}
+
+[data-status='working'] > .agent-status::before {
+  background: var(--on-accent);
+  animation: pulse 1.2s ease-in-out infinite;
+}
+
+[data-status='done'] > .agent-status {
+  border-color: color-mix(in srgb, var(--good) 40%, transparent);
+  background: var(--good-wash);
+  color: var(--good);
+}
+
+[data-status='done'] > .agent-status::before {
+  display: none;
+}
+
+[data-status='done'] > .agent-status svg {
+  display: block;
+}
+
+[data-status='skipped'] > .agent-status,
+[data-status='planned'] > .agent-status {
+  border-style: dashed;
+}
+
+[data-status='skipped'] > .agent-status::before,
+[data-status='planned'] > .agent-status::before {
+  background: transparent;
+  box-shadow: inset 0 0 0 1px var(--muted);
+}
+
+/* Ports and their labels, drawn above the cards */
+
+.agent-ports {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.agent-port {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  margin: -6px 0 0 -6px;
+  border: 2px solid var(--agent-line);
+  border-radius: 50%;
   background: var(--surface);
 }
 
-.how-proposal-label {
-  font-size: 11px;
+.agent-port.is-hollow {
+  border-style: dashed;
+  border-color: var(--agent-line-soft);
+  background: var(--agent-canvas);
+}
+
+.agent-port.is-diamond {
+  width: 10px;
+  height: 10px;
+  margin: -5px 0 0 -5px;
+  border-width: 1.5px;
+  border-radius: 2px;
+  transform: rotate(45deg);
+}
+
+.agent-port-label {
+  position: absolute;
+  transform: translateX(-50%);
+  color: var(--muted);
+  font-size: 10px;
   font-weight: 800;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.07em;
   text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.agent-port-label.is-large {
+  font-size: 10.5px;
+}
+
+/* Round parts attached to an agent: models, skills, memory, and tools */
+
+.agent-sub {
+  position: absolute;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  border: 1.5px solid var(--rule-strong);
+  border-radius: 50%;
+  background: var(--surface);
+  box-shadow: var(--agent-lift);
+  color: var(--ink-2);
+  transition:
+    border-color 200ms ease,
+    color 200ms ease,
+    opacity 200ms ease;
+}
+
+.agent-sub:hover {
+  border-color: var(--agent-line);
+}
+
+.agent-sub.live {
+  border-color: var(--accent);
   color: var(--accent-ink);
 }
 
-.how-proposal-line {
-  max-width: 62ch;
-  font-size: 19px;
+.agent-sub.dim {
+  opacity: 0.4;
+}
+
+.agent-sub-label {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 50%;
+  width: 104px;
+  transform: translateX(-50%);
+  color: var(--ink-2);
+  font-size: 12px;
   font-weight: 700;
-  line-height: 1.4;
-  letter-spacing: -0.01em;
+  line-height: 1.25;
+  text-align: center;
 }
 
-.how-proposal-steps {
+.agent-sub.is-small .agent-sub-label {
+  width: 72px;
+  font-size: 11.5px;
+}
+
+/* Step numbers and labels on the lines */
+
+.agent-badge {
+  flex: none;
+  width: 22px;
+  height: 22px;
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 12px;
-  margin-top: 6px;
-  counter-reset: proposal;
+  place-items: center;
+  border: 1.5px solid var(--agent-line);
+  border-radius: 50%;
+  background: var(--surface);
+  color: var(--ink-2);
+  font-size: 11.5px;
+  font-weight: 800;
+  transition:
+    background-color 200ms ease,
+    border-color 200ms ease,
+    color 200ms ease;
 }
 
-.how-proposal-steps li {
-  display: grid;
-  align-content: start;
-  gap: 4px;
-  padding: 12px 14px;
-  border-radius: var(--r2);
-  background: var(--bg);
-  counter-increment: proposal;
+.agent-badge.is-placed {
+  position: absolute;
+  margin: -11px 0 0 -11px;
 }
 
-.how-proposal-steps strong {
+.agent-badge[data-state='current'] {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: var(--on-accent);
+}
+
+.agent-badge[data-state='done'] {
+  border-color: var(--good);
+  color: var(--good);
+}
+
+.agent-badge[data-state='skipped'] {
+  opacity: 0.45;
+}
+
+.agent-elabel {
+  padding: 2px 9px;
+  border: 1px solid var(--rule-strong);
+  border-radius: 999px;
+  background: var(--agent-canvas);
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+  transition:
+    color 200ms ease,
+    border-color 200ms ease,
+    opacity 200ms ease;
+}
+
+.agent-elabel.is-placed {
+  position: absolute;
+  transform: translate(-50%, -50%);
+}
+
+.agent-elabel.is-left {
+  transform: translate(-100%, -50%);
+}
+
+.agent-elabel.is-right {
+  transform: translate(0, -50%);
+}
+
+.agent-elabel.is-gate {
+  border-style: dashed;
+}
+
+.agent-elabel.lit {
+  border-color: color-mix(in srgb, var(--accent) 50%, var(--rule));
+  background: var(--surface);
+  color: var(--accent-ink);
+}
+
+/* Dimmed by fading the text, not the whole label, so the line behind it stays hidden. */
+.agent-elabel.dim {
+  border-color: var(--rule);
+  color: color-mix(in srgb, var(--muted) 45%, var(--agent-canvas));
+}
+
+.agent-checkchip {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  padding: 5px 13px 5px 5px;
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 14.5px;
+  border: 1.5px dashed var(--agent-line);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.25;
+  white-space: nowrap;
+  transition:
+    opacity 200ms ease,
+    border-color 200ms ease;
 }
 
-.how-proposal-steps strong::before {
-  content: counter(proposal);
-  display: grid;
-  place-items: center;
-  flex: none;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: var(--accent);
-  color: var(--on-accent);
-  font-size: 11px;
+.agent-checkchip strong,
+.agent-loopnote strong {
+  display: block;
+  color: var(--ink);
   font-weight: 800;
 }
 
-.how-proposal-steps span {
-  font-size: 13.5px;
-  color: var(--ink-2);
+.agent-checkchip.lit,
+.agent-loopnote.lit {
+  border-color: var(--accent);
 }
 
-@media (max-width: 820px) {
-  .how-proposal-steps {
-    grid-template-columns: minmax(0, 1fr);
+.agent-checkchip.lit .agent-check-round,
+.agent-loopnote.lit .agent-check-round {
+  color: var(--accent-ink);
+  font-weight: 700;
+}
+
+.agent-checkchip.dim {
+  border-color: var(--rule-strong);
+  color: color-mix(in srgb, var(--muted) 45%, var(--surface));
+}
+
+.agent-checkchip.dim strong {
+  color: color-mix(in srgb, var(--ink) 40%, var(--surface));
+}
+
+.agent-note {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 12.5px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.agent-note.is-centered {
+  transform: translateX(-50%);
+}
+
+/* A sticky note, as n8n uses for comments on the canvas */
+
+.agent-sticky {
+  padding: 12px 14px 14px;
+  border: 1px solid color-mix(in srgb, var(--mark) 70%, var(--rule-strong));
+  border-radius: var(--r2);
+  background: color-mix(in srgb, var(--mark) 36%, var(--surface));
+  box-shadow: var(--agent-lift);
+  color: var(--ink);
+  transition:
+    border-color 200ms ease,
+    box-shadow 200ms ease;
+}
+
+.agent-canvas .agent-sticky {
+  position: absolute;
+}
+
+.agent-sticky.lit {
+  border-color: var(--accent);
+  box-shadow: var(--agent-lift), 0 0 0 3px color-mix(in srgb, var(--accent) 25%, transparent);
+}
+
+.agent-sticky-title {
+  color: var(--ink-2);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.agent-stats {
+  margin-top: 8px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 9px 14px;
+}
+
+.agent-stat strong {
+  display: block;
+  font-size: 20px;
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+}
+
+.agent-stat span {
+  display: block;
+  color: var(--ink-2);
+  font-size: 12px;
+  line-height: 1.3;
+}
+
+/* Phone width: the same parts as a vertical stack in the order of a run */
+
+.agent-stack {
+  display: none;
+  margin-top: 18px;
+}
+
+.agent-st {
+  position: relative;
+  display: grid;
+  grid-template-columns: 26px minmax(0, 1fr);
+  column-gap: 12px;
+  padding-bottom: 22px;
+}
+
+.agent-st::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 12px;
+  width: 2px;
+  background: var(--rule-strong);
+}
+
+.agent-st.is-attached::before {
+  background: repeating-linear-gradient(var(--agent-line-soft) 0 5px, transparent 5px 10px);
+}
+
+.agent-st:first-child::before {
+  top: 22px;
+}
+
+.agent-st:last-child::before {
+  bottom: auto;
+  height: 22px;
+}
+
+.agent-st-rail {
+  position: relative;
+  z-index: 1;
+  padding-top: 12px;
+}
+
+.agent-st-rail .agent-badge {
+  margin: 0 auto;
+}
+
+.agent-st-dot {
+  display: block;
+  width: 10px;
+  height: 10px;
+  margin: 6px auto 0;
+  border-radius: 50%;
+  background: var(--rule-strong);
+}
+
+.agent-st-body {
+  min-width: 0;
+  display: grid;
+  gap: 12px;
+}
+
+.agent-st .agent-node {
+  position: relative;
+  width: 100%;
+}
+
+.agent-st-label {
+  color: var(--muted);
+  font-size: 11.5px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.agent-subchips {
+  margin-left: 18px;
+  padding: 2px 0 2px 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  border-left: 1.5px dashed var(--agent-line-soft);
+}
+
+.agent-subchip {
+  padding: 3px 10px 3px 3px;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  border: 1px solid var(--rule-strong);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--ink-2);
+  font-size: 12.5px;
+  font-weight: 700;
+}
+
+.agent-subchip-icon {
+  width: 24px;
+  height: 24px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--chip);
+}
+
+.agent-subchip small {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.agent-subchip.live {
+  border-color: var(--accent);
+  color: var(--accent-ink);
+}
+
+.agent-subchip.dim,
+.agent-loopnote.dim {
+  opacity: 0.4;
+}
+
+.agent-subchip.selected {
+  outline: 2px solid var(--ink-2);
+  outline-offset: 2px;
+}
+
+.agent-st-out {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 13.5px;
+}
+
+.agent-loopnote {
+  padding: 9px 12px 9px 9px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 1.5px dashed var(--agent-line);
+  border-radius: var(--r2);
+  background: var(--surface);
+  color: var(--ink-2);
+  font-size: 13.5px;
+  line-height: 1.35;
+}
+
+/* Side panel: details for whatever was clicked */
+
+.agent-panel {
+  position: fixed;
+  z-index: 50;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: min(420px, 100vw);
+  display: flex;
+  flex-direction: column;
+  border-left: 1px solid var(--rule);
+  background: var(--surface);
+  box-shadow: -14px 0 36px color-mix(in srgb, var(--ink) 10%, transparent);
+  transform: translateX(100%);
+  visibility: hidden;
+  transition:
+    transform 220ms ease,
+    visibility 0s linear 220ms;
+}
+
+.agent-panel.open {
+  transform: none;
+  visibility: visible;
+  transition: transform 220ms ease;
+}
+
+.agent-panel-head {
+  padding: calc(var(--safe-top) + 18px) 18px 14px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.agent-panel-head .icon-button {
+  margin-left: auto;
+}
+
+.agent-panel-titles {
+  min-width: 0;
+  display: grid;
+  gap: 2px;
+}
+
+.agent-panel-kicker {
+  color: var(--muted);
+  font-size: 12.5px;
+  font-weight: 700;
+}
+
+.agent-panel h2 {
+  font-family: var(--display);
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.agent-panel-body {
+  padding: 16px 18px calc(var(--safe-bottom) + 32px);
+  display: grid;
+  align-content: start;
+  gap: 16px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.agent-panel-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.agent-panel-status .agent-status {
+  position: static;
+}
+
+.agent-panel-lead {
+  font-size: 15.5px;
+  line-height: 1.55;
+}
+
+/* The panel is narrow, so each fact keeps its label above the value at every width. */
+.agent-panel .facts {
+  margin-top: 0;
+  padding: 2px 16px;
+}
+
+.agent-panel .fact {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 11px 0;
+}
+
+.agent-panel .fact-value {
+  font-size: 15px;
+}
+
+.agent-panel code {
+  padding: 1px 5px;
+  border-radius: var(--r1);
+  background: var(--chip);
+  font-family: var(--mono);
+  font-size: 0.86em;
+  overflow-wrap: anywhere;
+}
+
+.agent-list {
+  display: grid;
+  gap: 6px;
+}
+
+.agent-list li {
+  position: relative;
+  padding-left: 14px;
+}
+
+.agent-list li::before {
+  content: '';
+  position: absolute;
+  top: 0.62em;
+  left: 2px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--rule-strong);
+}
+
+.agent-scrim {
+  position: fixed;
+  z-index: 40;
+  inset: 0;
+  display: none;
+  background: color-mix(in srgb, var(--ink) 32%, transparent);
+}
+
+@media (max-width: 1120px) {
+  .agent-rail {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 959px) {
+  .agent-controls {
+    width: 100%;
   }
 
-  .how-proposal-line {
-    font-size: 17px;
+  .agent-controls .btn-primary {
+    flex: 1 0 auto;
+  }
+
+  .agent-runbar {
+    flex-wrap: wrap;
+    gap: 6px 10px;
+  }
+
+  .agent-runbar-text {
+    flex-basis: 100%;
+    order: 3;
+  }
+
+  .agent-runbar-aside {
+    margin-left: auto;
+  }
+
+  .agent-frame,
+  .agent-rail {
+    display: none;
+  }
+
+  .agent-stack {
+    display: block;
+  }
+
+  .agent-panel {
+    top: auto;
+    left: 0;
+    width: auto;
+    max-height: 84dvh;
+    border-left: none;
+    border-top: 1px solid var(--rule);
+    border-radius: var(--r3) var(--r3) 0 0;
+    transform: translateY(100%);
+  }
+
+  .agent-panel-head {
+    padding-top: 18px;
+  }
+
+  .agent-scrim.show {
+    display: block;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .agent-wire.flow,
+  .agent-node[data-status='working'],
+  [data-status='working'] > .agent-status::before {
+    animation: none;
+  }
+
+  .agent-panel,
+  .agent-panel.open {
+    transition: none;
   }
 }
 

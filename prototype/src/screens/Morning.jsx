@@ -214,7 +214,7 @@ export function Morning() {
             ) : (
               <p>Nothing running right now. It checks for new bids again tomorrow at 6:00 AM.</p>
             )}
-            <button className="next-link" onClick={() => navigate(working.length ? `/bids/${working[0].job.id}` : '/how')}>
+            <button className="next-link" onClick={() => navigate(working.length ? `/bids/${working[0].job.id}` : '/agent')}>
               {working.length ? 'Watch it work' : 'See how it works'}
               <Icon name="chevron" size={18} stroke={2.4} />
             </button>

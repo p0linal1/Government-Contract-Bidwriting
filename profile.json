@@ -43,6 +43,8 @@
   "_exclusions": "Optional: work you never want surfaced even when the codes match, e.g. hardware resale. The agent marks these skip.",
   "exclusions": [
     "Hardware or parts procurement",
-    "On-site staffing outside the US"
+    "On-site staffing outside the US",
+    "Military applications: defense buyers, or weapons, combat, or military-operations purposes",
+    "Contracts above $5 million"
   ]
 }

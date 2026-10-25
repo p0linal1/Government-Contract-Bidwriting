@@ -22,7 +22,9 @@ Cadocary LLC is based in Washington and sells to public defenders, courts, jails
 | PURLPal | Answers questions over large document sets (Medicare plan documents), kept current by a data pipeline |
 | Hotels4Truckers | Web and mobile booking platform for hotels with truck parking |
 
-**Bids Doug wants:** software and IT work in Washington, $25,000 and up, with at least 7 days to respond. Small jobs in his range, not $200 million Air Force contracts.
+The website, read on Oct 25, lists only DocketBot, ClientCheck, and Highlighter (in-browser document search) as Cadocary's own products. It presents SpendLogic, Hotels4Truckers, and PURLPal as client projects Cadocary designed and built. The agents' facts follow the site (`agent/memory/cadocary-facts/README.md`).
+
+**Bids Doug wants** (updated Oct 25): software and IT work, contracts priced between $1 million and $5 million, no military applications, and at least 7 days to respond. $5 million is a hard limit. Custom software contracts suit Cadocary best. Cadocary uses offshore developers, so contracts that allow them are better, and a clause requiring US persons only or barring offshore access counts against a bid. Washington buyers are preferred, and federal work is allowed, since the pipeline searches SAM.gov. This replaces "$25,000 and up".
 
 ## What Doug said, in his words
 
@@ -40,7 +42,8 @@ Cadocary LLC is based in Washington and sells to public defenders, courts, jails
 - **The agent makes the small calls itself.** It doesn't stop to ask about questions for the buyer, references, and similar things. It lists them for him at the end.
 - **Research must answer two things.** Is Cadocary a competitive bidder, and why? The "why" feeds the draft. And what is the contract worth? Many RFPs leave the value out.
 - **Pricing comes from research on comparable past contracts.**
-- **Preload the agent with Cadocary's website, past projects, and everyone's resume.**
+- **Preload the agent with Cadocary's website, past projects, and everyone's resume.** The website is loaded. Past projects and resumes are still to come (`docs/questions-for-doug.md`).
+- **Facts depend on the bid.** No standard fact file fits every RFP. Which past projects, references, staff, and claims to use depends on the bid. The `company-facts` skill teaches the Qualifier and Drafter to choose them per RFP.
 - **He wants a clean web app, not email.** Found RFPs go on the left, each showing whether it is being researched or drafted, and a bid surfaces when it is complete. Email can't easily carry approve buttons.
 - **He wants a ranked list of the best bids.**
 - **Rejected drafts cost nothing,** because he simply won't send them.
@@ -131,7 +134,7 @@ Real examples from our RFP collection:
 
 ## Recommended architecture
 
-This is from the engineering review. The agent shell is built and live (`agent/`): an operator with a delegation skill, plus four helpers (reader, qualifier, researcher, drafter) each with its own skill. The flow is: the reader fills an RFP sheet on the cheaper Sonnet model, the qualifier decides from the sheet, and only a pursue goes on to research and drafting, an environment, and two memory stores (RFP Library and Cadocary Facts). It differs from the review in one way: the qualifier also does the checking, as in the team's original plan, instead of a separate checker agent. The operator pulls RFPs itself through Polina's hosted SAM.gov tool, with its access code kept in an Anthropic vault. A test on Oct 25 searched 95 notices, judged each one, and opened the 5 worth a look, for 82 cents. Not built yet: the code that stores intake results in the RFP Library, the record tools, the code checks, and the session launcher.
+This is from the engineering review. The agent shell is built and live (`agent/`): an operator with a delegation skill, plus four helpers (reader, qualifier, researcher, drafter) each with its own skill. The flow is: the reader fills an RFP sheet on the cheaper Sonnet model, the qualifier decides from the sheet, and only a pursue goes on to research and drafting. A read-and-qualify test on Oct 25 (the U.S. Senate wellbeing app RFP) worked end to end. The Reader downloaded all 7 files (114 pages) and wrote a sheet with 302 cited requirements and every deadline, including the question deadline. The Qualifier passed on it for sound reasons: an off-the-shelf wellbeing app, three similar references required, outside Doug's focus. It took 10 minutes and cost $2.67, an environment, and two memory stores (RFP Library and Cadocary Facts). It differs from the review in one way: the qualifier also does the checking, as in the team's original plan, instead of a separate checker agent. The operator pulls RFPs itself through Polina's hosted SAM.gov tool, with its access code kept in an Anthropic vault. A test on Oct 25 searched 95 notices, judged each one, and opened the 5 worth a look, for 82 cents. `agent/library.py` stores every open SAM.gov notice in the RFP Library, with its files in the Files API, and `agent/run.py` starts one session per RFP with its files attached. Not built yet: the record tools and the code checks.
 
 - **One Managed Agents session per RFP,** started by our backend after sourcing. A scheduled deployment sends the same starting message every day, so it can't hand the agent "today's RFP". One session per RFP also gives each bid its own spending cap, live feed, and failure.
 - **Agents:** an operator plus four helpers (qualifier, researcher, checker, drafter), all on Opus 5.5 with effort set to high. The checker starts fresh each time. On the operator, workflows and inline agents are turned off, so it can use only these four agents.
@@ -208,7 +211,7 @@ The full reference is `docs/managed-agents.md`. The facts that matter most:
 ## Suggested split of the work
 
 - **Doug and facts:** the facts sheet, the three-award research test, and the questions for Doug. Start here: `docs/fact-sheet.md`.
-- **Platform:** the agent shell is done (`agent/`), and the operator pulls RFPs through Polina's tool. Next: code that stores each intake result (records in the RFP Library, files in the Files API), the record tools endpoint, and one session per RFP.
+- **Platform:** the agent shell is done (`agent/`), and the operator pulls RFPs through Polina's tool. The library code and the one-RFP launcher are built (`agent/library.py`, `agent/run.py`). Next: the record tools endpoint, and running both on a schedule.
 - **Checks and sourcing:** the code checks, a deadline parser with time zones, and SAM.gov (already underway in this repo).
 - **App:** connect the prototype screens (`prototype/`) to the real event feed and the finished packet.
 

@@ -12,6 +12,7 @@ The full project context, including Doug's decisions, the plan, what the reviews
 - `docs/fact-sheet.md`: the first task, Doug's approved facts sheet. `facts.example.json` is its shape; `scripts/check_facts.py` checks it and prints what the agent may claim.
 - `docs/managed-agents.md`: reference for Anthropic Managed Agents, where the bid agent will run.
 - `docs/reviews/`: the plan and the three full reviews of it.
+- `docs/questions-for-doug.md`: what we still need from Doug to qualify and draft truthfully.
 
 ## Rules
 

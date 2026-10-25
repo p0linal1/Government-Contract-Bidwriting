@@ -8,20 +8,22 @@
       "id": "memstore_01CWkzBJC2w4usssAdixLBxr",
       "name": "RFP Library",
       "readme_id": "mem_014wnkYKSadbr5wmS2n2oosA",
-      "fingerprint": "e228aef6a1c480302f046cc9fd65ae5b4f421dc5c48d395e7edd1d1c964c8f41"
+      "fingerprint": "5ed43b574991190b05597b697adc22966c56db350ff66f941a055a30dfe8b04e"
     },
     "cadocary-facts": {
       "id": "memstore_01UnB2xsoBPAq6Wh4CfBMNb4",
       "name": "Cadocary Facts",
       "readme_id": "mem_01N5Q6CWvHa9DXfEC1M8VLF5",
-      "fingerprint": "d9e2d699c0f2e78dffa89a4d51729c09c837d1c8b182fd53bccb36ef486d4a49"
+      "fingerprint": "af357758c90897de81ca9c410a01e5dc7ec0ac3fbcd6ee498b296c96a7620e9e",
+      "private_id": "mem_01LhGYVPL75yKpeJ46qFBsph",
+      "private_fingerprint": "e24be51edc9ffcd889a5f7a4a473fdc4f87c39058337e0ec91d5c77a58610eef"
     }
   },
   "skills": {
     "rfp-qualifying": {
       "id": "skill_01Xk737C2Sfe9p2CTe3W9LwR",
-      "version": "skver_01WxUwdp6CgY8qCeWc7MY7ce",
-      "fingerprint": "72b758b70c74416987a254c64175989e47b9d6141c07c0ad7719bf6eab4d245c"
+      "version": "skver_012gFV4bNrJqApnscn5vWrdZ",
+      "fingerprint": "b1785e19c5f78b060a5efcb11651774c11ba106e9599c01b9933a6f11a3e9529"
     },
     "rfp-research": {
       "id": "skill_01LGSdbxsUEDPvrmwh8NTtmG",
@@ -30,26 +32,31 @@
     },
     "proposal-drafting": {
       "id": "skill_01TGKG2s5xnMWD3MPmV4VqkK",
-      "version": "skver_01TepHqgcZZg5isQfm8pzDXU",
-      "fingerprint": "11a782f43681cbc5d4c3a3e09c89287a3b153a2a2104b3bdadbb8c26affe631b"
+      "version": "skver_01QrcfCA8jKeKj5zy7PpH798",
+      "fingerprint": "e0cfde9536ca77e86f4a1d05c2930f5201e39cca861ec46686baf9c0477f202b"
     },
     "agent-delegation": {
       "id": "skill_01E8L6koR3vMMXWFfZbzXqtr",
-      "version": "skver_01K5eJ96RXMze2u149JyVg9h",
-      "fingerprint": "c57206312adfee17f556b56c5c939b9070c890e052a784fd05d003a86e9034d7"
+      "version": "skver_01TE3YN8vnjERDeeizo97jT9",
+      "fingerprint": "e911a894c2baf1f6ebec87c8a098daf3bc33106ccbd9a27afac347b1333e2306"
     },
     "rfp-reading": {
       "id": "skill_01FF3hPdJ1nhsLuvYt5R6tyN",
-      "version": "skver_01MTB8sZiyH88oys2im3UoLt",
-      "fingerprint": "de7bd1b5e749c772b963ee85758830241183a265be6eff323fcf3c40f6e63f80"
+      "version": "skver_01UAaRFpbw2oBGwYTkXrr7xm",
+      "fingerprint": "96e97d722a0a118fb8854c2126a94f0cf9cb23c56b0f0c88a5dbeba623b1e052"
+    },
+    "company-facts": {
+      "id": "skill_01Gjc1Ggof1GiJ3hhY37ibfM",
+      "version": "skver_016SEJLygvqQfzUpSSXKopqN",
+      "fingerprint": "b4d3cefe39503778789068da1b44abcb7222f0533edaa08bd7e853138eaa60a8"
     }
   },
   "agents": {
     "qualifier": {
       "id": "agent_01XzDnJSx9KLfEgC1ZraTLPd",
       "name": "Cadocary Qualifier",
-      "version": 2,
-      "fingerprint": "3cb43e3dc381a46eae1b2eccd72f47d4786567e3c2c357eea95c5e66c5281023"
+      "version": 4,
+      "fingerprint": "355f767ce1ffb3109e84f3f41a998a66dc52d3831f963564ea0914a056280341"
     },
     "researcher": {
       "id": "agent_01X5VQBCNP6zXWqS54n1tgLk",
@@ -60,20 +67,20 @@
     "drafter": {
       "id": "agent_01EiFfsfSSps41gyUSG52L86",
       "name": "Cadocary Drafter",
-      "version": 2,
-      "fingerprint": "335032b246f3ad269b8dabbd219751feabba70d317d0ce53642df06214a7880f"
+      "version": 4,
+      "fingerprint": "de2acf26e8c0995e0717b2aaf02d9c0e7428ed81eca770776807be88e8d80981"
     },
     "operator": {
       "id": "agent_01T6ww8wetS3NJNicgfg48Pg",
       "name": "Cadocary Operator",
-      "version": 6,
-      "fingerprint": "d144de3d1941025001765feea3be8e0e0b0fb6474de0bbf0a7c1306b43073a58"
+      "version": 10,
+      "fingerprint": "c03c28e3d5fa967159260afec5364098a1a2eb41bf4cd8fae04a08bcb83129e3"
     },
     "reader": {
       "id": "agent_01EFdc4RsT6U5vncFsErAm3W",
       "name": "Cadocary Reader",
-      "version": 2,
-      "fingerprint": "30ff1ed44eb62dd705543365388adbc1d0167a09943cc6ef83371669ea260d88"
+      "version": 3,
+      "fingerprint": "e6cbe10c43700ed63c68b75a2d73dc5166d9bc39807affe35e00fc1f4b57d9d5"
     }
   },
   "vault": {
