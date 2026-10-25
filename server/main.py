@@ -24,6 +24,7 @@ app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None)
 
 # A SAM.gov notice id, which is also the RFP's id in the library.
 RFP_ID = re.compile(r"[0-9a-f]{32}")
+SESSION_ID = re.compile(r"sesn_\w+")
 
 
 def answer(read):
@@ -36,8 +37,12 @@ def answer(read):
 
 
 @app.get("/api/agent/live")
-def agent_live():
-    return answer(lambda: rfp_library.scrubbed(live.snapshot()))
+def agent_live(session: str | None = None):
+    """The latest runs, and the steps of the run asked for, or of the newest one."""
+    found = (session is None or SESSION_ID.fullmatch(session)) and answer(lambda: live.snapshot(session))
+    if not found:
+        raise HTTPException(404, "No recent run with that id")
+    return rfp_library.scrubbed(found)
 
 
 @app.get("/api/library")

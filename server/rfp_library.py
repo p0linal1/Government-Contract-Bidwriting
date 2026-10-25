@@ -36,7 +36,7 @@ REMOVED = "[removed]"
 RUNNING = ("running", "rescheduling")
 
 LIBRARY_CACHE_SECONDS = 45
-RFP_CACHE_SECONDS = 30
+RFP_CACHE_SECONDS = 8
 SESSION_COUNT = 50
 RECENT_RUNS = 5
 READERS = 8
@@ -133,7 +133,8 @@ def run_summary(session, step_count):
     """A session as live.py describes it, plus its RFP and its last steps. Only a running one is read step by step."""
     threads = live.session_threads(session)
     steps = live.latest_steps(session["id"], threads)[:step_count] if step_count else []
-    return {**live.summary(session, threads), "rfp_id": session["metadata"]["rfp_id"], "steps": steps}
+    planned = session["metadata"].get("steps", "")
+    return {**live.summary(session, threads), "rfp_id": session["metadata"]["rfp_id"], "planned": planned.split(",") if planned else [], "steps": steps}
 
 
 def newest_by_rfp(sessions):

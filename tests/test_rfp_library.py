@@ -5,6 +5,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "server"))
 
+import live  # noqa: E402
 import rfp_library  # noqa: E402
 
 
@@ -37,3 +38,21 @@ def test_the_page_never_gets_a_finding_it_does_not_show():
 def test_buyer_is_the_office_with_codes_left_as_written():
     assert rfp_library.buyer("TRANSPORTATION, DEPARTMENT OF / PHMSA / 693JK3 ACQUISITION SERVICES DIV.") == "693JK3 Acquisition Services Div."
     assert rfp_library.buyer(None) == "Unknown buyer"
+
+
+def test_a_step_shows_what_it_was_given_and_what_came_back_but_never_the_draft():
+    read_sheet = {"type": "agent.tool_use", "id": "a", "name": "read", "input": {"file_path": "/out/sheet.json", "offset": 200, "limit": 201}, "processed_at": "t"}
+    read_draft = {"type": "agent.tool_use", "id": "b", "name": "read", "input": {"file_path": "/out/proposal.md"}, "processed_at": "t"}
+    results = {"a": "x" * 2000, "b": "Doug's draft"}
+    sheet = live.describe("Qualifier", read_sheet, results)
+    assert sheet["text"] == "Qualifier read sheet.json lines 200-400"
+    assert sheet["detail"]["input"] == "/out/sheet.json lines 200-400"
+    assert len(sheet["detail"]["result"]) <= live.DETAIL_LENGTH + 2
+    assert live.describe("Operator", read_draft, results)["detail"]["result"] == live.WITHHELD
+
+
+def test_repeated_steps_merge_into_one_with_a_count():
+    step = {"agent": "Qualifier", "text": "Qualifier read Cadocary's facts", "at": "t", "count": 1, "detail": None}
+    other = {**step, "text": "Qualifier read sheet.json"}
+    rows = live.merged([step, step, step, other])
+    assert [(row["text"], row["count"]) for row in rows] == [("Qualifier read Cadocary's facts", 3), ("Qualifier read sheet.json", 1)]

@@ -20,17 +20,24 @@ IDS_FILE = Path(__file__).resolve().parent.parent / "agent" / "ids.json"
 OPERATOR_ID = json.loads(IDS_FILE.read_text())["agents"]["operator"]["id"]
 
 AGENTS = ["Operator", "Reader", "Qualifier", "Researcher", "Drafter"]
-SESSION_COUNT = 5
+SESSION_COUNT = 10
 STEP_COUNT = 8
 CACHE_SECONDS = 4
 EVENTS_PAGE_SIZE = 1000
 MESSAGE_LENGTH = 140
+DETAIL_LENGTH = 1500
+
+# The draft, its notes, and the private facts stay in the private workspace: a step that touched
+# one of them shows what was done, never what came back.
+PRIVATE_FILES = ("proposal.md", "draft.json", "notes.md", "cost.md", "private.md")
+WITHHELD = "Not shown here. The draft and Cadocary's private facts stay in the private workspace."
 
 SESSION_STATUS = {"running": "running", "rescheduling": "running", "idle": "finished", "terminated": "stopped"}
 THREAD_STATUS = {"running": "working", "rescheduling": "working", "idle": "done", "terminated": "done"}
 
 cache_lock = threading.Lock()
-cached = {"at": float("-inf"), "answer": None}
+# By the session asked for, or None for the newest: (monotonic time, answer).
+cached = {}
 # By session or thread id: (updated_at, what was read). Only for ones that have stopped.
 finished_threads = {}
 finished_steps = {}
@@ -75,8 +82,47 @@ def what_file(path):
         return "the RFP Library"
     # Where Managed Agents puts a tool result too long to hand back at once.
     if file_name(path).startswith("repl-output-"):
-        return "the rest of a long result"
+        return "a long tool result"
     return file_name(path) if path else "the files"
+
+
+def line_range(tool_input):
+    offset, limit = tool_input.get("offset"), tool_input.get("limit")
+    if not offset and not limit:
+        return ""
+    first = offset or 1
+    return f" lines {first}-{first + limit - 1}" if limit else f" from line {first}"
+
+
+def call_input(name, tool_input):
+    """What a tool call was given, as a person would want to see it: the path, query, command, or page."""
+    match name:
+        case "read":
+            return tool_input.get("file_path", "") + line_range(tool_input)
+        case "write" | "edit":
+            return tool_input.get("file_path", "")
+        case "grep":
+            return f"{tool_input.get('pattern', '')} in {tool_input.get('path') or 'the files'}"
+        case "glob":
+            return tool_input.get("pattern", "")
+        case "bash":
+            return tool_input.get("command", "")
+        case "web_search":
+            return tool_input.get("query", "")
+        case "web_fetch":
+            return tool_input.get("url", "")
+        case _:
+            return json.dumps(tool_input, indent=2)
+
+
+def text_of(content):
+    if isinstance(content, str):
+        return content
+    return "\n".join(block.get("text", "") for block in content or [] if isinstance(block, dict))
+
+
+def clipped(text):
+    return text if len(text) <= DETAIL_LENGTH else text[:DETAIL_LENGTH] + "\n…"
 
 
 def plural(count, word):
@@ -111,7 +157,7 @@ def describe_call(name, tool_input):
         case "web_fetch":
             return f"opened {host(tool_input.get('url', ''))}"
         case "read":
-            return f"read {what_file(tool_input.get('file_path', ''))}"
+            return f"read {what_file(tool_input.get('file_path', ''))}{line_range(tool_input)}"
         case "write":
             return f"saved {file_name(tool_input.get('file_path', ''))}"
         case "edit":
@@ -141,23 +187,49 @@ def first_line(content):
     return line if len(line) <= MESSAGE_LENGTH else line[: MESSAGE_LENGTH - 1].rsplit(" ", 1)[0] + "…"
 
 
-def describe(agent, event):
-    """One event as a step a person would follow, or None for bookkeeping."""
+def describe(agent, event, results):
+    """One event as a step a person would follow, with what it was given and what came back, or None for bookkeeping."""
     kind = event["type"]
     if kind in ("agent.tool_use", "agent.mcp_tool_use"):
         text = f"{agent} {describe_call(event['name'], event['input'])}"
+        given = call_input(event["name"], event["input"])
+        touches_private = any(name in json.dumps(event["input"]) for name in PRIVATE_FILES)
+        result = results.get(event["id"])
+        detail = {"input": clipped(given), "result": WITHHELD if touches_private else clipped(result) if result is not None else None}
     elif kind == "agent.thread_message_sent":
         # Only the Operator's handoffs name the receiver. A helper's message always goes back to it.
         receiver = event.get("to_agent_name")
         text = f"{agent} handed the work to the {short_name(receiver)}" if receiver else f"{agent} reported back to the Operator"
+        detail = {"input": None, "result": clipped(text_of(event.get("content")))}
     elif kind == "agent.message":
         line = first_line(event["content"])
         if not line:
             return None
         text = f"{agent}: {line}"
+        detail = {"input": None, "result": clipped(text_of(event["content"]))}
     else:
         return None
-    return {"agent": agent, "text": text, "at": event["processed_at"]}
+    return {"agent": agent, "text": text, "at": event["processed_at"], "count": 1, "detail": detail}
+
+
+def tool_results(events):
+    """Each tool call's result text, by the id of the call it answers."""
+    return {
+        event.get("tool_use_id") or event.get("mcp_tool_use_id"): text_of(event.get("content"))
+        for event in events
+        if event["type"] in ("agent.tool_result", "agent.mcp_tool_result")
+    }
+
+
+def merged(steps):
+    """Repeats of the same step in a row become one step with a count. Steps come newest first."""
+    rows = []
+    for step in steps:
+        if rows and rows[-1]["agent"] == step["agent"] and rows[-1]["text"] == step["text"]:
+            rows[-1] = {**rows[-1], "count": rows[-1]["count"] + 1}
+        else:
+            rows.append(step)
+    return rows
 
 
 def session_threads(session):
@@ -175,7 +247,9 @@ def thread_steps(session_id, thread):
     if known and known[0] == thread["updated_at"]:
         return known[1]
     agent = short_name(thread["agent"]["name"])
-    steps = [step for event in thread_events(session_id, thread["id"]) if (step := describe(agent, event))]
+    events = thread_events(session_id, thread["id"])
+    results = tool_results(events)
+    steps = [step for event in events if (step := describe(agent, event, results))]
     if thread["status"] not in ("running", "rescheduling"):
         finished_steps[thread["id"]] = (thread["updated_at"], steps)
     return steps
@@ -184,7 +258,7 @@ def thread_steps(session_id, thread):
 def latest_steps(session_id, threads):
     steps = [step for thread in threads for step in thread_steps(session_id, thread)]
     steps.sort(key=lambda step: step["at"], reverse=True)
-    return steps[:STEP_COUNT]
+    return merged(steps)[:STEP_COUNT]
 
 
 def agent_statuses(session, threads):
@@ -213,16 +287,28 @@ def summary(session, threads):
     }
 
 
-def snapshot():
-    """The Operator's latest sessions, newest first, and the newest session's last steps, newest first."""
+def snapshot(session_id=None):
+    """The Operator's latest sessions, newest first, and one session's last steps, newest first.
+
+    That session is the one asked for, or else the newest. None when the one asked for is not among
+    the latest: only those are offered, so the page never reads an arbitrary session.
+    """
     with cache_lock:
-        if time.monotonic() - cached["at"] < CACHE_SECONDS:
-            return cached["answer"]
+        hit = cached.get(session_id)
+        if hit and time.monotonic() - hit[0] < CACHE_SECONDS:
+            return hit[1]
         sessions = anthropic(f"sessions?{urllib.parse.urlencode({'limit': SESSION_COUNT, 'agent_id': OPERATOR_ID})}")["data"]
-        threads = [session_threads(session) for session in sessions]
+        if session_id:
+            chosen = next((session for session in sessions if session["id"] == session_id), None)
+            if not chosen:
+                return None
+        else:
+            chosen = sessions[0] if sessions else None
+        threads = {session["id"]: session_threads(session) for session in sessions}
         answer = {
-            "sessions": [summary(session, its_threads) for session, its_threads in zip(sessions, threads)],
-            "steps": latest_steps(sessions[0]["id"], threads[0]) if sessions else [],
+            "sessions": [summary(session, threads[session["id"]]) for session in sessions],
+            "session_id": chosen["id"] if chosen else None,
+            "steps": latest_steps(chosen["id"], threads[chosen["id"]]) if chosen else [],
         }
-        cached.update(at=time.monotonic(), answer=answer)
-        return cached["answer"]
+        cached[session_id] = (time.monotonic(), answer)
+        return answer
