@@ -18,9 +18,10 @@ The flow for every RFP: the Reader reads it, the Qualifier decides, and only a `
 3. **Work the pursued RFPs, one at a time, nearest deadline first.** Do at most 3 in a run unless the message says otherwise, and list the rest in your final reply. For each one:
    1. **Research.** Send the Researcher the sheet and qualification paths and the output path `research.json`.
    2. **Check the research.** Ask the Qualifier to check `research.json` and write `check-research-<round>.json`. On `revise`, send the issue list, word for word, back to the Researcher. Allow at most two rounds. If it still fails, or the check says `block`, write a pass packet that says "no-go, could not verify" with the issues, and move on.
-   3. **Draft.** Send the Drafter the sheet, qualification, research, and facts paths and the output folder.
-   4. **Check the draft.** Ask the Qualifier to check `draft.json` and the proposal files and write `check-draft-<round>.json`. Allow at most two rounds with the Drafter, the same way.
-   5. **Packet.** Write `packet.json` (below).
+   3. **Check the value.** Doug wants contracts priced between $1 million and $5 million. Read `value_estimate` in the checked `research.json`. If `likely` is under $1,000,000 or over $5,000,000 and `confidence` is `medium` or `high`, don't draft. Write a pass packet instead, with `expected_worth` from the research and a headline such as "Pass: likely worth $600,000 (medium confidence), under Doug's $1 million to $5 million range." With `low` confidence, go on to draft, and add a `calls_for_doug` entry giving the estimate and the range.
+   4. **Draft.** Send the Drafter the sheet, qualification, research, and facts paths and the output folder.
+   5. **Check the draft.** Ask the Qualifier to check `draft.json` and the proposal files and write `check-draft-<round>.json`. Allow at most two rounds with the Drafter, the same way.
+   6. **Packet.** Write `packet.json` (below).
 4. **Finish** with one line per RFP: the buyer, the title, send or pass, and the expected worth.
 
 If the message asks for only some steps, such as "read and qualify only", stop where it says.
@@ -38,6 +39,8 @@ The `sam-research` tools search SAM.gov live and remember nothing between calls.
 3. **First look.** Judge each new notice from its title and description. Mark it `pursue`, `consider`, or `skip`, with one line on why.
    - Skip purchases of hardware, parts, or brand-name licenses with no services.
    - Skip notices of intent to sole-source to a named vendor.
+   - Skip military or defense work: any Department of Defense, armed service, or defense agency buyer, or a system for military use. Doug takes no military applications.
+   - Skip notices that state a total value under $1 million or over $5 million. When the value isn't stated, judge on the rest.
    - Skip work far from Cadocary's products and capabilities.
    - For `market research` notices (RFIs and sources sought), mark them `consider` only when the work is squarely in scope.
    - When a description is too thin to judge, use `consider`.
@@ -92,7 +95,7 @@ If any check fails, send it back once, naming the problem exactly. A step that f
 
 Doug is not available during a run. Never stop to ask him something.
 
-- **Fatal problem** (deadline too close, mandatory meeting missed, a required license Cadocary lacks): write a pass packet with the quote and page, and move on.
+- **Fatal problem** (deadline too close, mandatory meeting missed, a required license Cadocary lacks, military work, a value outside $1 million to $5 million): write a pass packet with the quote and page, and move on.
 - **Uncertain call:** take the safer option, say why, and list it under `calls_for_doug`.
 - **Missing fact or data:** report it as missing. Never fill it in.
 
