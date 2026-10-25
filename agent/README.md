@@ -20,7 +20,7 @@ Settings on every agent:
 ## Storage in the cloud
 
 - **RFP Library** (memory store): every RFP found so far, plus earlier findings. `library.py` fills it (below). The layout is in `memory/rfp-library/README.md`.
-- **Cadocary Facts** (memory store): everything the agents may say about Cadocary. It holds the registration details from the team's sourcing profile, what cadocary.com says (each fact with its page), and Doug's preferences, none of them approved yet. The `company-facts` skill teaches the Qualifier and Drafter to choose the facts that fit each bid. Doug's answers to `docs/questions-for-doug.md` fill the rest.
+- **Cadocary Facts** (memory store): everything the agents may say about Cadocary. It holds the registration details, what cadocary.com and Doug's capability statement say (each fact with its page), and Doug's preferences, none of them approved yet. Contact details and the street address live in a gitignored `memory/cadocary-facts/private.md`, which `setup.py` loads as `/private.md` only on a machine that has it. The `company-facts` skill teaches the Qualifier and Drafter to choose the facts that fit each bid. Doug's answers to `docs/questions-for-doug.md` fill the rest.
 - **RFP documents:** these go in the Files API, because they are too big for memory. A run gets them under `/mnt/session/uploads/<rfp-id>/`.
 - **Vault** (`Cadocary bid agent`): holds the access code for Polina's SAM.gov tool. Anthropic adds it to each call, so no agent ever sees it.
 - **Environment:** `cadocary-bids`, a cloud sandbox with open networking so the researcher can search. Since no agent has bash, web search, web fetch, and our own tools are the only ways out.

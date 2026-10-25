@@ -150,6 +150,16 @@ def sync_memory_store(spec, ids):
     elif known["fingerprint"] != fingerprint(readme):
         call("POST", f"memory_stores/{known['id']}/memories/{known['readme_id']}", {"content": readme}, beta=MEMORY_BETA)
     known["fingerprint"] = fingerprint(readme)
+    # private.md is gitignored, so only a machine that has it loads or updates it.
+    private_file = HERE / "memory" / spec["key"] / "private.md"
+    if private_file.exists():
+        private = private_file.read_text()
+        if "private_id" not in known:
+            memory = call("POST", f"memory_stores/{known['id']}/memories", {"path": "/private.md", "content": private}, beta=MEMORY_BETA)
+            known["private_id"] = memory["id"]
+        elif known["private_fingerprint"] != fingerprint(private):
+            call("POST", f"memory_stores/{known['id']}/memories/{known['private_id']}", {"content": private}, beta=MEMORY_BETA)
+        known["private_fingerprint"] = fingerprint(private)
     stores[spec["key"]] = known
     save(ids)
     return known
