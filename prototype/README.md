@@ -17,6 +17,7 @@ To start the morning over, go to Settings, then Demo data, then Reset the demo. 
 | Review the bid | Why Cadocary is competitive, the expected worth, the calls the agent made, and the proposal page by page with highlights and margin notes |
 | Agent | The five Claude agents as a graph. Online, it lights up from the real runs. Click any part for what it does, or play a replay of a sample run |
 | Settings | Company facts, products, files the agent reads, and the sources it checks |
+| Start walkthrough | A guided tour of the live app in 12 steps. It dims the page, points at each part, and explains it. `?tour=4` in the address opens it at step 4 |
 
 Every claim links to its source: the RFP page, a web page, or a Cadocary file.
 

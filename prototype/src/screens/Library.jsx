@@ -46,7 +46,7 @@ function LibraryGroup({ group, currentId }) {
   const holdsCurrent = group.rfps.some((rfp) => rfp.id === currentId)
   const [open, setOpen] = useState(!group.folded || holdsCurrent)
   return (
-    <section>
+    <section data-tour={`group-${group.id}`}>
       <h2 className={`list-title ${group.needsYou ? 'list-title-needs' : ''}`}>
         <Icon name={group.icon} size={13} stroke={2.2} />
         {group.title} <span className="count">{group.rfps.length}</span>
@@ -63,7 +63,7 @@ function LibraryList({ currentId }) {
   const { library } = useLibrary()
   const groups = library ? groupRfps(library.rfps) : []
   return (
-    <nav className="desk-list" aria-label="Library">
+    <nav className="desk-list" aria-label="Library" data-tour="library">
       <button className="list-item list-today" aria-current={currentId ? undefined : 'page'} onClick={() => navigate('/today')}>
         <span className="today-mark">
           <Icon name="calendar" size={14} stroke={2.2} />
@@ -119,10 +119,10 @@ function CiteChip({ cite }) {
   )
 }
 
-function Section({ title, rows }) {
+function Section({ title, rows, tour }) {
   if (!rows.length) return null
   return (
-    <section className="morning-group">
+    <section className="morning-group" data-tour={tour}>
       <h2 className="start-title">{title}</h2>
       <Facts rows={rows} />
     </section>
@@ -175,7 +175,7 @@ function RunProgress({ run, packet }) {
   const running = run.status === 'running'
   const states = Object.fromEntries(STAGES.map((stage) => [stage.key, stageState(stage, run)]))
   return (
-    <section className="rfp-run" aria-label="Where the run on this RFP stands">
+    <section className="rfp-run" aria-label="Where the run on this RFP stands" data-tour="rfp-progress">
       <div className="agent-runbar" data-mode={running ? 'live' : 'last'} aria-live="polite">
         <span className="agent-runbar-tag">{running ? 'Working now' : run.status === 'stopped' ? 'Stopped' : 'Finished'}</span>
         <span className="agent-runbar-text">{runStatusLine(run, states, packet)}</span>
@@ -222,6 +222,7 @@ function RfpBody({ rfp }) {
       {run && <RunProgress run={run} packet={packet} />}
 
       <Facts
+        tour="rfp-facts"
         rows={[
           { label: 'Recommendation', value: running ? 'Not decided yet. The agent is working on it.' : recommendationText(packet, qualification, run) },
           packet && { label: 'Expected worth', value: worthText(packet.expected_worth), detail: packet.expected_worth?.basis, detailLabel: packet.expected_worth?.confidence && `Confidence ${packet.expected_worth.confidence}.` },
@@ -233,10 +234,11 @@ function RfpBody({ rfp }) {
         ].filter(Boolean)}
       />
 
-      {run && <Steps title={running ? 'Latest steps' : 'How the run ended'} label="Steps of the run on this RFP" steps={run.steps} />}
+      {run && <Steps title={running ? 'Latest steps' : 'How the run ended'} label="Steps of the run on this RFP" steps={run.steps} tour="run-steps" />}
 
       <Section
         title="Why"
+        tour="rfp-reasons"
         rows={reasons.map((reason, i) => ({
           label: `Reason ${i + 1}`,
           value: reason.reason,
@@ -378,7 +380,7 @@ function Today() {
           The RFP Library holds {library.rfps.length} open SAM.gov notices for Cadocary's codes. The agent reads each one, passes on the ones Cadocary cannot win, and drafts the rest for you.
         </p>
 
-        <ul className="next-cards">
+        <ul className="next-cards" data-tour="today-cards">
           <Card
             icon="doc"
             title="Ready for you"
