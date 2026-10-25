@@ -29,7 +29,7 @@ HELPERS = [
         "key": "reader",
         "name": "Cadocary Reader",
         "description": "Reads an RFP and all its attachments once and fills the fixed RFP sheet that every later step works from.",
-        "skill": "rfp-reading",
+        "skills": ["rfp-reading"],
         # Reading is careful extraction rather than judgment, so the cheaper model is enough.
         "model": {"id": "claude-sonnet-5-5", "effort": {"type": "high"}},
         # web_fetch only opens links a person, a search, or a fetched page showed this agent, so links
@@ -40,21 +40,21 @@ HELPERS = [
         "key": "qualifier",
         "name": "Cadocary Qualifier",
         "description": "Decides pursue or pass from the RFP sheet and Cadocary's facts, and checks the other agents' work.",
-        "skill": "rfp-qualifying",
+        "skills": ["rfp-qualifying", "company-facts"],
         "tools": ["read", "write", "glob", "grep"],
     },
     {
         "key": "researcher",
         "name": "Cadocary Researcher",
         "description": "Finds what an RFP is worth, comparable past awards, the incumbent, likely competitors, and a price, with a source for every number.",
-        "skill": "rfp-research",
+        "skills": ["rfp-research"],
         "tools": ["read", "write", "glob", "grep", "web_search", "web_fetch"],
     },
     {
         "key": "drafter",
         "name": "Cadocary Drafter",
         "description": "Writes the complete proposal from the qualification, the research, and Cadocary's approved facts.",
-        "skill": "proposal-drafting",
+        "skills": ["proposal-drafting", "company-facts"],
         "tools": ["read", "write", "edit", "glob", "grep"],
     },
 ]
@@ -63,7 +63,7 @@ OPERATOR = {
     "key": "operator",
     "name": "Cadocary Operator",
     "description": "Runs the bid pipeline: pulls new RFPs, hands qualifying, research, and drafting to its three agents, checks their work, and writes the packet Doug reviews.",
-    "skill": "agent-delegation",
+    "skills": ["agent-delegation"],
     "tools": ["read", "write", "glob", "grep"],
 }
 
@@ -150,6 +150,16 @@ def sync_memory_store(spec, ids):
     elif known["fingerprint"] != fingerprint(readme):
         call("POST", f"memory_stores/{known['id']}/memories/{known['readme_id']}", {"content": readme}, beta=MEMORY_BETA)
     known["fingerprint"] = fingerprint(readme)
+    # private.md is gitignored, so only a machine that has it loads or updates it.
+    private_file = HERE / "memory" / spec["key"] / "private.md"
+    if private_file.exists():
+        private = private_file.read_text()
+        if "private_id" not in known:
+            memory = call("POST", f"memory_stores/{known['id']}/memories", {"path": "/private.md", "content": private}, beta=MEMORY_BETA)
+            known["private_id"] = memory["id"]
+        elif known["private_fingerprint"] != fingerprint(private):
+            call("POST", f"memory_stores/{known['id']}/memories/{known['private_id']}", {"content": private}, beta=MEMORY_BETA)
+        known["private_fingerprint"] = fingerprint(private)
     stores[spec["key"]] = known
     save(ids)
     return known
@@ -201,14 +211,14 @@ def toolset(names):
     }
 
 
-def agent_body(spec, skill, extra_tools=(), multiagent=None, mcp_servers=()):
+def agent_body(spec, skills, extra_tools=(), multiagent=None, mcp_servers=()):
     body = {
         "name": spec["name"],
         "description": spec["description"],
         "model": spec.get("model", MODEL),
         "system": (HERE / "prompts" / f"{spec['key']}.md").read_text(),
         "tools": [toolset(spec["tools"]), *extra_tools],
-        "skills": [{"type": "custom", "skill_id": skill["id"], "version": skill["version"]}],
+        "skills": [{"type": "custom", "skill_id": skill["id"], "version": skill["version"]} for skill in skills],
         "metadata": {"project": "cadocary-bids", "role": spec["key"]},
     }
     if multiagent:
@@ -241,7 +251,7 @@ def main():
     for spec in MEMORY_STORES:
         sync_memory_store(spec, ids)
 
-    helpers = [sync_agent(spec["key"], agent_body(spec, sync_skill(spec["skill"], ids)), ids) for spec in HELPERS]
+    helpers = [sync_agent(spec["key"], agent_body(spec, [sync_skill(name, ids) for name in spec["skills"]]), ids) for spec in HELPERS]
     multiagent = {
         "type": "multiagent_20261001",
         "advisor": {"type": "disabled"},
@@ -255,7 +265,7 @@ def main():
     sam_server = {"type": "url", "name": SAM_SERVER, "url": os.environ["SAM_TOOL_URL"]}
     # MCP tools default to "always ask", which would leave an unattended run waiting forever.
     sam_tools = {"type": "mcp_toolset", "mcp_server_name": SAM_SERVER, "default_config": {"permission_policy": {"type": "always_allow"}}}
-    operator_body = agent_body(OPERATOR, sync_skill(OPERATOR["skill"], ids), [sam_tools], multiagent, [sam_server])
+    operator_body = agent_body(OPERATOR, [sync_skill(name, ids) for name in OPERATOR["skills"]], [sam_tools], multiagent, [sam_server])
     sync_agent(OPERATOR["key"], operator_body, ids)
 
     for agent in ids["agents"].values():
