@@ -87,7 +87,11 @@ function money(dollars) {
   return dollars == null ? null : `$${Math.round(dollars).toLocaleString()}`
 }
 
-const shortYear = (iso) => new Date(iso).toLocaleDateString([], { month: 'short', year: 'numeric' })
+// Research copies award dates as the source wrote them, so some are not dates a browser can read.
+function awardMonth(text) {
+  const date = new Date(text)
+  return Number.isNaN(date.getTime()) ? text : date.toLocaleDateString([], { month: 'short', year: 'numeric' })
+}
 
 function worthText(worth) {
   if (!worth || [worth.low, worth.likely, worth.high].every((value) => value == null)) return 'Unknown'
@@ -197,9 +201,9 @@ function RfpBody({ rfp }) {
       <Section
         title="Comparable past awards"
         rows={(research?.comparables ?? []).map((award) => ({
-          label: award.awarded_on ? shortYear(award.awarded_on) : 'Date unknown',
+          label: award.awarded_on ? awardMonth(award.awarded_on) : 'Date unknown',
           value: `${award.buyer}: ${award.title}`,
-          detail: [award.awardee, money(award.amount), award.term_years && `${award.term_years} years`].filter(Boolean).join(', '),
+          detail: [award.awardee, money(award.amount), award.term_years && (award.term_years === 1 ? '1 year' : `${award.term_years} years`)].filter(Boolean).join(', '),
         }))}
       />
       <Section title="Risks" rows={(packet?.risks ?? []).map((risk, i) => ({ label: `Risk ${i + 1}`, value: risk.risk, detail: risk.source, detailLabel: 'Source:' }))} />
