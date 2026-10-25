@@ -81,9 +81,10 @@ def test_search_sends_server_side_filters_and_joins_codes(monkeypatch):
         return {"_embedded": {"results": [{"_id": "a"}]}, "page": {"totalPages": 1, "totalElements": 1}}
 
     monkeypatch.setattr(fetch, "get_json", fake)
-    fetch.search("naics", ["541511", "541519"], fetch.RESPONSIVE_TYPES, "2026-10-25T00:00:00+00:00")
+    fetch.search("naics", ["541511", "541519"], response_from="2026-10-25T00:00:00+00:00")
     assert seen["naics"] == "541511,541519"
-    assert "a" not in seen["notice_type"].split(",")  # award notices never requested
+    # Only RFP types by default: Solicitation and Combined Synopsis/Solicitation.
+    assert sorted(seen["notice_type"].split(",")) == ["k", "o"]
     assert seen["response_date.from"].startswith("2026-10-25")
 
 
@@ -106,6 +107,30 @@ def test_filter_drops_special_notices(tmp_path):
     out = run_filter(tmp_path, [notice("industry-day", notice_type="Special Notice")])
     assert out["opportunities"] == []
     assert out["dropped"]["not responsive (Special Notice)"] == 1
+
+
+def test_filter_keeps_only_rfps_by_default(tmp_path):
+    """An RFP asks for a bid. Sources Sought and Presolicitations ask for something else."""
+    rows = [
+        notice("rfp", notice_type="Solicitation"),
+        notice("combined", notice_type="Combined Synopsis/Solicitation"),
+        notice("market-research", notice_type="Sources Sought"),
+        notice("advance-warning", notice_type="Presolicitation"),
+    ]
+    out = run_filter(tmp_path, rows)
+    assert {r["notice_id"] for r in out["opportunities"]} == {"rfp", "combined"}
+    assert all(r["response_kind"] == "bid" for r in out["opportunities"])
+
+
+def test_filter_include_market_research_widens_the_set(tmp_path):
+    rows = [
+        notice("rfp", notice_type="Solicitation"),
+        notice("market-research", notice_type="Sources Sought"),
+        notice("advance-warning", notice_type="Presolicitation"),
+    ]
+    out = run_filter(tmp_path, rows, None, "--include-market-research")
+    kinds = {r["notice_id"]: r["response_kind"] for r in out["opportunities"]}
+    assert kinds == {"rfp": "bid", "market-research": "market research", "advance-warning": "pre-bid"}
 
 
 def test_filter_set_aside_eligibility(tmp_path):

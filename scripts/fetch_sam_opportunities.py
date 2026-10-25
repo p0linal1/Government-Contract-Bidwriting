@@ -44,9 +44,10 @@ HEADERS = {
     "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
 }
 
-# SAM's notice-type codes. Only the responsive ones are requested by default: a Special Notice is
-# usually an industry day or a notice of intent with nothing to respond to, so it is left out even
-# though a few RFIs are posted that way.
+# SAM's notice-type codes. Only RFPs are requested by default — a Solicitation or a Combined
+# Synopsis/Solicitation is the government asking for a bid. The wider set adds the notice types
+# that ask for something other than a bid: Sources Sought is market research, a Presolicitation is
+# advance warning, and a Special Notice is usually an industry day with nothing to respond to.
 NOTICE_TYPES = {
     "o": "Solicitation",
     "k": "Combined Synopsis/Solicitation",
@@ -58,6 +59,7 @@ NOTICE_TYPES = {
     "u": "Justification",
     "g": "Sale of Surplus Property",
 }
+RFP_TYPES = "o,k"
 RESPONSIVE_TYPES = "o,k,p,r,i"
 
 DEFAULT_PROFILE = "profile.json"
@@ -90,7 +92,7 @@ def get_json(url, params=None, attempts=4):
     raise RuntimeError(f"giving up on {url}: {last}")
 
 
-def search(field, codes, notice_types=RESPONSIVE_TYPES, response_from=None, include_inactive=False):
+def search(field, codes, notice_types=RFP_TYPES, response_from=None, include_inactive=False):
     """Every notice carrying any of `codes` (one NAICS or PSC field), as search-result dicts.
 
     SAM ORs a comma-separated code list, so all of a profile's NAICS codes cost one query.
@@ -281,6 +283,11 @@ def main():
         help="also pull notices with no response date (one extra, larger search per code field)",
     )
     parser.add_argument(
+        "--include-market-research",
+        action="store_true",
+        help="also pull Sources Sought, Presolicitations and Special Notices, which ask for something other than a bid",
+    )
+    parser.add_argument(
         "--all-notices",
         action="store_true",
         help="drop the server-side type/deadline filters, award notices included (research mode; slow)",
@@ -296,12 +303,13 @@ def main():
         sys.exit(f"{args.profile} lists no naics or psc codes")
 
     now = datetime.now(timezone.utc)
+    wanted_types = RESPONSIVE_TYPES if args.include_market_research else RFP_TYPES
     if args.all_notices:
         queries = [{"notice_types": None, "response_from": None}]
     else:
-        queries = [{"notice_types": RESPONSIVE_TYPES, "response_from": now.strftime("%Y-%m-%dT%H:%M:%S+00:00")}]
+        queries = [{"notice_types": wanted_types, "response_from": now.strftime("%Y-%m-%dT%H:%M:%S+00:00")}]
         if args.include_no_deadline:
-            queries.append({"notice_types": RESPONSIVE_TYPES, "response_from": None, "no_deadline_only": True})
+            queries.append({"notice_types": wanted_types, "response_from": None, "no_deadline_only": True})
 
     by_notice, matches = {}, {}
     for field, codes in fields:
@@ -353,7 +361,7 @@ def main():
         },
         "filters": {
             "server_side": not args.all_notices,
-            "notice_types": None if args.all_notices else RESPONSIVE_TYPES,
+            "notice_types": None if args.all_notices else wanted_types,
             "include_no_deadline": args.include_no_deadline,
             "include_inactive": args.include_inactive,
             "enriched": not args.no_enrich,

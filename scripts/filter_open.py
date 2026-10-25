@@ -26,12 +26,18 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from fetch_sam_opportunities import CSV_COLUMNS, write_csv  # noqa: E402
 
-# Notice types you can act on, and what acting on them means. Award Notices, Justifications and
-# Sales of Surplus are information only. Special Notices are too, in practice: industry days and
-# notices of intent, where the handful of real RFIs among them is not worth the noise.
-RESPONSE_KIND = {
+# An RFP is a notice that asks for a bid. Only these two do: everything else on SAM either asks for
+# something else (market research, advance warning) or is information only.
+RFP_KIND = {
     "Solicitation": "bid",
     "Combined Synopsis/Solicitation": "bid",
+}
+
+# The wider set, behind --include-market-research. A Sources Sought wants a capability statement,
+# not a proposal, and a Presolicitation wants nothing yet — so a drafting stage has to branch on
+# response_kind before it writes anything.
+WIDER_KIND = {
+    **RFP_KIND,
     "Presolicitation": "pre-bid",
     "Intent to Bundle Requirements (DoD- Funded)": "pre-bid",
     "Sources Sought": "market research",
@@ -79,6 +85,11 @@ def main():
     )
     parser.add_argument("--keep-awarded", action="store_true", help="keep notices with a recorded award")
     parser.add_argument(
+        "--include-market-research",
+        action="store_true",
+        help="keep Sources Sought and Presolicitations as well as RFPs",
+    )
+    parser.add_argument(
         "--ignore-set-aside", action="store_true", help="keep set-asides the profile isn't eligible for"
     )
     args = parser.parse_args()
@@ -90,6 +101,8 @@ def main():
     elif eligible is not None:
         eligible = set(eligible)
 
+    response_kind = WIDER_KIND if args.include_market_research else RFP_KIND
+
     now = datetime.now(timezone.utc)
     kept, dropped = [], {}
 
@@ -100,7 +113,7 @@ def main():
         if row.get("is_canceled"):
             drop("cancelled")
             continue
-        kind = RESPONSE_KIND.get(row.get("notice_type"))
+        kind = response_kind.get(row.get("notice_type"))
         if kind is None:
             drop(f"not responsive ({row.get('notice_type')})")
             continue

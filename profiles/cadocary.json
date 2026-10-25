@@ -1,0 +1,25 @@
+{
+  "legal_business_name": "Cadocary LLC",
+  "uei": "KMG3ZA6PAPK3",
+  "cage_code": "230S6",
+  "website": "cadocary.com",
+  "city": "Richland",
+  "state": "WA",
+  "zip": "99352",
+  "naics": ["511210", "518210", "541511", "541519"],
+  "psc": ["7A20", "DA10", "D302", "D308", "DA01"],
+  "capabilities": [
+    "Custom software development",
+    "Commercial software licensing & publishing",
+    "SaaS solutions",
+    "Cloud computing & data storage",
+    "Web hosting & data processing",
+    "Application development & hosting",
+    "Systems integration",
+    "API development",
+    "Database management",
+    "IT infrastructure solutions",
+    "Software maintenance & support",
+    "Technology consulting & digital transformation"
+  ]
+}
