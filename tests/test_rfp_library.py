@@ -56,3 +56,15 @@ def test_repeated_steps_merge_into_one_with_a_count():
     other = {**step, "text": "Qualifier read sheet.json"}
     rows = live.merged([step, step, step, other])
     assert [(row["text"], row["count"]) for row in rows] == [("Qualifier read Cadocary's facts", 3), ("Qualifier read sheet.json", 1)]
+
+
+def test_the_shown_draft_loses_notes_to_doug_and_his_address():
+    draft = (
+        "# Response\n\n[DOUG: delete this note before sending. Confirm with Pat ([removed], [removed]).]\n\n"
+        "| Address | 12 Elm Street, Richland WA 99352 |\n\nBody text [NEEDED FROM DOUG: date sent]."
+    )
+    shown = rfp_library.without_notes_to_doug(draft)
+    assert "delete this note" not in shown
+    assert "[NEEDED FROM DOUG: date sent]" in shown
+    scrubbed = rfp_library.TOWN_AFTER_STREET.sub(rfp_library.REMOVED, rfp_library.scrubbed(shown))
+    assert "Elm" not in scrubbed and "99352" not in scrubbed

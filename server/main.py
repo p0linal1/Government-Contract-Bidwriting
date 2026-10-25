@@ -58,4 +58,12 @@ def rfp(rfp_id: str):
     return found
 
 
+@app.get("/api/rfp/{rfp_id}/proposal")
+def proposal(rfp_id: str):
+    found = RFP_ID.fullmatch(rfp_id) and answer(lambda: rfp_library.proposal(rfp_id))
+    if not found:
+        raise HTTPException(404, "No draft for that RFP in the library")
+    return found
+
+
 app.mount("/", StaticFiles(directory=APP_BUILD, html=True), name="app")
