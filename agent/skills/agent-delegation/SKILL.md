@@ -81,6 +81,14 @@ Qualify it and write /mnt/session/outputs/wa-example-001/qualification.json
 in the format under "Output" in your skill.
 ```
 
+## Wait for the reply
+
+After you hand work to a helper, stop and wait for its reply message. Reading a long RFP takes minutes.
+
+- **A missing file before the reply arrives is not a failure.** Don't check for the file until the helper says it is done.
+- **Report only what a helper actually said,** in its own words. Never describe a reply you haven't received, and never fill in its details.
+- **If no reply comes** after the helper's thread goes idle, ask it once what happened, and act on its answer.
+
 ## Before moving to the next step
 
 Open the output file and confirm:

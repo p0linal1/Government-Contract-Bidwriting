@@ -14,7 +14,7 @@
       "id": "memstore_01UnB2xsoBPAq6Wh4CfBMNb4",
       "name": "Cadocary Facts",
       "readme_id": "mem_01N5Q6CWvHa9DXfEC1M8VLF5",
-      "fingerprint": "af357758c90897de81ca9c410a01e5dc7ec0ac3fbcd6ee498b296c96a7620e9e",
+      "fingerprint": "ed723f0448ea32915541998e548f48f2c41b2e6559efad466b78c2fb50983b57",
       "private_id": "mem_01LhGYVPL75yKpeJ46qFBsph",
       "private_fingerprint": "e24be51edc9ffcd889a5f7a4a473fdc4f87c39058337e0ec91d5c77a58610eef"
     }
@@ -22,8 +22,8 @@
   "skills": {
     "rfp-qualifying": {
       "id": "skill_01Xk737C2Sfe9p2CTe3W9LwR",
-      "version": "skver_012gFV4bNrJqApnscn5vWrdZ",
-      "fingerprint": "b1785e19c5f78b060a5efcb11651774c11ba106e9599c01b9933a6f11a3e9529"
+      "version": "skver_017KVbpE6c2XGtbYwMCbZCoY",
+      "fingerprint": "258a31302cd084a1a4d9afd63c1a2acc789c559c695833df5baeae59cb47be2a"
     },
     "rfp-research": {
       "id": "skill_01LGSdbxsUEDPvrmwh8NTtmG",
@@ -37,8 +37,8 @@
     },
     "agent-delegation": {
       "id": "skill_01E8L6koR3vMMXWFfZbzXqtr",
-      "version": "skver_01TE3YN8vnjERDeeizo97jT9",
-      "fingerprint": "e911a894c2baf1f6ebec87c8a098daf3bc33106ccbd9a27afac347b1333e2306"
+      "version": "skver_0125CemzEo86C4Dvty2WnKvZ",
+      "fingerprint": "f289db14cae253989e82e828be060fe1170361489553949bd442f6651e496f6b"
     },
     "rfp-reading": {
       "id": "skill_01FF3hPdJ1nhsLuvYt5R6tyN",
@@ -55,8 +55,8 @@
     "qualifier": {
       "id": "agent_01XzDnJSx9KLfEgC1ZraTLPd",
       "name": "Cadocary Qualifier",
-      "version": 4,
-      "fingerprint": "355f767ce1ffb3109e84f3f41a998a66dc52d3831f963564ea0914a056280341"
+      "version": 5,
+      "fingerprint": "03789af725e81127fd7ac93582f9908f4ca39fe73bddb4d13b69ac4ae8f4f6b5"
     },
     "researcher": {
       "id": "agent_01X5VQBCNP6zXWqS54n1tgLk",
@@ -73,8 +73,8 @@
     "operator": {
       "id": "agent_01T6ww8wetS3NJNicgfg48Pg",
       "name": "Cadocary Operator",
-      "version": 10,
-      "fingerprint": "c03c28e3d5fa967159260afec5364098a1a2eb41bf4cd8fae04a08bcb83129e3"
+      "version": 11,
+      "fingerprint": "e6525af9f44d9b73967e465278006eb31e1ca09e07749bdb62579b9f220c61d3"
     },
     "reader": {
       "id": "agent_01EFdc4RsT6U5vncFsErAm3W",
