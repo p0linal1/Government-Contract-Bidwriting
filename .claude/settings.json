@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3 scripts/fetch_sam_opportunities.py:*)",
+      "Bash(python3 scripts/filter_open.py:*)",
+      "Bash(python3 scripts/scores.py:*)",
+      "Bash(python3 scripts/render_report.py:*)",
+      "Read(profile.json)",
+      "Read(data/**)",
+      "Write(data/new_scores.json)",
+      "Edit(data/new_scores.json)"
+    ]
+  }
+}

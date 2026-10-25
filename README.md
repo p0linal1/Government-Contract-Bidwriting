@@ -1,79 +1,112 @@
 # Government-Contract-Bidwriting
 
-Tools for a small business to find federal contract opportunities it can actually win, and
-draft a response to them.
+An agent that finds the federal contract opportunities a small business can actually respond to.
+Each day it pulls SAM.gov for your NAICS codes, throws out everything already awarded, expired, or
+set aside for someone else, and ranks what's left against what your business does.
 
-## Step 1: pull matching opportunities from SAM.gov
+## Quick start
 
-`scripts/fetch_sam_opportunities.py` reads a vendor profile (NAICS + PSC codes) and pulls every
-active SAM.gov opportunity carrying one of those codes.
+You need Python 3.9+ (standard library only) and [Claude Code](https://claude.com/claude-code).
 
 ```bash
-python3 scripts/fetch_sam_opportunities.py --profile profiles/example.json
+cp profile.example.json profile.json     # then set your NAICS codes — the only file you edit
+bin/sam-research.sh                      # or, inside Claude Code: /sam-research
+open data/report.md
 ```
 
-Stdlib only — no pip install, no API key. It calls the same public endpoints sam.gov's own
-search UI uses:
+`profile.json` holds your NAICS codes, optional PSC codes, the set-asides you qualify for, and a
+plain-language list of capabilities the agent scores against. It is gitignored, so your codes never
+land in the shared repo.
 
-| | |
+No Claude Code? `bin/sam-research.sh --no-agent` does the pull and filtering and leaves an unranked
+`data/open_opportunities.csv`.
+
+## What gets filtered out, and where
+
+Most of what SAM.gov calls "active" is not something you can bid on. On a four-code software
+profile, 2,298 active notices held 112 open for response. The rest were award notices, expired
+solicitations, and justifications.
+
+| Removed | How |
 |---|---|
-| search | `https://sam.gov/api/prod/sgs/v1/search/?index=opp&naics=<code>&is_active=true` |
-| detail | `https://sam.gov/api/prod/opps/v2/opportunities/<notice_id>` |
+| Award notices, justifications, surplus sales | Never requested: the search asks only for responsive notice types |
+| Deadlines already passed | Never requested: the search asks for `response_date` from now |
+| Solicitations still listed as active after an award was posted | Each notice's related notices are checked for an award |
+| Set-asides you aren't eligible for | `set_aside_eligibility` in `profile.json` |
+| Cancelled notices | Filter |
+| Notices you already reviewed | Shown, but only new or amended notices are re-scored and marked **NEW** |
 
-Both require `Accept: application/hal+json` or they answer `406 Not Acceptable`. The search
-response is thin (title, dates, org, description excerpt), so each notice gets a second detail
-call for the fields that matter when triaging a bid: full NAICS list, PSC, set-aside, archive
-date, place of performance, and the contracting officer's name and email.
+Because the filtering happens in the search, a run fetches detail for ~100 notices, not ~2,500, and
+finishes in about ten seconds before scoring.
 
-Options:
+RFIs have no notice type of their own on SAM.gov. Agencies post them as Sources Sought or Special
+Notices, so both are kept and labelled "market research". Answering one is how a small business
+gets a later solicitation set aside for it.
 
-- `--no-enrich` — skip the per-notice detail calls (seconds instead of minutes, but no
-  set-aside or contact info)
-- `--include-inactive` — also return closed notices, for past-performance research
-- `--workers N` — concurrent detail requests (default 6)
+## How it runs
 
-### Output
-
-Writes `data/opportunities.json` (full records, with description excerpts) and
-`data/opportunities.csv` (one row per notice, sorted by response deadline), both keyed on
-SAM's `notice_id` and carrying a `matched_by` field naming which of the profile's codes
-surfaced it.
-
-`data/` is gitignored — solicitations turn over constantly, so regenerate the pull rather than
-reading a stale one out of the repo.
-
-## Step 2: cut it down to what's actually biddable
-
-SAM's `is_active=true` does not mean "open for bids" — most active notices are Award Notices for
-contracts already given out, and many more are past their response deadline but not yet archived.
-On the Cadocary profile, 2,513 active notices contained only **74** a vendor could still respond to.
-
-```bash
-python3 scripts/filter_open.py --days 30
+```
+profile.json
+   │
+   ▼
+scripts/fetch_sam_opportunities.py   SAM search (server-side filtered) + detail + award check
+   │  data/opportunities.json
+   ▼
+scripts/filter_open.py               awarded / set-aside / cancelled / deadline; marks NEW
+   │  data/open_opportunities.json
+   ▼
+scripts/scores.py pending            only notices not yet scored, or amended since
+   │
+   ▼
+sam-researcher agent                 judges fit against capabilities → data/new_scores.json
+   │  scripts/scores.py merge
+   ▼
+scripts/render_report.py             validates scores, writes data/ranked.json + data/report.md
 ```
 
-Keeps the solicitation-shaped notice types (Solicitation, Combined Synopsis/Solicitation,
-Presolicitation, Sources Sought, RFI), drops cancelled notices and past deadlines, adds a
-`days_left` column, and writes `data/open_opportunities.json` / `.csv` sorted by urgency.
+The agent (`.claude/agents/sam-researcher.md`) only makes the judgment call. Every SAM.gov request
+and every output file comes from a script, so the result doesn't depend on how the model phrased
+things. `render_report.py` refuses to publish if any open notice is unscored or a score is
+malformed. `.claude/settings.json` limits the agent to running those four scripts and writing its
+scores file.
 
-- `--days N` — only deadlines within N days
-- `--include-no-deadline` — keep notices with no response date
+The SAM.gov endpoints are the public ones sam.gov's own search page uses, so there's no API key. They
+answer `406` unless the request sends `Accept: application/hal+json`.
 
-## Step 3 (not built yet): rank and draft
+### Schedule it
 
-The open list still carries noise, because a broad code like NAICS 541519 ("Other Computer
-Related Services") surfaces hardware and parts solicitations alongside software work. Ranking
-each notice against the profile's capability list, then drafting a response, is the next step.
-
-### Vendor profiles
-
-A profile holds the NAICS codes, PSC codes and capability list from a company's SAM.gov
-registration or capability statement. Copy `profiles/example.json` and fill in your own:
-
-```bash
-cp profiles/example.json profiles/mycompany.json
-python3 scripts/fetch_sam_opportunities.py --profile profiles/mycompany.json
+```
+# crontab -e — weekdays at 7:00
+0 7 * * 1-5  /path/to/repo/bin/sam-research.sh >> /path/to/repo/data/logs/cron.log 2>&1
 ```
 
-Real profiles are gitignored (`profiles/*.json`, with `example.json` the committed template) so
-a company's registration details stay out of the repo.
+Runs headless with `--permission-mode dontAsk`, so a disallowed action fails instead of hanging.
+`SAM_RESEARCH_BUDGET_USD` caps model spend per run (default $2). On macOS you get a notification
+when there's something new.
+
+### Outputs
+
+| File | For |
+|---|---|
+| `data/report.md` | You: pursue / consider / skip, best fit first, with deadline, agency, set-aside, contact |
+| `data/ranked.json` | Anything you build on top: the same result, as `groups.{pursue,consider,skip}[]` |
+| `data/open_opportunities.csv` | A spreadsheet of every open notice, unranked |
+
+`data/` is gitignored. Solicitations turn over daily, so regenerate the data instead of committing
+it.
+
+### Script options
+
+- `fetch_sam_opportunities.py --include-no-deadline` also pulls notices with no response date
+- `fetch_sam_opportunities.py --all-notices --include-inactive` turns off the server-side filters,
+  for past-award and competitor research (slow)
+- `filter_open.py --days 30` limits to deadlines in the next 30 days
+- `filter_open.py --keep-awarded` / `--ignore-set-aside` turn off those two filters
+
+## Tests
+
+```bash
+python3 -m pytest -q tests/
+```
+
+Offline; nothing calls SAM.gov.

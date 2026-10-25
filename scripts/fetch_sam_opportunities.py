@@ -1,16 +1,23 @@
 #!/usr/bin/env python3
-"""Pull active SAM.gov contract opportunities matching a vendor profile's NAICS/PSC codes.
+"""Pull open SAM.gov contract opportunities matching a vendor profile's NAICS/PSC codes.
 
 Uses the same public endpoints sam.gov's own search UI calls, so no API key is needed:
 
-  search  https://sam.gov/api/prod/sgs/v1/search/?index=opp&naics=<code>&is_active=true
-  detail  https://sam.gov/api/prod/opps/v2/opportunities/<notice_id>
+  search   https://sam.gov/api/prod/sgs/v1/search/?index=opp&naics=<codes>&notice_type=<types>
+  detail   https://sam.gov/api/prod/opps/v2/opportunities/<notice_id>
+  related  https://sam.gov/api/prod/opps/v2/opportunities/<notice_id>/relatedopportunities
 
-Both require `Accept: application/hal+json` or they answer 406.
+All require `Accept: application/hal+json` or they answer 406.
+
+By default the search itself is restricted to notice types a vendor can respond to and to response
+deadlines still ahead, so award notices and expired solicitations are never downloaded or enriched.
+Each surviving notice is then checked against its related notices, which is where SAM records an
+award made against a solicitation that is still listed as active.
 
 Usage:
-  python3 scripts/fetch_sam_opportunities.py --profile profiles/example.json
-  python3 scripts/fetch_sam_opportunities.py --profile profiles/example.json --no-enrich
+  python3 scripts/fetch_sam_opportunities.py                      # reads profile.json
+  python3 scripts/fetch_sam_opportunities.py --profile acme.json --no-enrich
+  python3 scripts/fetch_sam_opportunities.py --all-notices --include-inactive   # past-performance research
 """
 
 import argparse
@@ -27,13 +34,39 @@ from pathlib import Path
 
 SEARCH_URL = "https://sam.gov/api/prod/sgs/v1/search/"
 DETAIL_URL = "https://sam.gov/api/prod/opps/v2/opportunities/{notice_id}"
+RELATED_URL = "https://sam.gov/api/prod/opps/v2/opportunities/{notice_id}/relatedopportunities"
 UI_URL = "https://sam.gov/opp/{notice_id}/view"
-PAGE_SIZE = 100
+# The search API accepts up to 1,000 per page, so a filtered pull is usually a single request.
+PAGE_SIZE = 1000
 HEADERS = {
     "Accept": "application/hal+json",
     "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
     "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
 }
+
+# SAM's notice-type codes. RFIs have no type of their own: agencies post them as Sources Sought or
+# Special Notices, which is why both are in the default set.
+NOTICE_TYPES = {
+    "o": "Solicitation",
+    "k": "Combined Synopsis/Solicitation",
+    "p": "Presolicitation",
+    "r": "Sources Sought",
+    "s": "Special Notice",
+    "i": "Intent to Bundle Requirements (DoD- Funded)",
+    "a": "Award Notice",
+    "u": "Justification",
+    "g": "Sale of Surplus Property",
+}
+RESPONSIVE_TYPES = "o,k,p,r,s,i"
+
+DEFAULT_PROFILE = "profile.json"
+
+
+def load_profile(path):
+    path = Path(path)
+    if not path.exists():
+        sys.exit(f"no profile at {path} — copy profile.example.json to profile.json and set your NAICS codes")
+    return json.loads(path.read_text())
 
 
 def get_json(url, params=None, attempts=4):
@@ -45,14 +78,22 @@ def get_json(url, params=None, attempts=4):
         try:
             with urllib.request.urlopen(req, timeout=60) as resp:
                 return json.loads(resp.read().decode("utf-8"))
-        except (urllib.error.URLError, urllib.error.HTTPError, TimeoutError, json.JSONDecodeError) as exc:
+        except urllib.error.HTTPError as exc:
+            # A 4xx other than rate limiting will not get better on retry.
+            if 400 <= exc.code < 500 and exc.code != 429:
+                raise RuntimeError(f"{url}: HTTP {exc.code}") from exc
             last = exc
-            time.sleep(1.5 * (attempt + 1))
+        except (urllib.error.URLError, TimeoutError, json.JSONDecodeError) as exc:
+            last = exc
+        time.sleep(1.5 * (attempt + 1))
     raise RuntimeError(f"giving up on {url}: {last}")
 
 
-def search_code(field, code, include_inactive=False):
-    """Every active notice carrying one NAICS or PSC code, as search-result dicts."""
+def search(field, codes, notice_types=RESPONSIVE_TYPES, response_from=None, include_inactive=False):
+    """Every notice carrying any of `codes` (one NAICS or PSC field), as search-result dicts.
+
+    SAM ORs a comma-separated code list, so all of a profile's NAICS codes cost one query.
+    """
     found, page = [], 0
     while True:
         params = {
@@ -62,15 +103,25 @@ def search_code(field, code, include_inactive=False):
             "mfe": "true",
             "page": page,
             "size": PAGE_SIZE,
-            field: code,
+            field: ",".join(codes),
             "is_active": "true",
         }
+        if notice_types:
+            params["notice_type"] = notice_types
+        if response_from:
+            params["response_date.from"] = response_from
         if include_inactive:
             params["is_inactive"] = "true"
         payload = get_json(SEARCH_URL, params)
         results = payload.get("_embedded", {}).get("results", [])
         found.extend(results)
         meta = payload.get("page", {})
+        if page == 0 and meta.get("totalElements", 0) > meta.get("maxAllowedRecords", float("inf")):
+            print(
+                f"  warning: {field} matched {meta['totalElements']} notices but SAM only pages through "
+                f"{meta['maxAllowedRecords']}; narrow the codes or drop --all-notices",
+                file=sys.stderr,
+            )
         page += 1
         if not results or page >= meta.get("totalPages", 0):
             break
@@ -109,8 +160,35 @@ def flatten(record, matched_by):
     }
 
 
+def award_of(data2):
+    """The award block of a notice's data2, or None if it records no award."""
+    award = (data2 or {}).get("award") or {}
+    awardee = award.get("awardee") or {}
+    if not (awardee.get("name") or award.get("amount") or award.get("number")):
+        return None
+    return {
+        "awardee": (awardee.get("name") or "").strip(),
+        "awardee_uei": awardee.get("ueiSAM"),
+        "amount": award.get("amount"),
+        "date": award.get("date"),
+        "contract_number": award.get("number"),
+    }
+
+
+def related_award(notice_id):
+    """An award SAM has linked to this notice through its related notices, or None."""
+    related = get_json(RELATED_URL.format(notice_id=notice_id))
+    for entry in related.get("relatedOpportunities") or []:
+        found = award_of(entry.get("data2"))
+        if found:
+            data2 = entry.get("data2") or {}
+            found["award_notice_id"] = data2.get("opportunityId") or data2.get("id")
+            return found
+    return None
+
+
 def enrich(row):
-    """Add the fields that only the detail endpoint carries: full NAICS/PSC, set-aside, POC."""
+    """Add what only the detail endpoints carry: full NAICS/PSC, set-aside, POC, and any award."""
     try:
         detail = get_json(DETAIL_URL.format(notice_id=row["notice_id"]))
     except RuntimeError as exc:
@@ -145,6 +223,11 @@ def enrich(row):
             "contact_phone": primary.get("phone"),
         }
     )
+    try:
+        row["award"] = award_of(data) or related_award(row["notice_id"])
+    except RuntimeError as exc:
+        row["award"] = None
+        row["enrich_error"] = f"related-notice check failed: {exc}"
     return row
 
 
@@ -172,64 +255,113 @@ CSV_COLUMNS = [
 ]
 
 
-def main():
-    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("--profile", default="profiles/example.json", help="vendor profile JSON")
-    parser.add_argument("--out-dir", default="data", help="where to write opportunities.json/.csv")
-    parser.add_argument("--no-enrich", action="store_true", help="skip the per-notice detail calls")
-    parser.add_argument("--include-inactive", action="store_true", help="also return closed notices")
-    parser.add_argument("--workers", type=int, default=6, help="concurrent detail requests")
-    args = parser.parse_args()
-
-    profile = json.loads(Path(args.profile).read_text())
-    codes = [("naics", c) for c in profile.get("naics", [])] + [("psc", c) for c in profile.get("psc", [])]
-    if not codes:
-        sys.exit(f"{args.profile} lists no naics or psc codes")
-
-    by_notice, matches = {}, {}
-    for field, code in codes:
-        results = search_code(field, code, args.include_inactive)
-        print(f"  {field}={code}: {len(results)}", file=sys.stderr)
-        for record in results:
-            notice_id = record.get("_id")
-            if not notice_id:
-                continue
-            by_notice[notice_id] = record
-            matches.setdefault(notice_id, set()).add(f"{field.upper()} {code}")
-
-    rows = [flatten(record, matches[nid]) for nid, record in by_notice.items()]
-    print(f"{len(rows)} unique notices from {len(codes)} codes", file=sys.stderr)
-
-    if not args.no_enrich:
-        print(f"fetching detail for {len(rows)} notices...", file=sys.stderr)
-        with ThreadPoolExecutor(max_workers=args.workers) as pool:
-            rows = list(pool.map(enrich, rows))
-        failed = sum(1 for r in rows if r.get("enrich_error"))
-        if failed:
-            print(f"  {failed} detail lookups failed", file=sys.stderr)
-
-    rows.sort(key=lambda r: r.get("response_date") or "9999", reverse=False)
-
-    out_dir = Path(args.out_dir)
-    out_dir.mkdir(parents=True, exist_ok=True)
-    payload = {
-        "fetched_at": datetime.now(timezone.utc).isoformat(),
-        "profile": {k: profile.get(k) for k in ("legal_business_name", "uei", "cage_code", "naics", "psc")},
-        "count": len(rows),
-        "opportunities": rows,
-    }
-    (out_dir / "opportunities.json").write_text(json.dumps(payload, indent=2))
-
-    with (out_dir / "opportunities.csv").open("w", newline="") as handle:
-        writer = csv.DictWriter(handle, fieldnames=CSV_COLUMNS, extrasaction="ignore")
+def write_csv(path, rows, columns):
+    with Path(path).open("w", newline="") as handle:
+        writer = csv.DictWriter(handle, fieldnames=columns, extrasaction="ignore")
         writer.writeheader()
         for row in rows:
             flat = dict(row)
             for key in ("matched_by", "naics_codes"):
                 if isinstance(flat.get(key), list):
                     flat[key] = "; ".join(str(v) for v in flat[key])
+            if isinstance(flat.get("award"), dict):
+                flat["award"] = flat["award"].get("awardee") or "yes"
             writer.writerow(flat)
 
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser.add_argument("--profile", default=DEFAULT_PROFILE, help="vendor profile JSON (default: profile.json)")
+    parser.add_argument("--out-dir", default="data", help="where to write opportunities.json/.csv")
+    parser.add_argument("--no-enrich", action="store_true", help="skip the per-notice detail and award checks")
+    parser.add_argument(
+        "--include-no-deadline",
+        action="store_true",
+        help="also pull notices with no response date (one extra, larger search per code field)",
+    )
+    parser.add_argument(
+        "--all-notices",
+        action="store_true",
+        help="drop the server-side type/deadline filters, award notices included (research mode; slow)",
+    )
+    parser.add_argument("--include-inactive", action="store_true", help="also return archived notices")
+    parser.add_argument("--workers", type=int, default=6, help="concurrent detail requests")
+    args = parser.parse_args()
+
+    profile = load_profile(args.profile)
+    fields = [(f, [str(c) for c in profile.get(f) or []]) for f in ("naics", "psc")]
+    fields = [(f, codes) for f, codes in fields if codes]
+    if not fields:
+        sys.exit(f"{args.profile} lists no naics or psc codes")
+
+    now = datetime.now(timezone.utc)
+    if args.all_notices:
+        queries = [{"notice_types": None, "response_from": None}]
+    else:
+        queries = [{"notice_types": RESPONSIVE_TYPES, "response_from": now.strftime("%Y-%m-%dT%H:%M:%S+00:00")}]
+        if args.include_no_deadline:
+            queries.append({"notice_types": RESPONSIVE_TYPES, "response_from": None, "no_deadline_only": True})
+
+    by_notice, matches = {}, {}
+    for field, codes in fields:
+        for query in queries:
+            results = search(field, codes, query["notice_types"], query["response_from"], args.include_inactive)
+            if query.get("no_deadline_only"):
+                results = [r for r in results if not r.get("responseDate")]
+            print(f"  {field}={','.join(codes)}: {len(results)}", file=sys.stderr)
+            for record in results:
+                notice_id = record.get("_id")
+                if not notice_id:
+                    continue
+                by_notice[notice_id] = record
+                code_set = set(codes)
+                # Search results don't say which code hit; the detail call fills naics_codes later.
+                matches.setdefault(notice_id, set()).add(f"{field.upper()} {'/'.join(sorted(code_set))}")
+
+    rows = [flatten(record, matches[nid]) for nid, record in by_notice.items()]
+    print(f"{len(rows)} unique notices", file=sys.stderr)
+
+    if not args.no_enrich and rows:
+        print(f"fetching detail and award status for {len(rows)} notices...", file=sys.stderr)
+        with ThreadPoolExecutor(max_workers=args.workers) as pool:
+            rows = list(pool.map(enrich, rows))
+        failed = sum(1 for r in rows if r.get("enrich_error"))
+        if failed:
+            print(f"  {failed} detail lookups failed", file=sys.stderr)
+        awarded = sum(1 for r in rows if r.get("award"))
+        if awarded:
+            print(f"  {awarded} already have an award recorded against them", file=sys.stderr)
+        # Narrow matched_by to the codes that actually appear on the notice.
+        wanted = {f: set(codes) for f, codes in fields}
+        for row in rows:
+            hits = [f"NAICS {c}" for c in row.get("naics_codes") or [] if c in wanted.get("naics", ())]
+            if row.get("psc_code") in wanted.get("psc", ()):
+                hits.append(f"PSC {row['psc_code']}")
+            if hits:
+                row["matched_by"] = sorted(hits)
+
+    rows.sort(key=lambda r: r.get("response_date") or "9999")
+
+    out_dir = Path(args.out_dir)
+    out_dir.mkdir(parents=True, exist_ok=True)
+    payload = {
+        "fetched_at": now.isoformat(),
+        "profile": {
+            k: profile.get(k)
+            for k in ("legal_business_name", "uei", "cage_code", "naics", "psc", "set_aside_eligibility")
+        },
+        "filters": {
+            "server_side": not args.all_notices,
+            "notice_types": None if args.all_notices else RESPONSIVE_TYPES,
+            "include_no_deadline": args.include_no_deadline,
+            "include_inactive": args.include_inactive,
+            "enriched": not args.no_enrich,
+        },
+        "count": len(rows),
+        "opportunities": rows,
+    }
+    (out_dir / "opportunities.json").write_text(json.dumps(payload, indent=2))
+    write_csv(out_dir / "opportunities.csv", rows, CSV_COLUMNS)
     print(f"wrote {out_dir/'opportunities.json'} and {out_dir/'opportunities.csv'}", file=sys.stderr)
 
 
