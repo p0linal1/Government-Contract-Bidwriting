@@ -99,7 +99,7 @@ export const GROUPS = [
   { id: 'ready', title: 'Ready for you', icon: 'doc', mark: 'ready', needsYou: true, fits: (rfp) => rfp.status === 'ready_for_doug' },
   { id: 'partway', title: 'Stopped partway', icon: 'agent', mark: 'new', fits: (rfp) => ['qualifying', 'researching', 'drafting'].includes(rfp.status) },
   { id: 'new', title: 'To read', icon: 'search', mark: 'new', folded: true, fits: (rfp) => rfp.status === 'new' },
-  { id: 'passed', title: 'Passed', icon: 'close', mark: 'passed', fits: (rfp) => rfp.status === 'passed' },
+  { id: 'passed', title: 'Not bidding', icon: 'close', mark: 'passed', fits: (rfp) => rfp.status === 'passed' },
   { id: 'sent', title: 'Sent', icon: 'check', mark: 'submitted', fits: (rfp) => ['sent', 'won', 'lost'].includes(rfp.status) },
 ]
 
@@ -111,9 +111,12 @@ export function groupRfps(rfps) {
   return groups
 }
 
+// The agent writes "Pass" for don't bid, which reads to people like passing a test.
+export const shownHeadline = (headline) => headline.replace(/^Pass([:.])/, "Don't bid$1")
+
 // The packet's headline starts with the decision and runs several sentences. The list wants one.
 export function firstSentence(headline) {
-  const text = headline.replace(/^(Pass|Send):\s*/, '')
+  const text = headline.replace(/^(Pass|Send|Bid|Don't bid)[:.]\s*/, '')
   const sentence = text.match(/^.+?[.!?](?=\s|$)/)?.[0] ?? text
   return sentence.charAt(0).toUpperCase() + sentence.slice(1)
 }

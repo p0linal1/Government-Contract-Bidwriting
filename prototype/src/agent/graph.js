@@ -208,7 +208,7 @@ export const LABELS = {
   outQualifier: { x: 440, y: 412, side: 'left', rest: 'go or no-go' },
   outResearcher: { x: 760, y: 412, side: 'right', rest: 'research' },
   outDrafter: { x: 1044, y: 412, side: 'right', rest: 'proposal' },
-  gate: { x: 736, y: 360, rest: 'only after a pursue', gate: true },
+  gate: { x: 736, y: 360, rest: 'only after a bid', gate: true },
 }
 
 // Both checks travel the Qualifier's own line, so their notes stack under its card.
@@ -251,7 +251,7 @@ export const STACK = [
   { label: 'Starts the run', nodes: ['runNow', 'schedule'] },
   { step: 1, nodes: ['operator'], firstTest: true },
   { step: 2, attached: true, label: 'The Operator hands each step to a helper', nodes: ['reader'], out: ['outReader', 'handed back to the Operator'] },
-  { step: 3, attached: true, nodes: ['qualifier'], out: ['outQualifier', 'A pass ends the RFP here. A pursue goes on.'] },
+  { step: 3, attached: true, nodes: ['qualifier'], out: ['outQualifier', "A don't-bid ends the RFP here. A bid goes on."] },
   { step: 4, attached: true, nodes: ['researcher'], out: ['outResearcher', 'handed back to the Operator'] },
   { step: 5, attached: true, check: 'check5' },
   { step: 6, attached: true, nodes: ['drafter'], out: ['outDrafter', 'handed back to the Operator'] },
@@ -264,11 +264,11 @@ const SKILLS = {
     version: 0,
     plain: 'Delegation skill',
     teaches: [
-      'The order of a run: read, then qualify, and only a pursue goes on to research and drafting.',
+      'The order of a run: read, then qualify, and only a bid goes on to research and drafting.',
       'Pull new RFPs from SAM.gov once per run, and skip any already in the RFP Library.',
       'Give each helper a message that stands on its own: the RFP, the files to read, and exactly where to write.',
       'Open every result and check it before moving on. A step that fails twice ends that RFP.',
-      'At most three pursued RFPs per run, nearest deadline first.',
+      'At most three RFPs to bid on per run, nearest deadline first.',
       'Never stop to ask Doug. Take the safer option and list the call for him in the packet.',
     ],
   },
@@ -288,9 +288,9 @@ const SKILLS = {
     version: 0,
     plain: 'Qualifying skill',
     teaches: [
-      'Hard stops that mean pass: under 7 days to respond, a mandatory meeting already missed, a license or insurance level Cadocary lacks, a submission method or eligibility rule it cannot meet.',
+      "Hard stops that mean don't bid: under 7 days to respond, a mandatory meeting already missed, a license or insurance level Cadocary lacks, a submission method or eligibility rule it cannot meet.",
       'Six factors rated with fixed words: must-haves, the current vendor, past work, how bids are scored, price, and competition.',
-      'A fact the facts sheet does not cover is an unknown, not a pass.',
+      "A fact the facts sheet does not cover is an unknown, not a reason not to bid.",
       'Checking research: start fresh, open at least five sources, and confirm the quoted words are really there.',
       'Checking a draft: every requirement mapped to a page, the page limit met, every claim tied to an approved fact.',
       'Every check ends in pass, revise, or block.',
@@ -413,7 +413,7 @@ const PANELS = {
       { label: 'Qualifying skill teaches', value: SKILLS['rfp-qualifying'].teaches },
       { label: 'Tools', value: `Files only (${FILE_TOOLS})` },
       { label: 'Writes', value: '`qualification.json`, `check-research-<round>.json`, `check-draft-<round>.json`' },
-      { label: 'Go or no-go', value: 'A pass ends that RFP with a short packet that gives the reasons and quotes. A pursue goes on to research.' },
+      { label: 'Go or no-go', value: "A don't-bid ends that RFP with a short packet that gives the reasons and quotes. A bid goes on to research." },
       { label: 'Checks', value: 'The Operator asks for up to two rounds each on the research and the draft, and sends any fixes back to the Researcher or the Drafter itself. If the work still fails, the RFP stops as "no-go, could not verify".' },
       { label: 'Open question', value: "The engineering review recommends a separate checker agent. For now the Qualifier does the checking, as in the team's plan.", tone: 'warn' },
     ],
@@ -450,7 +450,7 @@ const PANELS = {
       {
         label: 'Contains',
         value: [
-          'Send or pass, with a one-line headline',
+          "Bid or don't bid, with a one-line headline",
           'Expected worth, low to high, with its confidence and basis',
           'Why Cadocary is competitive, and the risks, each with a source',
           'Every deadline, as the RFP wrote it',
@@ -549,7 +549,7 @@ const OPENING = [
 export const RUNS = {
   pursue: [
     ...OPENING,
-    { step: 3, caption: 'The Qualifier reports back to the Operator. Sample outcome: pursue. A pass would end this RFP here.', status: { qualifier: 'done' }, flows: { toQualifier: 'back' }, labels: { outQualifier: 'pursue', gate: 'only after a pursue' } },
+    { step: 3, caption: "The Qualifier reports back to the Operator. Sample outcome: bid. A don't-bid would end this RFP here.", status: { qualifier: 'done' }, flows: { toQualifier: 'back' }, labels: { outQualifier: 'bid', gate: 'only after a bid' } },
     { step: 4, caption: 'The Operator hands the RFP to the Researcher, which looks for comparable past awards, the current vendor, and a price. Every number needs a source.', status: { researcher: 'working' }, flows: { toResearcher: 'fwd' } },
     { step: 4, caption: 'The Researcher hands the research back to the Operator: a value range, the awards it found, and how sure it is.', status: { researcher: 'done' }, flows: { toResearcher: 'back' }, labels: { outResearcher: 'research' } },
     { step: 5, caption: 'The Operator asks the Qualifier to check the research. It opens the sources to confirm each quote is really there.', status: { qualifier: 'working' }, flows: { toQualifier: 'fwd' }, checks: { check5: 'Round 1' } },
@@ -567,10 +567,10 @@ export const RUNS = {
   ],
   pass: [
     ...OPENING,
-    { step: 3, caption: 'The Qualifier reports back to the Operator. Sample outcome: pass. The RFP stops here, with the reasons and the quotes behind them.', status: { qualifier: 'done' }, flows: { toQualifier: 'back' }, labels: { outQualifier: 'pass' } },
-    { step: 4, caption: 'Research and drafting are skipped. They are the costly steps, so only a pursue reaches them.', status: { researcher: 'skipped', drafter: 'skipped' }, skip: true },
-    { step: 8, caption: 'The Operator writes a short pass packet for Doug.', status: { packet: 'working' }, flows: { deliver: 'fwd' } },
-    { step: 8, end: true, caption: 'Done. Doug sees why it was passed. Nothing was drafted or sent.', status: { packet: 'done', operator: 'done' } },
+    { step: 3, caption: "The Qualifier reports back to the Operator. Sample outcome: don't bid. The RFP stops here, with the reasons and the quotes behind them.", status: { qualifier: 'done' }, flows: { toQualifier: 'back' }, labels: { outQualifier: "don't bid" } },
+    { step: 4, caption: 'Research and drafting are skipped. They are the costly steps, so only a bid reaches them.', status: { researcher: 'skipped', drafter: 'skipped' }, skip: true },
+    { step: 8, caption: "The Operator writes a short don't-bid packet for Doug.", status: { packet: 'working' }, flows: { deliver: 'fwd' } },
+    { step: 8, end: true, caption: "Done. Doug sees why the agent says not to bid. Nothing was drafted or sent.", status: { packet: 'done', operator: 'done' } },
   ],
 }
 

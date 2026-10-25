@@ -3,9 +3,10 @@
 agent/library.py writes the library; this only reads it. The app polls, so answers are cached for
 a little while, and a memory is read again only when its content has changed.
 
-The app has no login, so an answer carries only the fields its pages show, never a draft or
-notes, and contact details are scrubbed out: drafts are built from Doug's private facts, and
-any finding can quote them.
+The app has no login, so an answer carries only the fields its pages show, and contact details
+are scrubbed out: drafts are built from Doug's private facts, and any finding can quote them. The
+draft itself goes out only through proposal(), stripped the same way and without the agent's
+notes to Doug. notes.md never goes out.
 """
 
 import json
@@ -33,6 +34,11 @@ STREET = re.compile(
     r"|\bP\.?\s?O\.?\s+Box\s+\d+",
 )
 REMOVED = "[removed]"
+# What is left of an address once its street is gone: ", Richland WA 99352".
+TOWN_AFTER_STREET = re.compile(r"\[removed\],?\s+[A-Z][a-z]+(?:\s[A-Z][a-z]+)*,?\s+[A-Z]{2}\s+\d{5}(?:-\d{4})?")
+# The Drafter's bracketed asides to Doug, which he is told to delete before sending.
+NOTE_TO_DOUG = re.compile(r"\[[^\[\]]*delete this note before sending[^\[\]]*\]", re.IGNORECASE)
+COMPLIANCE_FIELDS = ("requirement_id", "section", "page", "status", "note")
 RUNNING = ("running", "rescheduling")
 
 LIBRARY_CACHE_SECONDS = 45
@@ -55,6 +61,13 @@ def scrubbed(answer):
     for pattern in (EMAIL, PHONE, STREET):
         text = pattern.sub(REMOVED, text)
     return json.loads(text)
+
+
+def without_notes_to_doug(markdown):
+    """The draft without the paragraphs addressed to Doug that say to delete them before sending."""
+    paragraphs = re.split(r"\n\s*\n", markdown)
+    kept = [paragraph for paragraph in paragraphs if not (paragraph.lstrip().startswith("[") and "delete this note before sending" in paragraph.lower())]
+    return NOTE_TO_DOUG.sub("", "\n\n".join(kept))
 
 
 def memory_call(path):
@@ -253,3 +266,35 @@ def build_rfp(rfp_id):
 def rfp(rfp_id):
     """One RFP's record, whatever findings runs have saved, and its newest run. None if it is not in the library."""
     return cached_answer(f"rfp:{rfp_id}", RFP_CACHE_SECONDS, lambda: build_rfp(rfp_id))
+
+
+def build_proposal(rfp_id):
+    stored = memories()
+    draft_memory = stored.get(f"/rfps/{rfp_id}/findings/proposal.md")
+    if not draft_memory:
+        return None
+    # Notes come out before the scrub, which adds brackets of its own.
+    markdown = without_notes_to_doug(read(draft_memory))
+    found = findings(stored, rfp_id)
+    draft_memory_json = stored.get(f"/rfps/{rfp_id}/findings/draft.json")
+    try:
+        draft = json.loads(read(draft_memory_json)) if draft_memory_json else {}
+    except json.JSONDecodeError:
+        draft = {}
+    record = json.loads(read(stored[f"/rfps/{rfp_id}/record.json"]))
+    answer = scrubbed({
+        "id": rfp_id,
+        "title": record["title"],
+        "buyer": buyer(record.get("agency")),
+        "recommendation": (found.get("packet") or {}).get("recommendation"),
+        "page_count": draft.get("page_count"),
+        "compliance": [pick(row, COMPLIANCE_FIELDS) for row in draft.get("compliance_matrix", [])],
+        "markdown": markdown,
+    })
+    answer["markdown"] = TOWN_AFTER_STREET.sub(REMOVED, answer["markdown"])
+    return answer
+
+
+def proposal(rfp_id):
+    """The newest draft proposal for an RFP, stripped of contact details and notes to Doug, with its compliance rows. None if there is no draft."""
+    return cached_answer(f"proposal:{rfp_id}", RFP_CACHE_SECONDS, lambda: build_proposal(rfp_id))

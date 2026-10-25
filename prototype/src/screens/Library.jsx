@@ -1,8 +1,9 @@
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import { runFacts } from '../agent/live'
 import { Steps } from '../agent/Steps'
-import { daysLeftText, firstSentence, groupRfps, rfpStatusLine, shortDate, shortTime, useLibrary, useRfp } from '../library'
+import { daysLeftText, firstSentence, groupRfps, rfpStatusLine, shortDate, shownHeadline, shortTime, useLibrary, useRfp } from '../library'
 import { Facts, Mark } from '../parts'
+import { DraftThumbnail, DraftViewer, useProposal } from './DraftBid'
 import { navigate } from '../router'
 import { Icon } from '../ui'
 
@@ -102,8 +103,8 @@ function worthText(worth) {
 }
 
 function recommendationText(packet, qualification, run) {
-  if (packet) return packet.recommendation === 'send' ? 'Send. The agent recommends bidding.' : 'Pass. The agent recommends not bidding.'
-  if (qualification) return qualification.decision === 'pass' ? 'Pass, at the go or no-go step' : 'Pursue, still being worked'
+  if (packet) return packet.recommendation === 'send' ? 'Bid. The agent recommends bidding on this RFP.' : "Don't bid. The agent recommends not bidding on this RFP."
+  if (qualification) return qualification.decision === 'pass' ? "Don't bid, decided at the go or no-go step" : 'Bid, still being worked'
   // The packet reaches the library only after a finished run is saved, so until then the run says it.
   if (run?.status === 'finished') return 'Decided in the run above. Its packet is not in the library yet.'
   return 'Not read yet'
@@ -156,7 +157,7 @@ const RAIL_STATE = { done: 'done', working: 'current', skipped: 'skipped' }
 // What the Operator said last, which at the end of a run is what it decided.
 function operatorVerdict(run) {
   const said = run.steps.find((step) => step.agent === 'Operator' && step.text.startsWith('Operator: '))
-  return said?.text.replace('Operator: ', '')
+  return said && shownHeadline(said.text.replace('Operator: ', ''))
 }
 
 function runStatusLine(run, states, packet) {
@@ -166,7 +167,7 @@ function runStatusLine(run, states, packet) {
     return working ? `Working: the ${working.agent} ${working.doing}.` : 'Working: the Operator is deciding the next step.'
   }
   if (run.status === 'stopped') return `Stopped after ${minutes} min, before it finished.`
-  const verdict = packet ? `${packet.recommendation === 'send' ? 'Send' : 'Pass'}. ${firstSentence(packet.headline)}` : operatorVerdict(run)
+  const verdict = packet ? `${packet.recommendation === 'send' ? 'Bid' : "Don't bid"}. ${firstSentence(packet.headline)}` : operatorVerdict(run)
   return verdict ? `Finished in ${minutes} min: ${verdict}` : `Finished in ${minutes} min.`
 }
 
@@ -202,15 +203,20 @@ function RfpBody({ rfp }) {
   const { packet, qualification, research, summary } = findings
   const running = run?.status === 'running'
   const headline = packet?.headline ?? qualification?.headline
+  const proposal = useProposal(rfp.id, rfp.draft_ready)
+  const [reading, setReading] = useState(false)
+  const closeReading = useCallback(() => setReading(false), [])
   // A run in progress outranks whatever an earlier run left in the library.
   const intro = running
     ? 'The agent is working on this RFP now. The tracker shows each stage as it happens, and every step below opens to show what it did.'
-    : (headline ?? (run ? operatorVerdict(run) : null) ?? 'The agent has not read this RFP yet. It is in the library, waiting its turn.')
+    : ((headline && shownHeadline(headline)) ?? (run ? operatorVerdict(run) : null) ?? 'The agent has not read this RFP yet. It is in the library, waiting its turn.')
   const deadlines = packet?.deadlines ?? []
   const reasons = qualification?.decision_reasons ?? []
 
   return (
     <div className="step-body">
+      {proposal && <DraftThumbnail proposal={proposal} onOpen={() => setReading(true)} />}
+      {reading && proposal && <DraftViewer proposal={proposal} onClose={closeReading} />}
       <h1 className="step-title">{rfp.title}</h1>
       <p className="step-intro">{intro}</p>
       {run && <RunProgress run={run} packet={packet} />}
@@ -221,7 +227,6 @@ function RfpBody({ rfp }) {
           { label: 'Recommendation', value: running ? 'Not decided yet. The agent is working on it.' : recommendationText(packet, qualification, run) },
           packet && { label: 'Expected worth', value: worthText(packet.expected_worth), detail: packet.expected_worth?.basis, detailLabel: packet.expected_worth?.confidence && `Confidence ${packet.expected_worth.confidence}.` },
           research && { label: 'Research estimate', value: worthText(research.value_estimate), detail: research.value_estimate.confidence && `Confidence ${research.value_estimate.confidence}.` },
-          rfp.draft_ready && { label: 'Draft', value: 'Draft ready. Doug reads it in the private workspace.' },
           { label: 'Proposal deadline', value: rfp.deadline ? `${shortDate(rfp.deadline)}, ${shortTime(rfp.deadline)}` : 'Not given', detail: daysLeftText(rfp.days_left) },
           { label: 'Buyer', value: rfp.agency ?? 'Not given' },
           { label: 'Kind', value: [rfp.notice_type, rfp.set_aside && `set-aside: ${rfp.set_aside}`].filter(Boolean).join(', ') || 'Not given' },
@@ -394,10 +399,10 @@ function Today() {
           />
           <Card
             icon="close"
-            title="Passed"
-            count={`${passed.length} passed`}
+            title="Not bidding"
+            count={`${passed.length} not bidding`}
             idle={!passed.length}
-            text={passed.length ? `${passed[0].buyer}: ${passed[0].headline ? firstSentence(passed[0].headline) : 'passed.'}` : 'Nothing passed yet.'}
+            text={passed.length ? `${passed[0].buyer}: ${passed[0].headline ? firstSentence(passed[0].headline) : "the agent says don't bid."}` : 'Nothing set aside yet.'}
             action={passed.length ? { label: 'See why', run: open(passed[0]) } : null}
           />
           <Card icon="search" title="To read" count={`${toRead.length} to read`} idle={!toRead.length} text={`${toRead.length} notices are waiting for the agent to read them, nearest deadline first.`} />
