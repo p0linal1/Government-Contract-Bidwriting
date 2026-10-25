@@ -26,9 +26,20 @@ MODEL = {"id": "claude-opus-5-5", "effort": {"type": "high"}}
 
 HELPERS = [
     {
+        "key": "reader",
+        "name": "Cadocary Reader",
+        "description": "Reads an RFP and all its attachments once and fills the fixed RFP sheet that every later step works from.",
+        "skill": "rfp-reading",
+        # Reading is careful extraction rather than judgment, so the cheaper model is enough.
+        "model": {"id": "claude-sonnet-5-5", "effort": {"type": "high"}},
+        # web_fetch only opens links a person, a search, or a fetched page showed this agent, so links
+        # handed over by the operator fail. bash lets the reader download RFP files and convert them.
+        "tools": ["read", "write", "glob", "grep", "bash", "web_fetch"],
+    },
+    {
         "key": "qualifier",
         "name": "Cadocary Qualifier",
-        "description": "Reads an RFP, decides pursue or pass, lists every requirement and deadline, and checks the other agents' work.",
+        "description": "Decides pursue or pass from the RFP sheet and Cadocary's facts, and checks the other agents' work.",
         "skill": "rfp-qualifying",
         "tools": ["read", "write", "glob", "grep"],
     },
@@ -194,7 +205,7 @@ def agent_body(spec, skill, extra_tools=(), multiagent=None, mcp_servers=()):
     body = {
         "name": spec["name"],
         "description": spec["description"],
-        "model": MODEL,
+        "model": spec.get("model", MODEL),
         "system": (HERE / "prompts" / f"{spec['key']}.md").read_text(),
         "tools": [toolset(spec["tools"]), *extra_tools],
         "skills": [{"type": "custom", "skill_id": skill["id"], "version": skill["version"]}],

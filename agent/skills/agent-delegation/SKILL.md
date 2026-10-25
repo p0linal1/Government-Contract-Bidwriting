@@ -1,6 +1,6 @@
 ---
 name: agent-delegation
-description: How the operator runs RFPs through qualifying, research, and drafting. Covers what to hand each agent, how to check their work, when to stop, and the packet Doug reads. Use at the start of every run.
+description: How the operator runs RFPs through reading, qualifying, research, and drafting. Covers what to hand each agent, how to check their work, when to stop, and the packet Doug reads. Use at the start of every run.
 ---
 
 # Agent delegation
@@ -9,16 +9,21 @@ Version 0. The order and rules below come from the team's plan and three plan re
 
 ## The run
 
-1. **Get the RFPs.** If the starting message names RFPs or attaches their files, use those and go to step 2. Otherwise run intake (below).
-2. **Take RFPs one at a time, nearest deadline first.** Work only on RFPs whose documents are attached to the session. Until our code stores intake results for you, a run that started from intake ends after intake. For each RFP:
-   1. **Qualify.** Send the Qualifier the RFP's document paths and the output path `/mnt/session/outputs/<rfp-id>/qualification.json`. Wait for the file.
-   2. **Pass?** If `decision` is `pass`, write the packet with `recommendation: pass` and the reasons, then go to the next RFP.
-   3. **Research.** Send the Researcher the qualification path, the RFP paths, and the output path `research.json`.
-   4. **Check the research.** Ask the Qualifier to check `research.json` and write `check-research-<round>.json`. On `revise`, send the issue list, word for word, back to the Researcher. Allow at most two rounds. If it still fails, or the check says `block`, write a pass packet that says "no-go, could not verify" with the issues, and move on.
-   5. **Draft.** Send the Drafter the qualification, research, and facts paths and the output folder.
-   6. **Check the draft.** Ask the Qualifier to check `draft.json` and the proposal files and write `check-draft-<round>.json`. Allow at most two rounds with the Drafter, the same way.
-   7. **Packet.** Write `packet.json` (below).
-3. **Finish** with one line per RFP: the buyer, the title, send or pass, and the expected worth.
+The flow for every RFP: the Reader reads it, the Qualifier decides, and only a `pursue` goes on to research and drafting. Each agent hands its result back to you, and you send the next step.
+
+1. **Get the RFPs.** If the starting message names RFPs or attaches their files, use those. Otherwise run intake (below), and take every `pursue` and `consider` notice from it.
+2. **Read every RFP, then qualify every RFP.** Both steps are cheap.
+   1. **Read.** Send the Reader the RFP's documents: the attached paths under `/mnt/session/uploads/<rfp-id>/`, or the attachment links from `get_notice`. Name the output path `/mnt/session/outputs/<rfp-id>/sheet.json`.
+   2. **Qualify.** Send the Qualifier the sheet path and the output path `qualification.json`. If `decision` is `pass`, write the packet with `recommendation: pass` and the reasons, and that RFP is done.
+3. **Work the pursued RFPs, one at a time, nearest deadline first.** Do at most 3 in a run unless the message says otherwise, and list the rest in your final reply. For each one:
+   1. **Research.** Send the Researcher the sheet and qualification paths and the output path `research.json`.
+   2. **Check the research.** Ask the Qualifier to check `research.json` and write `check-research-<round>.json`. On `revise`, send the issue list, word for word, back to the Researcher. Allow at most two rounds. If it still fails, or the check says `block`, write a pass packet that says "no-go, could not verify" with the issues, and move on.
+   3. **Draft.** Send the Drafter the sheet, qualification, research, and facts paths and the output folder.
+   4. **Check the draft.** Ask the Qualifier to check `draft.json` and the proposal files and write `check-draft-<round>.json`. Allow at most two rounds with the Drafter, the same way.
+   5. **Packet.** Write `packet.json` (below).
+4. **Finish** with one line per RFP: the buyer, the title, send or pass, and the expected worth.
+
+If the message asks for only some steps, such as "read and qualify only", stop where it says.
 
 ## Intake: pulling new RFPs
 
@@ -68,7 +73,7 @@ Example:
 
 ```
 RFP wa-example-001, City of Example, "Case management software".
-Read: /mnt/session/uploads/wa-example-001/rfp.md and /mnt/memory/cadocary-facts/.
+Read: /mnt/session/outputs/wa-example-001/sheet.json and /mnt/memory/cadocary-facts/.
 Qualify it and write /mnt/session/outputs/wa-example-001/qualification.json
 in the format under "Output" in your skill.
 ```
@@ -104,6 +109,7 @@ This is the one screen Doug reads.
   "why_competitive": [{"reason": "", "source": ""}],
   "risks": [{"risk": "", "source": ""}],
   "deadlines": [{"kind": "", "as_written": "", "page": 0}],
+  "sheet": "",
   "calls_for_doug": [{"topic": "", "choice_made": "", "why": ""}],
   "open_items": [""],
   "checks": {"research": "pass | revise | block", "draft": "pass | revise | block"},

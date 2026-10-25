@@ -1,11 +1,12 @@
 # Bid agent
 
-The shell of Cadocary's bid agent on Claude Managed Agents. One operator agent hands the work to three helper agents, and each agent has one skill that holds its know-how. All of it is live in the team's Anthropic workspace. In the Claude Console, open Managed Agents and then Cadocary Operator.
+The shell of Cadocary's bid agent on Claude Managed Agents. One operator agent hands the work to four helper agents, and each agent has one skill that holds its know-how. All of it is live in the team's Anthropic workspace. In the Claude Console, open Managed Agents and then Cadocary Operator.
 
 | Agent | Job | Skill | Tools |
 | --- | --- | --- | --- |
 | Cadocary Operator | Pulls new RFPs, hands out the work, checks each result, and writes the packet Doug reads | `agent-delegation` | read, write, glob, grep, and Polina's SAM.gov tool (`search_opportunities`, `get_notice`) |
-| Cadocary Qualifier | Decides pursue or pass, lists every requirement and deadline, and checks the other agents' work | `rfp-qualifying` | read, write, glob, grep |
+| Cadocary Reader | Downloads an RFP and every attachment, converts them to text, and fills the RFP sheet every later step works from. Runs on Sonnet 5.5 | `rfp-reading` | read, write, glob, grep, bash, web fetch |
+| Cadocary Qualifier | Decides pursue or pass from the sheet and Cadocary's facts, and checks the other agents' work | `rfp-qualifying` | read, write, glob, grep |
 | Cadocary Researcher | Finds what the contract is worth, comparable past awards, the incumbent, and a price, each with a source | `rfp-research` | read, write, glob, grep, web search, web fetch |
 | Cadocary Drafter | Writes the proposal from the qualification, the research, and the approved facts | `proposal-drafting` | read, write, edit, glob, grep |
 
@@ -13,8 +14,8 @@ Settings on every agent:
 
 - **Model:** Opus 5.5, with effort set to high.
 - **Permissions:** every tool is set to "always allow", because "ask" would leave an unattended run waiting forever.
-- **No bash.** No agent has bash, and none can send, submit, or email anything.
-- **Helpers:** the three helpers are attached to the Operator by version. The Operator can't invent other agents or start workflows.
+- **Bash only for the Reader.** It needs bash to download RFP files, because web fetch refuses links handed over by another agent. No other agent has bash, and none can send, submit, or email anything.
+- **Helpers:** the four helpers are attached to the Operator by version. The Operator can't invent other agents or start workflows.
 
 ## Storage in the cloud
 
