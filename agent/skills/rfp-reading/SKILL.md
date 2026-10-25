@@ -9,15 +9,14 @@ Version 0. It will be refined from the study of about 100 real RFPs, which fills
 
 ## Get the documents
 
-Keep every document in `/mnt/session/outputs/<rfp-id>/docs/`, so later steps and later runs can open the same files.
-
-- **Files attached to the session:** under `/mnt/session/uploads/<rfp-id>/`. Copy them into `docs/`.
-- **Links from the operator,** such as SAM.gov attachment links, which download directly with no login. Download each with bash: `curl -sSL -o "docs/<file name>" "<link>"`. Don't use web_fetch for these. It refuses links that another agent passed to you.
-- **Convert each file to text** next to the original, keeping page breaks:
-  - PDF: `pdftotext -layout file.pdf file.txt`. Pages are separated by form feeds, so you can count pages.
-  - Word: `pandoc file.docx -t plain -o file.txt`.
-  - Excel: `libreoffice --headless --convert-to csv file.xlsx`, or Python with openpyxl.
-  - A scanned PDF with no text: `pdftoppm -r 200 -png file.pdf page`, then `tesseract` on each page.
+- **Attached files, the normal case.** Our code downloads every document of the RFP and attaches it to the session under `/mnt/session/uploads/<rfp-id>/`. Read them there. They are read-only, so don't copy them; write what you make, such as text versions, to `/mnt/session/outputs/<rfp-id>/docs/`.
+  - `sam-notice.json` is the full SAM.gov notice: the description, contacts, set-aside, and attachment list. Many notices put the statement of work in the description, so read it like any other document.
+- **Links, the fallback.** When the operator sends a link instead, such as a file that couldn't be attached, download it into `docs/` with bash: `curl -sSL -o "docs/<file name>" "<link>"`. SAM.gov attachment links need no login. Don't use web_fetch for these. It refuses links that another agent passed to you.
+- **Convert each file to text** in `docs/`, keeping page breaks:
+  - PDF: `pdftotext -layout <file>.pdf docs/<file>.txt`. Pages are separated by form feeds, so you can count pages.
+  - Word: `pandoc <file>.docx -t plain -o docs/<file>.txt`.
+  - Excel: `libreoffice --headless --convert-to csv --outdir docs <file>.xlsx`, or Python with openpyxl.
+  - A scanned PDF with no text: `pdftoppm -r 200 -png <file>.pdf docs/page`, then `tesseract` on each page.
 - **Read all of it, every page:**
   - the solicitation and the statement of work
   - every attachment, pricing sheet, and form
@@ -72,7 +71,7 @@ Every `cite` is `{"doc": "", "page": 0, "quote": ""}`.
 ```json
 {
   "rfp_id": "", "buyer": "", "title": "", "solicitation_number": "", "source_url": "",
-  "documents": [{"name": "", "url_or_path": "", "saved_as": "docs/...", "pages": 0, "read": true, "note": ""}],
+  "documents": [{"name": "", "url_or_path": "/mnt/session/uploads/<rfp-id>/... or the link", "saved_as": "docs/<text version>", "pages": 0, "read": true, "note": ""}],
   "summary": "Three sentences: what they are buying, for whom, and for how long.",
   "scope": [{"item": "", "cite": {}}],
   "requirements": [{"id": "R1", "text": "", "kind": "mandatory | scored | format | form | submission", "cite": {}}],

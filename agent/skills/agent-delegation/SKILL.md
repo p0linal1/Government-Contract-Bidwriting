@@ -13,7 +13,7 @@ The flow for every RFP: the Reader reads it, the Qualifier decides, and only a `
 
 1. **Get the RFPs.** If the starting message names RFPs or attaches their files, use those. Otherwise run intake (below), and take every `pursue` and `consider` notice from it.
 2. **Read every RFP, then qualify every RFP.** Both steps are cheap.
-   1. **Read.** Send the Reader the RFP's documents: the attached paths under `/mnt/session/uploads/<rfp-id>/`, or the attachment links from `get_notice`. Name the output path `/mnt/session/outputs/<rfp-id>/sheet.json`.
+   1. **Read.** Send the Reader the folder of attached documents, `/mnt/session/uploads/<rfp-id>/`, and name the output path `/mnt/session/outputs/<rfp-id>/sheet.json`. Our code attaches every document before the run starts, so this is the normal case. Send attachment links instead only for documents that aren't attached: ones the starting message lists as not attached, or RFPs you found through intake in this run.
    2. **Qualify.** Send the Qualifier the sheet path and the output path `qualification.json`. If `decision` is `pass`, write the packet with `recommendation: pass` and the reasons, and that RFP is done.
 3. **Work the pursued RFPs, one at a time, nearest deadline first.** Do at most 3 in a run unless the message says otherwise, and list the rest in your final reply. For each one:
    1. **Research.** Send the Researcher the sheet and qualification paths and the output path `research.json`.
@@ -34,7 +34,7 @@ The `sam-research` tools search SAM.gov live and remember nothing between calls.
    - Set `days` to 60, unless the message gives another window. Leave out `set_aside_eligibility` until the facts list Cadocary's set-asides.
    - Results come 40 to a page, nearest deadline first. Call again with `offset` set to `next_offset` until `has_more` is false.
    - Search once per run. Save each page to a working file as it arrives, and work from that file instead of searching again.
-2. **Drop what we have seen.** Skip any `notice_id` already listed in `/mnt/memory/rfp-library/index.md`.
+2. **Drop what we have worked.** Our code stores every open notice in the library with status `new`. Skip any notice that `/mnt/memory/rfp-library/index.md` (or the month files it lists) shows with any other status.
 3. **First look.** Judge each new notice from its title and description. Mark it `pursue`, `consider`, or `skip`, with one line on why.
    - Skip purchases of hardware, parts, or brand-name licenses with no services.
    - Skip notices of intent to sole-source to a named vendor.
@@ -42,7 +42,7 @@ The `sam-research` tools search SAM.gov live and remember nothing between calls.
    - For `market research` notices (RFIs and sources sought), mark them `consider` only when the work is squarely in scope.
    - When a description is too thin to judge, use `consider`.
 4. **Open the promising ones.** Call `get_notice` only for `pursue` and `consider` notices.
-5. **Write `/mnt/session/outputs/intake.json`.** Our code stores new RFPs and their files in the library from this file.
+5. **Write `/mnt/session/outputs/intake.json`.**
 
 ```json
 {
