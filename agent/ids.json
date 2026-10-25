@@ -22,8 +22,8 @@
   "skills": {
     "rfp-qualifying": {
       "id": "skill_01Xk737C2Sfe9p2CTe3W9LwR",
-      "version": "skver_017KVbpE6c2XGtbYwMCbZCoY",
-      "fingerprint": "258a31302cd084a1a4d9afd63c1a2acc789c559c695833df5baeae59cb47be2a"
+      "version": "skver_01PvvrXcVyGMvB5Gdg8U6ojC",
+      "fingerprint": "de05165b16e706195fba5f060702c0916fe296aa78a91f4742ebf75883d9c592"
     },
     "rfp-research": {
       "id": "skill_01LGSdbxsUEDPvrmwh8NTtmG",
@@ -37,13 +37,13 @@
     },
     "agent-delegation": {
       "id": "skill_01E8L6koR3vMMXWFfZbzXqtr",
-      "version": "skver_0125CemzEo86C4Dvty2WnKvZ",
-      "fingerprint": "f289db14cae253989e82e828be060fe1170361489553949bd442f6651e496f6b"
+      "version": "skver_01DEZD2Pg7jcMdV6kwVhiR7V",
+      "fingerprint": "a4fc7dfdba021f2d043b76cb2f14690458f76fd6c089dc4a702af20ca742c9f9"
     },
     "rfp-reading": {
       "id": "skill_01FF3hPdJ1nhsLuvYt5R6tyN",
-      "version": "skver_01UAaRFpbw2oBGwYTkXrr7xm",
-      "fingerprint": "96e97d722a0a118fb8854c2126a94f0cf9cb23c56b0f0c88a5dbeba623b1e052"
+      "version": "skver_012opN1KJuYPqwNVXF3ExbrW",
+      "fingerprint": "99e2459c13e23682f2ae38f0b93b932b8e7c3d76957eed193e192ed6cf7a9f7f"
     },
     "company-facts": {
       "id": "skill_01Gjc1Ggof1GiJ3hhY37ibfM",
@@ -55,8 +55,8 @@
     "qualifier": {
       "id": "agent_01XzDnJSx9KLfEgC1ZraTLPd",
       "name": "Cadocary Qualifier",
-      "version": 5,
-      "fingerprint": "03789af725e81127fd7ac93582f9908f4ca39fe73bddb4d13b69ac4ae8f4f6b5"
+      "version": 6,
+      "fingerprint": "7ffe3071d5c48ceaf1a0a70455f984788bace5aa68d4702d2b29269b73b3938c"
     },
     "researcher": {
       "id": "agent_01X5VQBCNP6zXWqS54n1tgLk",
@@ -73,14 +73,14 @@
     "operator": {
       "id": "agent_01T6ww8wetS3NJNicgfg48Pg",
       "name": "Cadocary Operator",
-      "version": 11,
-      "fingerprint": "e6525af9f44d9b73967e465278006eb31e1ca09e07749bdb62579b9f220c61d3"
+      "version": 12,
+      "fingerprint": "2fda33d95e9652ba3cf27ff30f7b34f460e6124498741b4eba7ec550c31b244e"
     },
     "reader": {
       "id": "agent_01EFdc4RsT6U5vncFsErAm3W",
       "name": "Cadocary Reader",
-      "version": 3,
-      "fingerprint": "e6cbe10c43700ed63c68b75a2d73dc5166d9bc39807affe35e00fc1f4b57d9d5"
+      "version": 4,
+      "fingerprint": "a6fe63515ec776ffe05ae63c589a3e3eaf78eb268aac83b0db5029d84b0c9d07"
     }
   },
   "vault": {
