@@ -131,7 +131,7 @@ Real examples from our RFP collection:
 
 ## Recommended architecture
 
-This is from the engineering review. Nothing is built yet.
+This is from the engineering review. The agent shell is built and live (`agent/`): an operator with a delegation skill, plus three helpers (qualifier, researcher, drafter) each with its own skill, an environment, and two memory stores (RFP Library and Cadocary Facts). It differs from the review in one way: the qualifier also does the checking, as in the team's original plan, instead of a separate checker agent. The record tools, code checks, session launcher, and the `pull_new_rfps` connection are not built yet.
 
 - **One Managed Agents session per RFP,** started by our backend after sourcing. A scheduled deployment sends the same starting message every day, so it can't hand the agent "today's RFP". One session per RFP also gives each bid its own spending cap, live feed, and failure.
 - **Agents:** an operator plus four helpers (qualifier, researcher, checker, drafter), all on Opus 5.5 with effort set to high. The checker starts fresh each time. On the operator, workflows and inline agents are turned off, so it can use only these four agents.
@@ -200,12 +200,13 @@ The full reference is `docs/managed-agents.md`. The facts that matter most:
 | Plan review page | A Claude doc Sheffield can share | Verdict, loop diagram, and the 15 decisions with a column to mark them |
 | RFP collection | Sheffield's laptop (`RFP corpus`) | 80 public RFP PDFs, 78 cataloged by type (legal, AI, portals, data, Washington) |
 | Impact Lab starter repo | Sheffield's laptop | Claude Code commands and a FastAPI and React shell. Not used for now |
+| Bid agent shell | `agent/` in this repo, live in the Claude Console under Managed Agents (Cadocary Operator) | Operator plus qualifier, researcher, and drafter, each with a skill. A test session on Oct 25 confirmed that the operator reads its skill and the memory stores and delegates to a helper. `agent/README.md` explains how to change it |
 | Anthropic API key | Google Secret Manager: secret `anthropic-api-key` in project `finchat-495622` | Works, and Managed Agents is turned on for it (checked Oct 25). Ask Sheffield for access (role: Secret Manager Secret Accessor). If the key is replaced, the name stays the same. Never put it in the repo, a log, or the frontend |
 
 ## Suggested split of the work
 
 - **Doug and facts:** the facts sheet, the three-award research test, and the questions for Doug. Start here: `docs/fact-sheet.md`.
-- **Platform:** create the agent and environment, set up the record tools endpoint, launch one session for one RFP.
+- **Platform:** the agent shell is done (`agent/`). Next: connect `pull_new_rfps` to the sourcing scripts, load RFP documents into the Files API and the RFP Library, set up the record tools endpoint, and launch one session for one RFP.
 - **Checks and sourcing:** the code checks, a deadline parser with time zones, and SAM.gov (already underway in this repo).
 - **App:** connect the prototype screens (`prototype/`) to the real event feed and the finished packet.
 
