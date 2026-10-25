@@ -36,9 +36,10 @@ export const TOUR_STEPS = [
   },
   {
     route: `/bids/${VA_RFP}`,
+    open: '[data-tour="run-steps"] [data-tour="tool-call"]',
     target: '[data-tour="run-steps"]',
     title: 'Every tool call',
-    text: 'This is every step the agent took. Open one to see what it read or searched, and what came back.',
+    text: 'Every tool call the agent made, newest first. Each one opens to show what it read or searched, and what came back. One is open here.',
   },
   {
     route: `/bids/${DOT_RFP}`,

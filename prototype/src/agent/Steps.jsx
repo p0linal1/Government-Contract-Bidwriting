@@ -11,7 +11,7 @@ function Step({ step }) {
   const { input, result } = step.detail ?? {}
   return (
     <li className="agent-step">
-      <button className="agent-step-head" aria-expanded={open} onClick={() => setOpen(!open)}>
+      <button className="agent-step-head" aria-expanded={open} data-tour={input ? 'tool-call' : undefined} onClick={() => setOpen(!open)}>
         <time dateTime={step.at}>{stepTime(step.at)}</time>
         <span>
           {step.text}
@@ -35,10 +35,10 @@ function Step({ step }) {
   )
 }
 
-export function Steps({ title, label, steps }) {
+export function Steps({ title, label, steps, tour }) {
   if (!steps.length) return null
   return (
-    <section className="agent-steps" aria-label={label}>
+    <section className="agent-steps" aria-label={label} data-tour={tour}>
       <p className="agent-steps-title">{title}</p>
       <ol>
         {steps.map((step) => (
