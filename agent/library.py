@@ -312,7 +312,8 @@ def sync():
 
 def unique_name(name, taken):
     """A file name not yet used for this RFP, since all of its documents mount in one folder."""
-    name = name.replace("/", "-")
+    # The Files API refuses some characters in names, and SAM.gov file names can contain anything.
+    name = re.sub(r"[^A-Za-z0-9 ._()-]+", "-", name).strip(" .-") or "attachment"
     stem, dot, extension = name.rpartition(".")
     if not dot:
         stem, extension = name, ""
