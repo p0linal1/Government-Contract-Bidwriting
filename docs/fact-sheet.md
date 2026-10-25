@@ -72,7 +72,7 @@ Every fact needs the same five parts, so code can check claims against the sheet
 
    This never goes in a shared or public file.
 10. **Preferences**
-    - bids he wants: currently software and IT, $1 million to $5 million, no military applications, Washington preferred and federal allowed, at least 7 days to respond
+    - bids he wants: currently software and IT, custom software best, $1 million to $5 million ($5 million a hard limit), no military applications, offshore developers allowed, Washington preferred and federal allowed, at least 7 days to respond
     - work he never bids on
     - the farthest he will travel for on-site work
     - contract terms he won't accept (liability, data ownership, insurance demands)
@@ -86,7 +86,7 @@ Every fact needs the same five parts, so code can check claims against the sheet
 | --- | --- |
 | Products, services, and client work, from cadocary.com (`agent/memory/cadocary-facts/README.md`) | From the site, Oct 25. Confirm the details and live customers |
 | Website: cadocary.com | From Doug |
-| Bids he wants: software and IT, $1 million to $5 million, no military, Washington preferred and federal allowed, at least 7 days | From Doug, Oct 25 |
+| Bids he wants: software and IT, custom software best, $1 million to $5 million ($5 million a hard limit), no military, offshore developers allowed, Washington preferred and federal allowed, at least 7 days | From Doug, Oct 25 |
 | Currently bidding on jail software | From Doug |
 | Has a bid inbox, an FGA subscription, and logins for WEBS and Public Purchase | From Doug (inside bidkit) |
 | Insurance at $1,000,000 general liability and $1,000,000 cyber | Made up for the prototype. Do not use until Doug confirms |

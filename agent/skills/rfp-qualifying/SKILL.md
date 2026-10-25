@@ -16,9 +16,10 @@ The goal is a pursue or pass decision, with the reasons a busy owner can act on.
 
 Doug's preferences:
 
-- software and IT work
-- contracts priced between $1 million and $5 million
+- software and IT work. Custom software contracts suit Cadocary best.
+- contracts priced between $1 million and $5 million. $5 million is a hard limit.
 - no military applications
+- Cadocary uses offshore developers, so contracts that allow them are better
 - Washington buyers preferred, and federal buyers allowed
 - at least 7 days to respond
 
@@ -32,7 +33,7 @@ Any one of these means `pass`, with the quote and page:
 - The submission method can't be met in time, such as hand delivery of paper copies.
 - An eligibility rule Cadocary cannot meet, such as a set-aside it doesn't qualify for or required on-site staff it doesn't have.
 - **Military or defense work.** The buyer is the Department of Defense, an armed service (including the Coast Guard and National Guard), or a defense agency, or the system is for military or defense use. Veterans Affairs and other civilian agencies are not military.
-- **Value outside Doug's range.** The RFP states a value or budget for the whole contract below $1 million or above $5 million. Use the total for the base term and every option. If the RFP gives only a yearly amount, multiply it by the term and show the arithmetic.
+- **Value outside Doug's range.** The RFP states a value or budget for the whole contract below $1 million or above $5 million, which is Doug's hard limit. Use the total for the base term and every option. If the RFP gives only a yearly amount, multiply it by the term and show the arithmetic.
 
 A not-to-exceed amount or contract ceiling is a cap, not the value. A ceiling below $1 million is a hard stop, because the contract can't be worth more. A ceiling above $5 million is not; treat the value as not stated.
 
@@ -55,7 +56,7 @@ Rate each one with the fixed words below, and give evidence for each rating.
 | price_competitiveness | likely, unclear, unlikely | Lowest price wins, or best value, or qualifications only |
 | competition_density | low, medium, high, unknown | How common the product category is and how many vendors serve it |
 
-Weigh the `security_and_compliance` items, such as CJIS, background checks, and hosting location, against what the facts say Cadocary has. A requirement the facts don't cover is an unknown, not a pass.
+Weigh the `security_and_compliance` items, such as CJIS, background checks, and hosting location, against what the facts say Cadocary has. A requirement the facts don't cover is an unknown, not a pass. Look for staffing limits too: US persons or citizens only, no offshore or foreign-national access, or work and data access inside the US. Cadocary's team includes offshore developers (`prefs.offshore_staff`). Check whether the facts show a way to meet the clause, such as only named US staff touching production data. If it plainly cannot, it is a hard stop. If it is unclear, rate knockouts `at_risk` and add the clause to `questions_for_buyer`.
 
 ## Output: `qualification.json`
 

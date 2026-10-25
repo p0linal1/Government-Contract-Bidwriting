@@ -24,7 +24,7 @@ Cadocary LLC is based in Washington and sells to public defenders, courts, jails
 
 The website, read on Oct 25, lists only DocketBot, ClientCheck, and Highlighter (in-browser document search) as Cadocary's own products. It presents SpendLogic, Hotels4Truckers, and PURLPal as client projects Cadocary designed and built. The agents' facts follow the site (`agent/memory/cadocary-facts/README.md`).
 
-**Bids Doug wants** (updated Oct 25): software and IT work, contracts priced between $1 million and $5 million, no military applications, and at least 7 days to respond. Washington buyers are preferred, and federal work is allowed, since the pipeline searches SAM.gov. This replaces "$25,000 and up".
+**Bids Doug wants** (updated Oct 25): software and IT work, contracts priced between $1 million and $5 million, no military applications, and at least 7 days to respond. $5 million is a hard limit. Custom software contracts suit Cadocary best. Cadocary uses offshore developers, so contracts that allow them are better, and a clause requiring US persons only or barring offshore access counts against a bid. Washington buyers are preferred, and federal work is allowed, since the pipeline searches SAM.gov. This replaces "$25,000 and up".
 
 ## What Doug said, in his words
 
