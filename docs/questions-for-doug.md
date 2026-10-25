@@ -2,7 +2,7 @@
 
 What we still need from Doug so the agent can qualify and draft truthfully. Each one takes a line to answer. The most important come first.
 
-The agent already has his registration details, what cadocary.com says, and his bid preferences (`agent/memory/cadocary-facts/README.md`). Everything below is missing from those, so today the agent lists each gap in a bid instead of writing it.
+The agent already has his registration details, what cadocary.com and his capability statement say, and his bid preferences (`agent/memory/cadocary-facts/README.md`). Everything below is missing from those, so today the agent lists each gap in a bid instead of writing it.
 
 Doug answered the six questions under "Also ask Doug" in `docs/fact-sheet.md` on Oct 25 (pull request #15), so they are not repeated here.
 
@@ -28,10 +28,10 @@ These are what a proposal claims. Without them, the drafter leaves marked blanks
 9. **Past government contracts.** List each one: buyer, years, dollar value, and one line on the work. Which may we name?
 10. **Product users.** How many public defense offices or attorneys use DocketBot and ClientCheck today, and may we name any?
 11. **Client projects.** For SpendLogic, Hotels4Truckers, and PURLPal: what years, roughly what contract value, and may a government bid name the client?
-12. **References.** Who will speak for you: name, title, organization, phone, email, which project, and have they agreed to be named?
+12. **References.** Your capability statement lists a contact at SpendLogic, Hotels4Truckers, and PURLPal. Has each agreed to be a named reference, and who else, especially at a government buyer, will speak for you?
 13. **Staff.** Who would work on a bid: name, role, years of experience, and hours a week available? Can we have each resume?
 14. **Signer.** Who may sign bids and sworn forms for Cadocary?
-15. **Years in business.** When was Cadocary founded, and what is its street address?
+15. **Years in business.** When was Cadocary founded?
 
 ## To price a bid
 

@@ -7,7 +7,7 @@ description: How to use Cadocary's facts for one particular bid. Covers which fa
 
 Version 0.
 
-The facts are in `/mnt/memory/cadocary-facts/README.md`. Nothing about Cadocary may be claimed unless a fact there says it.
+The facts are in `/mnt/memory/cadocary-facts/README.md`, plus `private.md` beside it when present: the street address and the personal and client contact details. Nothing about Cadocary may be claimed unless a fact in one of them says it. They come from cadocary.com, Doug's capability statement, the SAM.gov registration, and Doug, and each fact names its source.
 
 Doug's rule: no standard set of facts fits every RFP. Which past projects, references, staff, and claims to use depends on the bid. Read every fact once, then choose for this RFP.
 
@@ -15,7 +15,7 @@ Doug's rule: no standard set of facts fits every RFP. Which past projects, refer
 
 **Stable:** the same in every bid. Use them wherever the RFP asks.
 
-- identity: `company.*`, such as the legal name, location, website, and email
+- identity: `company.*`, such as the legal name, location, website, capabilities, and the point of contact in `private.md`
 - registrations: the UEI, CAGE code, NAICS, and PSC codes
 - products: `product.*`, what each one does, how it runs, and its listed price
 
@@ -24,7 +24,7 @@ Doug's rule: no standard set of facts fits every RFP. Which past projects, refer
 - past performance: `work.*` and `product.*`
 - references
 - staff
-- approach: `service.*` and the `approach` and `built` facts of the closest projects
+- approach: `service.*`, `why.*`, and the `approach` and `built` facts of the closest projects
 - pricing basis
 
 ## Choosing for this RFP
@@ -44,10 +44,10 @@ Work from the reader's sheet (`sheet.json`).
 
 For each kind:
 
-- **Past performance.** SpendLogic, Hotels4Truckers, and PURLPal are client projects that Cadocary designed and built. Never call them Cadocary products, and never say Cadocary sold them to anyone. DocketBot, ClientCheck, and Highlighter are Cadocary's own products.
-- **References.** Use only a reference whose fact records the person's permission and the date they gave it. There are none yet.
+- **Past performance.** SpendLogic, Hotels4Truckers, and PURLPal are client projects that Cadocary designed and built as prime contractor. Never call them Cadocary products, and never say Cadocary sold them to anyone. DocketBot, ClientCheck, and Highlighter are Cadocary's own products.
+- **References.** Use only a reference whose fact records the person's permission and the date they gave it. There are none yet. The client contacts in `private.md` are not references until that permission is recorded.
 - **Staff.** Use only people the facts name, with only the roles and experience the facts give. There are none yet.
-- **Approach.** Build it from the `service.*` facts and the approach of the closest project, told in the RFP's terms. Describe how Cadocary works only the way the facts do.
+- **Approach.** Build it from the `service.*` facts and the approach of the closest project, told in the RFP's terms. Describe how Cadocary works only the way the facts do. The `why.*` claims fit only where a fact shows them: "operates locally without storing user credentials" is true of DocketBot and ClientCheck, not of a hosted system.
 - **Pricing basis.** Rates and prices come only from Doug's price list in the facts. There is none yet. The $30/month DocketBot and ClientCheck licenses are retail prices for one user. Never use them as a bid price, and never multiply them out for a buyer's seat count.
 
 ## Staying inside the fact

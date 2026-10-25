@@ -1,13 +1,26 @@
 # Cadocary facts
 
-The facts about Cadocary LLC that the agents may use. Nothing about Cadocary may be claimed unless it is here. Our code writes this file into the memory store, and the agents only read it. It holds the registration details from the team's sourcing profile, what cadocary.com said when the team read it on October 25, 2026, and Doug's preferences.
+As of October 25, 2026.
+
+The facts about Cadocary LLC that the agents may use. Nothing about Cadocary may be claimed unless it is here or in `private.md` beside it. Our code writes both files into the memory store, and the agents only read them.
+
+Facts change. To update one, edit this file (or `private.md`), change the date above, and rerun `agent/setup.py`. New sessions get the new facts; running sessions keep the ones they started with.
+
+Sources:
+
+- **Site:** cadocary.com, read October 25, 2026. The source is the exact page URL.
+- **Capability statement:** Doug's one-page PDF, "Cadocary LLC.pdf", cited by page. It is not in the repo because it holds personal contact details.
+- **Registration:** the team's sourcing profile, from Cadocary's SAM.gov registration.
+- **Doug:** what he told the team.
 
 Each fact has:
 
 - an id, which the qualifier and drafter cite
 - the fact. Words in quotation marks are copied exactly from the source.
-- a source: a document, Doug, or the exact page URL
+- its source
 - whether Doug has approved it
+
+`private.md` holds what must stay out of the public repo: prices, the street address, and the personal and client contact details. Agents get it in the same memory store when it exists.
 
 Until a fact is approved, the agents may use it for qualifying and research, but the drafter lists it for Doug's confirmation before relying on it. No fact is approved yet.
 
@@ -17,13 +30,15 @@ No single set of facts fits every RFP. Which past work, references, staff, and c
 
 | id | fact | source | approved |
 | --- | --- | --- | --- |
-| company.legal_name | Cadocary LLC | SAM.gov registration (team sourcing profile) | no |
-| company.location | Richland, Washington 99352 | SAM.gov registration (team sourcing profile) | no |
-| company.website | cadocary.com | Doug | no |
-| company.uei | KMG3ZA6PAPK3 | SAM.gov registration (team sourcing profile) | no |
-| company.cage_code | 230S6 | SAM.gov registration (team sourcing profile) | no |
-| company.naics | 511210, 518210, 541511, 541519 | SAM.gov registration (team sourcing profile) | no |
-| company.psc | 7A20, DA10, D302, D308, DA01 | SAM.gov registration (team sourcing profile) | no |
+| company.legal_name | Cadocary LLC | Registration; capability statement, page 1 | no |
+| company.location | Richland, Washington 99352. The street address is in `private.md`. | Registration; capability statement, page 1 | no |
+| company.website | cadocary.com | Doug; capability statement, page 1 | no |
+| company.uei | KMG3ZA6PAPK3 | Registration; capability statement, page 1 | no |
+| company.cage_code | 230S6 | Registration; capability statement, page 1 | no |
+| company.naics | 511210, 518210, 541511, 541519 | Registration; capability statement, page 1 | no |
+| company.psc | 7A20, DA10, D302, D308, DA01 | Registration; capability statement, page 1 | no |
+| company.about | "Cadocary LLC is a software development and technology company providing custom software development, commercial software licensing, and cloud and on-premises computing infrastructure solutions. We deliver secure, scalable, and reliable technology solutions that support the operational and mission requirements of government and commercial clients." | Capability statement, page 1 | no |
+| company.point_of_contact | The capability statement names one point of contact and an office email. Both are in `private.md`. | Capability statement, page 1 | no |
 | company.brand | The website's name is Cadocary Software: "Cadocary Software is built by Cadocary LLC." | https://cadocary.com/contact/ | no |
 | company.email | mail@cadocary.com. "The best way to reach us is by email." | https://cadocary.com/contact/ | no |
 | company.description | "Cadocary is a software design and implementation consultancy. We take your product from design through to a shipped, working implementation." | https://cadocary.com/services/ | no |
@@ -36,20 +51,21 @@ No single set of facts fits every RFP. Which past work, references, staff, and c
 
 ## Capabilities
 
-Listed on the registration (team sourcing profile), not yet approved:
+| id | fact | source | approved |
+| --- | --- | --- | --- |
+| company.capabilities | Core capabilities: Custom Software Development; Commercial Software Licensing & Publishing; SaaS Solutions; Cloud Computing & Data Storage; Web Hosting & Data Processing; Application Development & Hosting; Systems Integration; API Development; Database Management; IT Infrastructure Solutions; Software Maintenance & Support; Technology Consulting & Digital Transformation | Capability statement, page 1; the registration lists the same | no |
 
-- custom software development
-- commercial software licensing and publishing
-- software as a service
-- cloud computing and data storage
-- web hosting and data processing
-- application development and hosting
-- systems integration
-- API development
-- database management
-- IT infrastructure
-- software maintenance and support
-- technology consulting
+## Why choose us
+
+Doug's own claims, from the capability statement. They describe the products' design. Use them only where the facts above back them up for this bid.
+
+| id | fact | source | approved |
+| --- | --- | --- | --- |
+| why.security_first | "Security-First Design: Software operates locally without storing user credentials, helping organizations maintain control over sensitive information." | Capability statement, page 1 | no |
+| why.workflow_centered | "Workflow-Centered Solutions: Applications are designed to integrate with existing business processes, minimizing disruption and reducing training requirements." | Capability statement, page 1 | no |
+| why.rapid_deployment | "Rapid Deployment: Easy-to-deploy solutions enable organizations to implement software quickly with minimal setup." | Capability statement, page 1 | no |
+| why.scalable_subscription | "Scalable Subscription Solutions: Flexible software licensing options support organizations of varying sizes and evolving operational needs." | Capability statement, page 1 | no |
+| why.purpose_built | "Purpose-Built Software: Custom-developed solutions designed to solve real-world operational challenges through practical, user-focused functionality." | Capability statement, page 1 | no |
 
 ## Products
 
@@ -115,15 +131,16 @@ SpendLogic, Hotels4Truckers, and PURLPal are not Cadocary products. They are the
 | --- | --- | --- | --- |
 | work.overview | "A selection of the contract software Cadocary has designed and built for enterprise clients — end-to-end engagements delivered as a design and implementation partner, from first spec to a shipped, working product." | https://cadocary.com/work/ | no |
 
-Each case study says: "Cadocary served as the software design and implementation consultancy for this engagement". Results on these pages are reported by the client, and the pages say so.
+Each case study says: "Cadocary served as the software design and implementation consultancy for this engagement". Results on these pages are reported by the client, and the pages say so. The capability statement lists all three as past performance, with Cadocary as prime contractor.
 
-The site gives no dates, contract values, team size, or client contact for any of them.
+Neither source gives dates, contract values, or team size for any of them. The capability statement names a contact at each client; those are in `private.md`, and none has agreed to be a reference.
 
 ### SpendLogic
 
 | id | fact | source | approved |
 | --- | --- | --- | --- |
 | work.spendlogic.client | Client: SpendLogic (spendlogic.com). Cadocary was the software design and implementation consultancy. | https://cadocary.com/work/spendlogic/ | no |
+| work.spendlogic.past_performance | SpendLogic.com, with Cadocary as "Prime Contractor". Scope: "Developed a procurement compliance documentation templating engine that streamlines the creation of standardized procurement documents, improving consistency, accuracy, and workflow efficiency." | Capability statement, page 1 | no |
 | work.spendlogic.scope | "Cadocary designed and implemented an end-to-end procurement-compliance documentation templating engine for SpendLogic, guiding federal contractors through the CPSR documentation that keeps their purchasing systems audit-ready." | https://cadocary.com/work/spendlogic/ | no |
 | work.spendlogic.problem | "Federal contractors and agencies live under the Contractor Purchasing System Review (CPSR) — a high-stakes audit of how they document and justify their purchasing decisions." | https://cadocary.com/work/spendlogic/ | no |
 | work.spendlogic.approach | "Cadocary started inside the compliance workflow rather than the code." From that model it designed a guided templating engine: "buyers answer structured prompts and the system produces standardized, policy-aligned documentation every time." | https://cadocary.com/work/spendlogic/ | no |
@@ -136,6 +153,7 @@ The site gives no dates, contract values, team size, or client contact for any o
 | id | fact | source | approved |
 | --- | --- | --- | --- |
 | work.hotels4truckers.client | Client: Hotels4Truckers (hotels4truckers.com). Cadocary was the software design and implementation consultancy. | https://cadocary.com/work/hotels4truckers/ | no |
+| work.hotels4truckers.past_performance | Hotels4Truckers.com, with Cadocary as "Prime Contractor". Scope: "Developed a web and mobile booking platform that enables truck drivers to search for and book hotels with truck-friendly parking, delivering a streamlined reservation experience across web and mobile devices." | Capability statement, page 1 | no |
 | work.hotels4truckers.scope | "Cadocary designed and implemented an end-to-end booking platform for Hotels4Truckers across web and native iOS and Android apps, helping truckers find and book hotels with real tractor-trailer parking at member rates." | https://cadocary.com/work/hotels4truckers/ | no |
 | work.hotels4truckers.problem | "A tractor-trailer needs up to 75 feet of parking." General hotel booking sites gave drivers "no reliable way to filter for hotels that could actually accommodate them." | https://cadocary.com/work/hotels4truckers/ | no |
 | work.hotels4truckers.approach | "Cadocary treated the core asset as data: a trucker-friendly hotel database built from scratch, capturing which properties can genuinely handle large-vehicle parking rather than trusting generic listings." Around it, "one experience delivered on the web and on native mobile". | https://cadocary.com/work/hotels4truckers/ | no |
@@ -147,6 +165,7 @@ The site gives no dates, contract values, team size, or client contact for any o
 | id | fact | source | approved |
 | --- | --- | --- | --- |
 | work.purlpal.client | Client: PURLPal (purlpal.ai). Cadocary was the software design and implementation consultancy. | https://cadocary.com/work/purlpal/ | no |
+| work.purlpal.past_performance | PurlPal.ai, with Cadocary as "Prime Contractor". Scope: "Developed a Retrieval-Augmented Generation (RAG) chatbot for Medicare Advantage plans, incorporating web scraping capabilities to aggregate, process, and deliver accurate, context-aware information through an AI-powered conversational interface." | Capability statement, page 1 | no |
 | work.purlpal.scope | "Cadocary designed and implemented an end-to-end RAG-enabled chatbot for PURLPal that answers questions over Medicare Advantage plan data, kept current by a webscraping pipeline that ingests plan details as they change." | https://cadocary.com/work/purlpal/ | no |
 | work.purlpal.problem | Medicare Advantage has "thousands of plans", changing yearly. "A general chatbot can't be trusted here — it either doesn't know the specifics or invents them." | https://cadocary.com/work/purlpal/ | no |
 | work.purlpal.approach | "rather than letting a model answer from memory, the assistant retrieves the relevant Medicare Advantage plan data first and generates its answer strictly from that grounded context." It is paired with "a webscraping and ingestion pipeline that continuously gathers plan information and keeps the knowledge base fresh." | https://cadocary.com/work/purlpal/ | no |
@@ -164,7 +183,7 @@ The site gives no dates, contract values, team size, or client contact for any o
 
 ## Team
 
-The website names no people: no owner, staff, roles, or headcount. Treat staff as unknown.
+The website names no people. The capability statement names only the point of contact (in `private.md`). Neither gives staff, roles, resumes, or headcount, so treat staff as unknown.
 
 ## Doug's preferences
 
@@ -186,10 +205,10 @@ Treat each of these as unknown. Never guess any of them.
 - CJIS readiness, background checks, and where hosted work would run
 - set-aside eligibility
 - past government contracts, their buyers, dates, and values
-- dates, values, and permission to name the client for the SpendLogic, Hotels4Truckers, and PURLPal work
+- dates, values, and permission to name the client for the SpendLogic, Hotels4Truckers, and PURLPal work. The client contacts in `private.md` are not references until they agree.
 - how many offices or attorneys use DocketBot and ClientCheck, and which ones may be named
 - references and their permission to be named
 - staff, roles, and resumes, and who may sign bids
-- years in business and street address
+- years in business
 - prices and rates. The only prices on the site are the $30/month DocketBot and ClientCheck licenses, which are not a bid price list.
 - registrations other than SAM.gov, such as WEBS, Public Purchase, and the Washington business license
