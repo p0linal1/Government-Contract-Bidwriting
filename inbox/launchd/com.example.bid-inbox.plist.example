@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  launchd agent for the bid inbox poller (preferred over cron on macOS: runs in the user session,
+  so the keychain is available without prompts, and it catches up after sleep).
+
+  Install:
+    sed "s|/Users/YOU|$HOME|g" inbox/launchd/com.example.bid-inbox.plist.example \
+        > ~/Library/LaunchAgents/com.example.bid-inbox.plist
+    launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.example.bid-inbox.plist
+  Check:   launchctl print gui/$(id -u)/com.example.bid-inbox | head -20
+  Run now: launchctl kickstart -k gui/$(id -u)/com.example.bid-inbox
+  Remove:  launchctl bootout gui/$(id -u)/com.example.bid-inbox
+
+  StartInterval 1800 = every 30 minutes. Logs go to inbox/logs/ (the script appends per month);
+  launchd's own stdout/stderr go to inbox/logs/launchd.log.
+-->
+<plist version="1.0">
+<dict>
+  <key>Label</key><string>com.example.bid-inbox</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>/bin/bash</string>
+    <string>/Users/YOU/bid-writing/bin/bid-inbox.sh</string>
+  </array>
+  <key>WorkingDirectory</key><string>/Users/YOU/bid-writing</string>
+  <key>StartInterval</key><integer>1800</integer>
+  <key>RunAtLoad</key><true/>
+  <key>StandardOutPath</key><string>/Users/YOU/bid-writing/inbox/logs/launchd.log</string>
+  <key>StandardErrorPath</key><string>/Users/YOU/bid-writing/inbox/logs/launchd.log</string>
+  <key>EnvironmentVariables</key>
+  <dict>
+    <key>PATH</key><string>/usr/local/bin:/opt/homebrew/bin:/usr/bin:/bin</string>
+  </dict>
+</dict>
+</plist>

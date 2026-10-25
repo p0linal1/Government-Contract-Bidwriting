@@ -1,0 +1,52 @@
+{
+  "_comment": "bidkit config for this opportunity. Filled by bin/new-opportunity.sh or bidkit.inbox; edit the format/workbooks/forms sections once the RFP is read. Paths are relative to this folder. Keys starting with _ are ignored. Full field reference: bidkit/examples/opportunity.example.json.",
+
+  "id": "{{ID}}",
+  "agency": "{{AGENCY}}",
+  "title": "{{TITLE}}",
+  "solicitation_number": "{{NUMBER}}",
+  "source": {"type": "{{SOURCE_TYPE}}", "received": "{{RECEIVED}}", "from": "{{FROM}}", "message_id": "{{MESSAGE_ID}}"},
+  "agency_source": "{{AGENCY_SOURCE}}",
+  "due": {"date": "{{DUE_DATE}}", "time": "", "timezone": "America/Los_Angeles", "confirmed": false, "source": "{{DUE_SOURCE}}"},
+  "submission_name_prefix": "YourCo",
+
+  "format": {
+    "_comment": "COPY the RFP's format rules here once read. Defaults below are common but NOT authoritative.",
+    "font_family_allow": ["Arial"],
+    "min_font_pt": 10,
+    "body_font_pt": 11,
+    "margin_in": 1.0,
+    "page_size": "letter",
+    "page_limit": null,
+    "numbered_from_heading": null,
+    "exclude_numbering_headings": ["Cover Letter", "Resumes"],
+    "header_footer_band_pt": 40
+  },
+
+  "fonts": {
+    "regular": "/System/Library/Fonts/Supplemental/Arial.ttf",
+    "bold": "/System/Library/Fonts/Supplemental/Arial Bold.ttf",
+    "italic": "/System/Library/Fonts/Supplemental/Arial Italic.ttf",
+    "bold_italic": "/System/Library/Fonts/Supplemental/Arial Bold Italic.ttf"
+  },
+
+  "workbooks": {},
+  "forms": {},
+
+  "signer": {
+    "printed": "Pat Principal, Principal",
+    "company": "YourCo LLC",
+    "typed_signature": "Pat Principal",
+    "signature_image": "../../company/principal-signature.png",
+    "date": ""
+  },
+
+  "redact": {"domain": "example.com", "keep_contact_for": ["Pat Principal"]},
+
+  "folders": {
+    "extract": "deliverables/bid/extract",
+    "draft": "deliverables/bid/workbooks-draft",
+    "final": "deliverables/bid/final",
+    "submit": "SUBMIT"
+  }
+}

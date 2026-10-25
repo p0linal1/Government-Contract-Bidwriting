@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  launchd agent for the FGA sourcing search (bin/bid-source.sh): weekdays at 07:15, once a day.
+  Runs in the user session so the desktop notification works and ~/.config/bidkit is readable.
+  Install:
+    sed "s|/Users/YOU|$HOME|g" inbox/launchd/com.example.bid-source.plist.example \
+        > ~/Library/LaunchAgents/com.example.bid-source.plist
+    launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.example.bid-source.plist
+  Check:   launchctl print gui/$(id -u)/com.example.bid-source | head -20
+  Run now: launchctl kickstart -k gui/$(id -u)/com.example.bid-source
+  Remove:  launchctl bootout gui/$(id -u)/com.example.bid-source
+  Prerequisite (once): FGA tokens in ~/.config/bidkit/fga-tokens.json —
+    cd bidkit && python3 -m bidkit.fga --portals ../inbox/portals.json login --from-browser
+  Output: opportunities/sourcing/fga/report-<date>.md; log inbox/logs/source-YYYY-MM.log.
+-->
+<plist version="1.0">
+<dict>
+  <key>Label</key><string>com.example.bid-source</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>/bin/bash</string>
+    <string>/Users/YOU/bid-writing/bin/bid-source.sh</string>
+  </array>
+  <key>WorkingDirectory</key><string>/Users/YOU/bid-writing</string>
+  <key>StartCalendarInterval</key>
+  <array>
+    <dict><key>Weekday</key><integer>1</integer><key>Hour</key><integer>7</integer><key>Minute</key><integer>15</integer></dict>
+    <dict><key>Weekday</key><integer>2</integer><key>Hour</key><integer>7</integer><key>Minute</key><integer>15</integer></dict>
+    <dict><key>Weekday</key><integer>3</integer><key>Hour</key><integer>7</integer><key>Minute</key><integer>15</integer></dict>
+    <dict><key>Weekday</key><integer>4</integer><key>Hour</key><integer>7</integer><key>Minute</key><integer>15</integer></dict>
+    <dict><key>Weekday</key><integer>5</integer><key>Hour</key><integer>7</integer><key>Minute</key><integer>15</integer></dict>
+  </array>
+  <key>RunAtLoad</key><false/>
+  <key>StandardOutPath</key><string>/Users/YOU/bid-writing/inbox/logs/launchd-source.log</string>
+  <key>StandardErrorPath</key><string>/Users/YOU/bid-writing/inbox/logs/launchd-source.log</string>
+  <key>EnvironmentVariables</key>
+  <dict>
+    <key>PATH</key><string>/usr/local/bin:/opt/homebrew/bin:/usr/bin:/bin</string>
+  </dict>
+</dict>
+</plist>

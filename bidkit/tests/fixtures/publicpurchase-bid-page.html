@@ -1,0 +1,760 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd"> 
+<html>
+	<head>
+	<title>Public Purchase: Bid RFP #26-013 - RFP 26-013 BIPIN RMS and JMS/CMS Software Replacement</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta name="template" content="gems/en/bid/bidView.html">
+	<link href="/gems/20200501/styles/purchasestyles.css" rel="stylesheet" type="text/css">
+	<!--[if IE 6]> <link href="/gems/20200501/styles/purchaseStylesIE6.css" rel="stylesheet" type="text/css"> <![endif]-->
+	<!--[if IE 7]> <link href="/gems/20200501/styles/purchaseStylesIE7.css" rel="stylesheet" type="text/css"> <![endif]-->
+	<link rel="icon" href="/gems/20200501/images/pp_favicon.ico">
+	
+	<script type="text/javascript">
+	onerror = function(msg,url,l){
+		var txt="_s=b73ed217151515791b9fea9c09386597&_r=img";
+		txt+="&Msg="+escape(msg);
+		txt+="&URL="+escape(url);
+		txt+="&Line="+l;
+		txt+="&Platform="+escape(navigator.platform);
+		txt+="&UserAgent="+escape(navigator.userAgent);
+		var i = document.createElement("img");
+		i.setAttribute("src", (("https:" == document.location.protocol) ? "https://errorstack.appspot.com" : "http://www.errorstack.com") + "/submit?" + txt);
+		document.body.appendChild(i);
+	}
+	</script>
+
+	
+	<script type="text/javascript" src="/gems/20200501/js/scriptaculous-js-1.8.0/lib/prototype.js"></script>
+	<script language="JavaScript" type="text/javascript" src="/gems/20200501/js/cookie.js"></script>
+	
+	<script type="text/javascript" src="/gems/20200501/js/event_notifier.js"></script>
+	<script language="javascript" type="text/javascript" src="/gems/20200501/js/gemsutils.js"></script>
+	
+	
+	<script type="text/javascript" src="/gems/20200501/js/scriptaculous-js-1.8.0/src/scriptaculous.js"></script>
+	<script type="text/javascript" src="/gems/20200501/js/balloontip.js"></script>
+
+	<link href="/gems/20200501/styles/modal.css" rel="stylesheet" type="text/css" />
+	<link rel="stylesheet" type="text/css" href="/gems/20200501/styles/balloontip.css"/>
+	
+	
+
+	
+	 	<style type="text/css">
+	 
+	@media print {
+		thead { display: table-row; }
+	}
+
+	 	</style>
+	 
+
+	<script type="text/javascript">
+		function Auction_PopupWindow(thispage, name, params) {
+		if (name == null) { name = "pop"; }
+		thiswindow = window.open(thispage,'psw_'+name,params);
+	}
+		function loggingOut() {
+ if (confirm('Are you sure you want to logout?')) {
+   self.location.href="/gems/kennewick,wa/login/logout";
+ }
+}
+		function loggingIn() {
+  var currLoc;
+  if (self.location.pathname && self.location.pathname.indexOf("/login/") < 0 && self.location.pathname.indexOf("browse/home") < 0 && self.location.pathname.indexOf("global/home/home") < 0 && self.location.pathname.indexOf("/about/") < 0 && self.location.pathname.indexOf("/register/") < 0) {
+    currLoc = "?&dst=" + escape(self.location.pathname.substring("/gems".length) + self.location.search);
+  }
+  else {
+    currLoc = "";
+  }
+  self.location.href="/gems/kennewick,wa/login/login" + currLoc;
+}
+		
+function submitInModal(theForm, obl) {
+	var params = $(theForm).serialize(true);
+	params['posting'] = 'Y';
+	
+	new Ajax.Updater({success : "nested_"+obl}, theForm.action, 
+					 {onFailure: function(){alert('Error contacting server');},
+					  parameters: params, 
+					  method: 'get',
+					  evalScripts: true
+					 });
+	return false;	
+}
+
+function Auction_PopupWindow(thispage, name, params) {
+		if (name == null) { name = "pop"; }
+		thiswindow = window.open(thispage,'psw_'+name,params);
+	}
+function saveCreateContract(bidId){
+		var contractNumber=$("contractNumber").value;
+		var url = SMS.url+'bid/createContract';
+
+
+		$("saveCreateContract").hide();
+		$("closeCreateContractModal").hide();
+		$("contractNumberSection").hide();
+		$("saveCreateContractAjaxLoader").show();
+
+
+
+		new Ajax.Request(url, {
+			parameters : {bidId : bidId, contractNumber : contractNumber},
+			onSuccess: 	function(transport) {
+
+				var json = transport.responseText.evalJSON();
+				if(json.response.statusCode == "found") {
+
+					$('newContractId').value=json.contractId;
+					$("saveCreateContractAjaxLoader").hide();
+					$("creationSuccessfulSection").show();
+
+					if(json.isMainContactNotAvailable)
+						$('mainContactNotAvailable').show();
+				} else {
+					var ul = document.getElementById("createContractErrorFields");
+					var li = document.createElement("li");
+
+					if(json.errors){
+						for	(index = 0; index < json.errors.length; index++) {
+							li = document.createElement("li");
+						    li.appendChild(document.createTextNode(json.errors[index].message));
+						    ul.appendChild(li);
+						}
+					}else if(json.response.statusCode == "invalidPermission"){
+					    li.appendChild(document.createTextNode('The user has no permission to create a contract'));
+					    ul.appendChild(li);
+					}else if(json.response.statusCode == "invalidBid"){
+						li.appendChild(document.createTextNode('Invalid bid'));
+						ul.appendChild(li);
+					}else if(json.response.statusCode == "finalizedCoopBid"){
+						li.appendChild(document.createTextNode('Unable to generate a contract for a finalized cooperative bid'));
+						ul.appendChild(li);
+					}else{
+						li.appendChild(document.createTextNode('Error creating the contract'));
+						ul.appendChild(li);
+					}
+					$("saveCreateContractAjaxLoader").hide();
+					$("creationErrorSection").show();
+				}
+				return false;
+			}
+		});
+	}	
+	
+	function openNewContract(){
+		var contractId=$('newContractId').value;
+		hm('createContractModal');
+		Auction_PopupWindow(SMS.contract_view+'?contractId='+contractId,'contractView','width=850,height=550,scrollbars=yes,resizable=yes');
+	}
+	var SMS = { 
+		url: '/gems/kennewick,wa/',
+		web: '/gems/20200501/',
+		contract_view:'https://www.publicpurchase.com/contract/kennewick,wa/contract/viewForm' 
+	};
+	
+	function onLoad() {
+		checkImages();
+	}
+
+	function ajaxCheckImage(elementHtml) {
+		new Ajax.Request(elementHtml.src, {
+			method: "get",
+			onComplete: function(response) {
+				if (404 == response.status) {
+				  	elementHtml.src = '/gems/20200501/images/filetypes/ico_generic.gif';
+			    }
+		  	}
+		});
+	}
+	
+	function checkImages() {
+		var checkImagesList = $$('.checkImages');
+		checkImagesList.forEach(function(elementHtml) {
+			ajaxCheckImage(elementHtml);
+		});
+	}	
+
+<!--
+	
+	
+	
+	
+	function downloadFile() 
+	{	
+		$('iframedownloadfile').src =  '/gems/vendoritem/downloadResponseFile?bidid=214432';
+	}
+	
+	function coopQtyDetails(sectionId) {
+		sm('coopQtyDetails_modal', 600, 400)
+		$("coopItemReport_modalDiv").innerHTML = '<img align="top" height="30" src="/gems/20200501/images/ajax-loader.gif" alt="Working..."/>';
+		new Ajax.Updater("coopItemReport_modalDiv", "/gems/kennewick,wa/bid/coop/responsesReport", {
+			method: 'get',
+			parameters: {"sectionId": sectionId, "bidId":214432}
+		});
+	}
+	
+	function fullNote (anchor, action) {
+		var noteId = $(anchor).readAttribute("data-noteid");
+		$("note_"+noteId+"_textBox")[action]();
+	}
+	
+
+	
+	
+//-->
+
+
+		
+   	function acceptCookies() 
+	{
+		var aYearFromNow = new Date();
+		aYearFromNow.setFullYear(aYearFromNow.getFullYear() + 1);
+		
+		$('cookiesAcceptedDiv').hide();
+		setCookie("cookiesAccepted_3", "Y", aYearFromNow, '/');
+	}
+	</script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-FGC584B0CX"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-FGC584B0CX');
+</script>
+
+</head>
+	<body >
+	<div style="display: none;" id="cookiesAcceptedDiv">
+    <div class="message-container">
+        <h2>This website uses cookies to ensure you get the best experience on our website. Please accept cookies for optimal performance.</h2>
+    </div>
+    <div class="container-button">
+        <button type="button" class="submit" onclick="acceptCookies();">Yes, I Accept Cookies</button>
+        <a href="javascript:Auction_PopupWindow('/gems/kennewick,wa/help/agency/privacy_policy.html','onlineHelp','width=540,height=400,scrollbars=yes,resizable=yes');">&nbsp; [Public Purchase Privacy Policy]</a>
+        <a href="javascript:Auction_PopupWindow('/gems/kennewick,wa/help/public/info_cookies.html','onlineHelp','width=540,height=400,scrollbars=yes,resizable=yes');">&nbsp; [How to manage the cookies]</a>
+    </div>
+</div>
+	<!-- Start Header & Main NavBars  -->
+	  <!-- GEMS -->
+
+	
+	<div class="header">
+	<script type="text/javascript">
+		//
+		var navfuncs = {
+		 	selectApp : function(sapp) {
+		 	    if (sapp == 'gems') {
+		   			document.location.href = "http://www.publicpurchase.com" + "/gems/browse/home";
+		   		}
+		 	  	if (sapp == 'con') {
+		  			document.location.href = "http://www.publicpurchase.com" + "/contract/home/home";
+		  		} 
+				if (sapp == 'req') {
+		  			document.location.href = "http://" + "/gems/pr/home/dash";
+		  		} 
+		  		if (sapp == 'vendor') {
+		  			document.location.href = "http://www.publicpurchase.com" + "/vendor/agency/home";
+		  		}
+		  		if (sapp == 'cat') {
+		  			document.location.href = "http://" + "/gems/cat/home/dash";
+		  		}
+		  		if (sapp == 'portal') {
+		  			document.location.href = "http://www.publicpurchase.com" + "/portal/view/home";
+		  		}
+		  		if (sapp == 'surplus') {
+		  			document.location.href = "http://www.publicsurplus.com" + "/sms/browse/home";
+		  		}
+		 	}
+		 }
+	 </script>
+		 <div class="logo">
+		       <a href="javascript:navfuncs.selectApp('gems');"><img style="width: 249px" src="/gems/20200501/images/logoP2.svg" title="Public Purchase Logo" alt="Public Purchase Logo" border="0"/></a>
+	     </div>
+			
+		 </div>
+		 <div class="small header-change-theme" style="text-align: right; padding-right: 8px">
+		<script type="text/javascript">
+			var themes = {
+				changeTheme : function(input){
+					if($(input).getValue() != "") {
+						new Ajax.Request('/gems/kennewick,wa/login/changeTheme?theme=' + $(input).getValue(), {
+							method: 'post',
+							onSuccess: function (transport) {
+								location.reload(true);
+							}
+						});
+					}
+				}
+			}
+		</script>
+		<label for="themeSelector" style="display: initial;">Theme</label>
+		<select onchange="themes.changeTheme(this)" id="themeSelector" class="theme-selector">
+						<option  value="gems">Classic</option>
+						<option  value="gemsV2">Responsive</option>
+		</select>
+		 </div>
+
+<div class="navbar">  
+	<div class="bartop"></div>
+	  	<div class="navleft">
+	  	   <a class="noborder" href="javascript:Auction_PopupWindow('/gems/kennewick,wa/help/onlineHelp.html','onlineHelp','width=540,height=400,scrollbars=yes,resizable=yes');">Chat <img src="/gems/20200501/images/comments.png" width="12" height="12" alt="Live Chat" title="Live Chat" style="padding-left:0px;margin:0px 0px -2px 0px;"/></a><a href="javascript:Auction_PopupWindow('/gems/help/mainhelp.html?frame1=vendor/info.html&amp;frame2=vendor/info_check.html','Help','width=800,height=600,scrollbars=yes,resizable=yes');">Help</a><a href="javascript:loggingOut();">Logout</a>
+		</div>
+		<div class="navright">
+			<a style="border-left: 0;"  href="/gems/vendor/home/home" target="_top">Home</a>
+			
+					<a  href="/gems/kennewick,wa/browse/search" target="_top">Search</a>
+				<a  href="/gems/kennewick,wa/browse/market" target="_top">Browse</a>
+
+			<a  href="/gems/mys/vendoruserinfo?tm=m" target="_top">My Stuff</a><a  href="/gems/vendor/admin/info?tm=m" target="_top">Tools</a>
+		</div>
+	<div class="barbot"></div>
+</div>
+	<!-- End Header & Main NavBars  -->
+	
+		 <div class="mainleftside">
+		 	 
+		   			<div class="cobrandlogo">	<div style="height:180px;">
+			   	<a href="http://www.go2kennewick.com ">
+		  <img src="/gems/docviewer/logo/50710/13720344" border="0" title="City of Kennewick" />
+		    </a>
+    </div></div>
+		  		
+			<div class="leftcontent">
+		  		
+		<div style="padding: 5px 0px; border-bottom: 1px solid #ECEFE0; margin: 0px 5px;">
+			<div><b>1. </b></div>
+			
+			<div>Addendum 1 first set of questions and answers, pre-bid attendance sheet, correction to A.1 worksheet, change of City contact.</div>
+			<div><i>Jul 31, 2026 3:46:57 PM PDT</i></div>
+			<div style="padding: 3px 0px;">
+					<a href="/gems/kennewick,wa/bid/onlineTrackChanges?bidId=214432&outlineId=585161&addendumNumber=1"><img src="/gems/20200501/images/trackChanges.png" style="vertical-align: middle; padding: 1px 0px;" border="0"> [Track Changes]</a><br/>
+			</div>
+		</div>
+		<br/>
+
+		  	</div>
+		 </div>
+	
+		<div class="mainrightside">
+			 
+	
+			 <div class="subNavHead">
+Bid RFP #26-013 - RFP 26-013 BIPIN RMS and JMS/CMS Software Replacement
+</div>
+			 
+			 <div>
+				
+			</div>
+	
+			<div class="rightcontent">
+				
+	<div>
+		<table align="center" border="0" cellpadding="0" cellspacing="0" class="bidinfo">
+  			<tr>
+  				<!-- LEFT INFO -->
+   				<td width="69%" valign="top">
+
+<table width="99%" border="0" class="bidinfoL" cellpadding="0"	cellspacing="2">
+	<tr>
+		<td style="width: 130px;" class="bidinfotitle">Bid Type</td>
+		<td class="bidinfobold">RFP</td>
+	</tr>
+	<tr>
+		<td class="bidinfotitle">Bid Number</td>
+		<td class="bidinfobold">26-013</td>
+	</tr>
+	<tr>
+		<td class="bidinfotitle">Title</td>
+		<td class="bidinfobold">RFP 26-013 BIPIN RMS and JMS/CMS Software Replacement</td>
+	</tr>
+	
+	
+		<tr>
+			<td class="bidinfotitle">Start Date</td>
+			<td class="bidinfobold">Jul 17, 2026 4:42:58 PM PDT</td>
+		</tr>
+		<tr>
+			<td class="bidinfotitle">End Date</td>
+			<td class="bidinfobold">Sep 10, 2026 3:00:00 PM PDT</td>
+		</tr>
+	
+	
+	<tr>
+		<td class="bidinfotitle">Agency</td>
+		<td class="bidinfobold">City of Kennewick</td>
+	</tr>
+	
+	<tr>
+		<td class="bidinfotitle"  valign="top">Bid Contact</td>
+		<td class="bidinfobold">
+			<div>Pat Buyer</div>
+			<div class="bidinfonb">
+                       <div>555-010-0199</div>
+					<div>purchasing@agency.example</div>
+				        <div>PO Box 6108</div>
+				        <div>210 W 6th Ave</div>
+			    	<div>
+				      Kennewick,
+				      WA
+				        &nbsp;99336
+				    </div>
+			</div>
+		</td>
+	</tr>
+</table>	
+   				</td>
+   				
+			   <!-- RIGHT INFO -->
+			   	<td width="30%" class="bidinfoR" style="padding:0px;">
+					<table width="100%" border="0" cellspacing="0" cellpadding="0">
+					 <thead>
+					  <tr><th>&nbsp;</th></tr>
+					 </thead>
+					 
+	       					<tr>
+						        <td>
+						        	<div style="margin:5px 10px;">
+						          		<div class="infoHead">Questions</div>
+							           		<div>0 Questions</div>
+							            	
+								           	
+								            
+		           						<a href="/gems/kennewick,wa/bid/questions/questionsBid?bidId=214432" >[View/Ask Questions]</a>
+		        					</div>
+		        				</td>
+	       					</tr>
+	       					
+										
+						
+		
+   					</table>
+   				</td>
+  			</tr>
+ 		</table>
+ 		
+ 		
+			<div class="bidInfoSection" style="margin: 15px 0px;">
+				<div class="bidInfoSectionTitle">Description</div>
+				<div style="padding: 0px 0px 5px 10px;">
+					The City of Kennewick will receive proposals for RFP 26-013 "BIPIN RMS and JMS/CMS Software Replacement" until September 10, 2026 at 3:00 P.M.<br /><br />The Bi-County Police Information Network (BIPIN) is seeking proposals from qualified contractors to establish a contract through competitive negotiation for a Public Safety Records and Jail Management System for the BIPIN Consortium of various law enforcement agencies in Benton and Franklin Counties, Washington.<br />
+<p>The BIPIN Executive Committee is currently seeking to replace the current Records Management and Corrections Management (RMS/CMS/Mobile) solution implemented in April 2022 after a conversion from Intergraph I/Leads to Tyler Public Safety. Qualified Contractors with a history of successfully&nbsp;delivering a proven, turnkey public safety records and jail management systems for all the BIPIN partners are encouraged to respond. The expectation is that the Contractor will furnish, provide, deliver, install, configure, implement (including multiple sources of data migration), service, and maintain a multijurisdictional System as described in the RFP.<br /><br /><em>A pre-proposal meeting was held through Microsoft Teams on July 27, 2026 at 11:00 A.M. Information and invitations was sent out to prospective contractors who emailed the main proposal point of contact for the City with the subject line: RFP 26-013 BIPIN Software Replacement Conference Meeting.<br /><br /></em>The City will post any addenda and bidder questions &amp; answers solely through Public Purchase. The City cannot guarantee receipt of all bidder documentation to outside third-party centers.<br /><br />Contact Public Purchase directly if unable to access documents online at support@publicpurchase.com. Online chat is available from 7:00 A.M. to 4:00 P.M. MT at www.publicpurchase.com top left corner.<br /><br />The City of Kennewick reserves the right to waive any informalities or to reject any or all bids.<br /><br />For proposal submission, questions or additional information, please use the following contact:</p>
+<p>Pat Buyer<br />IT Manager<br />Email: purchasing@agency.example<br />Phone: 555-010-0199</p> 
+				</div>
+			</div>
+		
+		
+			<div class="bidInfoSection" style="margin: 15px 0px;">
+				<div class="bidInfoSectionTitle">Delivery Information</div>
+				<div style="padding:10px;">	
+					<p><span><span>Bids due no later than:&nbsp;September 10, 2026 at 3:00 P.M. (Pacific Time).<br /></span><br /><span>The preferred submission method for bids is electronic submission via email to purchasing@agency.example with a subject line that includes the words, &ldquo;Response to RFP 26-013 BIPIN RMS and JMS/CMS Software Replacement&rdquo;. Bids may be hand delivered to: City of Kennewick Purchasing Department, Finance Door A, Attn: Pat Buyer, 210 W 6th Ave. Kennewick, WA 99336. All transmittals must reference &ldquo;Response to RFP 26-013 BIPIN RMS and JMS/CMS Software Replacement".</span><br /></span></p>
+<p><span>Questions shall be accepted until August 20, 2026, 11:00 A.M.&nbsp;(Pacific Time). Questions received after this deadline may go unanswered. Please note there are three rounds of questions as well as a pre-proposal meeting. Responses will be posted to Public Purchase shortly after the due date.</span></p>
+				</div>
+			</div>
+		
+			<div class="bidInfoSection" style="margin: 15px 0px;">
+				<div class="bidInfoSectionTitle">Pre-Bid Conference</div>
+				<div style="padding:10px;">	
+					<table width="99%" border="0" class="bidinfoL" cellpadding="0"	cellspacing="2">
+						<tr>
+							<td width="105" class="bidinfotitle">Date</td>
+							<td class="bidinfobold"> &nbsp; Jul 27, 2026 11:00:00 AM PDT</td>
+						</tr>
+						<tr>
+							<td width="105" class="bidinfotitle">Location</td>
+							<td class="bidinfobold"> &nbsp; Microsoft Teams Meeting</td>
+						</tr>
+					</table>
+		    	</div>
+			</div>
+		
+
+		
+ 		<div class="bidInfoSection" style="margin: 15px 0px;">
+   			<div class="bidInfoSectionTitle">Documents</div>
+   			<div style="padding: 5px;">
+					<table class="itemsTable">
+						<col width="auto;"/>
+						<col width="150px;"/>
+						<col width="80px;"/>
+						<thead>
+							<tr>
+								<th>Name</th>
+								<th align="center">Acceptance Required</th>
+								<th>&nbsp;</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr class="listA">
+										<td>
+							    			&nbsp;<img class="checkImages" src="/gems/20200501/images/filetypes/ico_pdf.gif"/>
+							    			&nbsp;<a href="/gems/docviewer/bidDoc?ffd=true&amp;outlineId=585161&amp;docId=70984883&amp;sectionId=2480394&amp;orgId=50710">26-013 RFP - BIPIN RFP .pdf</a>
+							    			
+							    		</td>
+						    		<td align="center">
+					  						Yes
+						    		</td>
+									<td align="right" style="padding-right: 5px;">
+											<a href="/gems/docviewer/bidDoc?ffd=true&amp;outlineId=585161&amp;docId=70984883&amp;sectionId=2480394&amp;orgId=50710">[Download]</a>
+						    		</td>
+							</tr>
+							<tr class="listB">
+										<td>
+							    			&nbsp;<img class="checkImages" src="/gems/20200501/images/filetypes/ico_xlsx.gif"/>
+							    			&nbsp;<a href="/gems/docviewer/bidDoc?ffd=true&amp;outlineId=585161&amp;docId=70984885&amp;sectionId=2480398&amp;orgId=50710">A2 - Public Safety RMS Requirements Template.xlsx</a>
+							    			
+							    		</td>
+						    		<td align="center">
+					  						Yes
+						    		</td>
+									<td align="right" style="padding-right: 5px;">
+											<a href="/gems/docviewer/bidDoc?ffd=true&amp;outlineId=585161&amp;docId=70984885&amp;sectionId=2480398&amp;orgId=50710">[Download]</a>
+						    		</td>
+							</tr>
+							<tr class="listA">
+										<td>
+							    			&nbsp;<img class="checkImages" src="/gems/20200501/images/filetypes/ico_xlsx.gif"/>
+							    			&nbsp;<a href="/gems/docviewer/bidDoc?ffd=true&amp;outlineId=585161&amp;docId=70984886&amp;sectionId=2480399&amp;orgId=50710">A3 - Public Safety CMS Requirements Template.xlsx</a>
+							    			
+							    		</td>
+						    		<td align="center">
+					  						Yes
+						    		</td>
+									<td align="right" style="padding-right: 5px;">
+											<a href="/gems/docviewer/bidDoc?ffd=true&amp;outlineId=585161&amp;docId=70984886&amp;sectionId=2480399&amp;orgId=50710">[Download]</a>
+						    		</td>
+							</tr>
+							<tr class="listB">
+										<td>
+							    			&nbsp;<img class="checkImages" src="/gems/20200501/images/filetypes/ico_xlsx.gif"/>
+							    			&nbsp;<a href="/gems/docviewer/bidDoc?ffd=true&amp;outlineId=585161&amp;docId=70984887&amp;sectionId=2480400&amp;orgId=50710">A4 - Public Safety Compliance and Technology-Emerging Technology Requirements.xlsx</a>
+							    			
+							    		</td>
+						    		<td align="center">
+					  						Yes
+						    		</td>
+									<td align="right" style="padding-right: 5px;">
+											<a href="/gems/docviewer/bidDoc?ffd=true&amp;outlineId=585161&amp;docId=70984887&amp;sectionId=2480400&amp;orgId=50710">[Download]</a>
+						    		</td>
+							</tr>
+							<tr class="listA">
+										<td>
+							    			&nbsp;<img class="checkImages" src="/gems/20200501/images/filetypes/ico_xlsx.gif"/>
+							    			&nbsp;<a href="/gems/docviewer/bidDoc?ffd=true&amp;outlineId=585161&amp;docId=70984888&amp;sectionId=2480401&amp;orgId=50710">A5 - Vendor_Reference_Deployment_History_Workbook.xlsx</a>
+							    			
+							    		</td>
+						    		<td align="center">
+					  						Yes
+						    		</td>
+									<td align="right" style="padding-right: 5px;">
+											<a href="/gems/docviewer/bidDoc?ffd=true&amp;outlineId=585161&amp;docId=70984888&amp;sectionId=2480401&amp;orgId=50710">[Download]</a>
+						    		</td>
+							</tr>
+							<tr class="listB">
+										<td>
+							    			&nbsp;<img class="checkImages" src="/gems/20200501/images/filetypes/ico_xlsx.gif"/>
+							    			&nbsp;<a href="/gems/docviewer/bidDoc?ffd=true&amp;outlineId=585161&amp;docId=70984889&amp;sectionId=2480402&amp;orgId=50710">A6 -Requirements Tracker - Costs.xlsx</a>
+							    			
+							    		</td>
+						    		<td align="center">
+					  						Yes
+						    		</td>
+									<td align="right" style="padding-right: 5px;">
+											<a href="/gems/docviewer/bidDoc?ffd=true&amp;outlineId=585161&amp;docId=70984889&amp;sectionId=2480402&amp;orgId=50710">[Download]</a>
+						    		</td>
+							</tr>
+							<tr class="listA">
+										<td>
+							    			&nbsp;<img class="checkImages" src="/gems/20200501/images/filetypes/ico_pdf.gif"/>
+							    			&nbsp;<a href="/gems/docviewer/bidDoc?ffd=true&amp;outlineId=585161&amp;docId=70984890&amp;sectionId=2480403&amp;orgId=50710">A7- Certifications and Assurances Form.pdf</a>
+							    			
+							    		</td>
+						    		<td align="center">
+					  						Yes
+						    		</td>
+									<td align="right" style="padding-right: 5px;">
+											<a href="/gems/docviewer/bidDoc?ffd=true&amp;outlineId=585161&amp;docId=70984890&amp;sectionId=2480403&amp;orgId=50710">[Download]</a>
+						    		</td>
+							</tr>
+							<tr class="listB">
+										<td>
+							    			&nbsp;<img class="checkImages" src="/gems/20200501/images/filetypes/ico_pdf.gif"/>
+							    			&nbsp;<a href="/gems/docviewer/bidDoc?ffd=true&amp;outlineId=585161&amp;docId=70984891&amp;sectionId=2480404&amp;orgId=50710">A8 - BiPIN's Standard Terms and Conditions.pdf</a>
+							    			
+							    		</td>
+						    		<td align="center">
+					  						Yes
+						    		</td>
+									<td align="right" style="padding-right: 5px;">
+											<a href="/gems/docviewer/bidDoc?ffd=true&amp;outlineId=585161&amp;docId=70984891&amp;sectionId=2480404&amp;orgId=50710">[Download]</a>
+						    		</td>
+							</tr>
+							<tr class="listA">
+										<td>
+							    			&nbsp;<img class="checkImages" src="/gems/20200501/images/filetypes/ico_pdf.gif"/>
+							    			&nbsp;<a href="/gems/docviewer/bidDoc?ffd=true&amp;outlineId=585161&amp;docId=70984892&amp;sectionId=2480405&amp;orgId=50710">A9 -Goods and Services Agreement Rev 1.pdf</a>
+							    			
+							    		</td>
+						    		<td align="center">
+					  						Yes
+						    		</td>
+									<td align="right" style="padding-right: 5px;">
+											<a href="/gems/docviewer/bidDoc?ffd=true&amp;outlineId=585161&amp;docId=70984892&amp;sectionId=2480405&amp;orgId=50710">[Download]</a>
+						    		</td>
+							</tr>
+							<tr class="listB">
+										<td>
+							    			&nbsp;<img class="checkImages" src="/gems/20200501/images/filetypes/ico_pdf.gif"/>
+							    			&nbsp;<a href="/gems/docviewer/bidDoc?ffd=true&amp;outlineId=585161&amp;docId=70984893&amp;sectionId=2480406&amp;orgId=50710">A10  User Personas and Operational Roles.pdf</a>
+							    			
+							    		</td>
+						    		<td align="center">
+					  						No
+						    		</td>
+									<td align="right" style="padding-right: 5px;">
+											<a href="/gems/docviewer/bidDoc?ffd=true&amp;outlineId=585161&amp;docId=70984893&amp;sectionId=2480406&amp;orgId=50710">[Download]</a>
+						    		</td>
+							</tr>
+							<tr class="listA">
+										<td>
+							    			&nbsp;<img class="checkImages" src="/gems/20200501/images/filetypes/ico_pdf.gif"/>
+							    			&nbsp;<a href="/gems/docviewer/bidDoc?ffd=true&amp;outlineId=585161&amp;docId=70984895&amp;sectionId=2480407&amp;orgId=50710">A11 - Federal Funding.pdf</a>
+							    			
+							    		</td>
+						    		<td align="center">
+					  						Yes
+						    		</td>
+									<td align="right" style="padding-right: 5px;">
+											<a href="/gems/docviewer/bidDoc?ffd=true&amp;outlineId=585161&amp;docId=70984895&amp;sectionId=2480407&amp;orgId=50710">[Download]</a>
+						    		</td>
+							</tr>
+							<tr class="listB">
+										<td>
+							    			&nbsp;<img class="checkImages" src="/gems/20200501/images/filetypes/ico_xlsx.gif"/>
+							    			&nbsp;<a href="/gems/docviewer/bidDoc?ffd=true&amp;outlineId=585161&amp;docId=70984898&amp;sectionId=2480408&amp;orgId=50710">A12- Pre-Bid Question Clarification Request List.xlsx</a>
+							    			
+							    		</td>
+						    		<td align="center">
+					  						No
+						    		</td>
+									<td align="right" style="padding-right: 5px;">
+											<a href="/gems/docviewer/bidDoc?ffd=true&amp;outlineId=585161&amp;docId=70984898&amp;sectionId=2480408&amp;orgId=50710">[Download]</a>
+						    		</td>
+							</tr>
+							<tr class="listA">
+										<td>
+							    			&nbsp;<img class="checkImages" src="/gems/20200501/images/filetypes/ico_xlsx.gif"/>
+							    			&nbsp;<a href="/gems/docviewer/bidDoc?ffd=true&amp;outlineId=585161&amp;docId=71204910&amp;sectionId=2483244&amp;orgId=50710">A1 - Public Safety General System Requirements.xlsx</a>
+							    			
+							    		</td>
+						    		<td align="center">
+					  						Yes
+						    		</td>
+									<td align="right" style="padding-right: 5px;">
+											<a href="/gems/docviewer/bidDoc?ffd=true&amp;outlineId=585161&amp;docId=71204910&amp;sectionId=2483244&amp;orgId=50710">[Download]</a>
+						    		</td>
+							</tr>
+							<tr class="listB">
+										<td>
+							    			&nbsp;<img class="checkImages" src="/gems/20200501/images/filetypes/ico_xlsx.gif"/>
+							    			&nbsp;<a href="/gems/docviewer/bidDoc?ffd=true&amp;outlineId=585161&amp;docId=71204930&amp;sectionId=2483245&amp;orgId=50710">Addendum 1 Questions.xlsx</a>
+							    			
+							    		</td>
+						    		<td align="center">
+					  						Yes
+						    		</td>
+									<td align="right" style="padding-right: 5px;">
+											<a href="/gems/docviewer/bidDoc?ffd=true&amp;outlineId=585161&amp;docId=71204930&amp;sectionId=2483245&amp;orgId=50710">[Download]</a>
+						    		</td>
+							</tr>
+							<tr class="listA">
+										<td>
+							    			&nbsp;<img class="checkImages" src="/gems/20200501/images/filetypes/ico_pdf.gif"/>
+							    			&nbsp;<a href="/gems/docviewer/bidDoc?ffd=true&amp;outlineId=585161&amp;docId=71204970&amp;sectionId=2483246&amp;orgId=50710">26-013 RFP - BIPIN RFP - Addendum 1.pdf</a>
+							    			
+							    		</td>
+						    		<td align="center">
+					  						Yes
+						    		</td>
+									<td align="right" style="padding-right: 5px;">
+											<a href="/gems/docviewer/bidDoc?ffd=true&amp;outlineId=585161&amp;docId=71204970&amp;sectionId=2483246&amp;orgId=50710">[Download]</a>
+						    		</td>
+							</tr>
+						</tbody>
+					</table>
+
+	 				<br/>
+   			</div>
+ 		</div>
+ 		
+		<div align="center">
+		</div>
+	</div>
+	<div><iframe id="iframedownloadfile" frameborder="0" name="iframedownloadfile" style="display: none;" src=""></iframe></div>
+
+		<script type="text/javascript">
+		<!--
+			/* Modal Dialog Box */
+			var Modal = {
+				pageWidth: function() { return window.innerWidth != null? window.innerWidth: document.documentElement && document.documentElement.clientWidth ? document.documentElement.clientWidth:document.body != null? document.body.clientWidth:null; },
+				pageHeight: function() { return window.innerHeight != null? window.innerHeight: document.documentElement && document.documentElement.clientHeight ? document.documentElement.clientHeight:document.body != null? document.body.clientHeight:null; },
+				posLeft: function() { return typeof window.pageXOffset != 'undefined' ? window.pageXOffset:document.documentElement && document.documentElement.scrollLeft? document.documentElement.scrollLeft:document.body.scrollLeft? document.body.scrollLeft:0; },
+				posTop: function() { return typeof window.pageYOffset != 'undefined' ? window.pageYOffset:document.documentElement && document.documentElement.scrollTop? document.documentElement.scrollTop: document.body.scrollTop?document.body.scrollTop:0; },
+				scrollFix: function() { var obol=document.getElementById('modal-overlay-mask'); obol.style.top=Modal.posTop()+'px'; obol.style.left=Modal.posLeft()+'px'; },
+				sizeFix: function() { var obol=document.getElementById('modal-overlay-mask'); obol.style.height=Modal.pageHeight()+'px'; obol.style.width=Modal.pageWidth()+'px'; },
+				kp: function(e) { ky=e?e.which:event.keyCode; if(ky==88||ky==120) Modal.hm(); return false; },
+				inf: function(h) { tag=document.getElementsByTagName('select'); for(i=tag.length-1;i>=0;i--) tag[i].style.visibility=h; tag=document.getElementsByTagName('iframe'); for(i=tag.length-1;i>=0;i--) { if (tag[i].id=="modalIframe") continue; tag[i].style.visibility=h; } tag=document.getElementsByTagName('object'); for(i=tag.length-1;i>=0;i--) tag[i].style.visibility=h; },
+				sm: function(obl, wd, ht) {var obbx=document.getElementById('modal-mbox');if (wd==null)wd=obbx.offsetWidth;if (ht==null)ht=obbx.offsetHeight;var h='hidden'; var ta='block'; var b='block'; var p='px'; var obol=document.getElementById('modal-overlay-mask');  var obbxd = document.getElementById('modal-mbd'); obbxd.innerHTML = document.getElementById(obl).innerHTML; obol.style.display=b; var tp=Modal.posTop()+((Modal.pageHeight()-ht)/2)-12; var lt=Modal.posLeft()+((Modal.pageWidth()-wd)/2)-12; obbx.style.top=(tp<0?0:tp)+p; obbx.style.left=(lt<0?0:lt)+p; obbx.style.width=wd+p; obbx.style.height=ht+p; Modal.inf(h); obbx.style.display=ta; Modal.sizeFix(); return false; },
+				smDynamic: function(obl) {var obbx=document.getElementById('modal-mbox');var h='hidden'; var b='block'; var p='px'; var obol=document.getElementById('modal-overlay-mask');  var obbxd = document.getElementById('modal-mbd'); obbxd.innerHTML = document.getElementById(obl).innerHTML; obol.style.display=b;Modal.inf(h);obbx.style.position="absolute";if(navigator.appName == "Microsoft Internet Explorer"){obbx.style.marginTop="18%";obbx.style.marginLeft="30%";}else{obbx.style.marginTop="10%";obbx.style.marginLeft="30%";}b;obbx.style.display=b; return false; },
+				hm: function() { var v='visible'; var n='none'; document.getElementById('modal-overlay-mask').style.display=n; document.getElementById('modal-mbox').style.display=n; Modal.inf(v); document.onkeypress=''; },
+				initmb: function() { var ab='absolute'; var n='none'; var obody=document.getElementsByTagName('body')[0]; var frag=document.createDocumentFragment(); var obol=document.createElement('div'); obol.className="olClass"; obol.id="modal-overlay-mask"; obol.style.display=n; obol.style.position=ab; obol.style.top=0; obol.style.left=0; obol.style.zIndex=998; obol.style.width='100%'; frag.appendChild(obol); var obbx=document.createElement('div'); obbx.className="mboxClass"; obbx.id="modal-mbox"; obbx.style.display=n; obbx.style.position=ab; obbx.style.zIndex=999; var obl=document.createElement('span'); obbx.appendChild(obl); var obbxd=document.createElement('div'); obbxd.id="modal-mbd"; obbxd.className="mbdClass"; obl.appendChild(obbxd); frag.insertBefore(obbx,obol.nextSibling); obody.insertBefore(frag,obody.firstChild); window.onscroll=Modal.scrollFix; window.onresize=Modal.sizeFix; },
+				smAjax: function(obl, url, wd, ht) {new Ajax.Updater({success : "nested_"+obl}, url, {evalScripts: true, onFailure: function(){alert("Error contacting server");}, onSuccess: function(){ if (wd == null) { smDynamic(obl); } else { sm(obl, wd, ht)} } });},
+				smAjaxGet: function(obl, url, wd, ht) {new Ajax.Updater({success : "nested_"+obl}, url, {method: 'get', evalScripts: true, onFailure: function(){alert("Error contacting server");}, onSuccess: function(){ if (wd == null) { smDynamic(obl); } else { sm(obl, wd, ht)} } });}
+			};
+			var smAjax = Modal.smAjax;
+			var sm = Modal.sm;
+			var smDynamic = Modal.smDynamic;
+			var hm = Modal.hm;
+			var smAjaxGet = Modal.smAjaxGet;
+			window.onload = function() {  Modal.initmb(); try { onLoad(); } catch (err) {/*ignored*/}  }
+		-->
+		</script>
+	<div id="createContractModal" class="dialog">
+		<div style="text-align:center">
+			<div id="nested_createContractModal">
+			</div>
+		</div>
+	</div>
+
+			</div>
+			
+	 	</div>
+	 	
+		<div class="widecontent">
+			
+		</div>
+	
+			 <div class="footer">
+			 		<div>Customer Support:  
+			<a onclick="document.location.href='mailto:vendorsupport@publicpurchase.com';">vendorsupport@publicpurchase.com</a>
+		|      Copyright  1999-2026 &copy; |   The Public Group, LLC.     All rights reserved.
+	</div>
+	<div align="center"><img src="/gems/20200501/images/logoGroup_footer.png" alt="The Public Group" /></div>
+			 </div>
+	</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,39 @@
+{
+  "_comment": "Copy to inbox/portals.json (gitignored). One entry per procurement portal, keyed by DOMAIN (no www., no port; sub-hosts match by suffix). adapter = a name in bidkit.portal.ADAPTERS: 'generic' (config-driven: frame_name, logged_in_marker, doc_href_pattern, doc_name_from, search{...}), 'publicpurchase' or 'webs' (grounded in code). profile_dir = the persistent browser profile holding that portal's login (defaults to ../secrets/browser-profiles/<domain>). Bootstrap each profile ONCE on a machine with a display: python3 -m bidkit.portal login <domain>. The session is saved as <profile_dir>/storage_state.json on every close so session cookies (which the browser would otherwise drop) survive headless cron runs.",
+  "publicpurchase.com": {
+    "_comment": "Grounded adapter: document links are /gems/docviewer/bidDoc?...docId=N with the filename as anchor text (URLs have no extension). Verified against a real saved bid page in bidkit/tests/fixtures/.",
+    "adapter": "publicpurchase",
+    "profile_dir": "../secrets/browser-profiles/publicpurchase",
+    "login_url": "https://www.publicpurchase.com/gems/login/login"
+  },
+  "des.wa.gov": {
+    "_comment": "Washington WEBS (pr-webs-vendor.des.wa.gov) — GROUNDED adapter (live captures 2026-09-16; scrubbed copies in bidkit/tests/fixtures/webs-*.html). ASP.NET FRAMESET: the real page is frame 'bottom'; a top-level request for any inner page bounces to the frameset home, so the adapter navigates the frame. Logged in = 'Logout.aspx' link present. Search: Search_Bid.aspx keyword box (#textBoxBidCustRefNum, max 15 chars, matches title words AND reference-number substrings; the adapter selects All commodity codes / All counties) then SearchBid.aspx advanced search (#SolicitationKeywords, status <ALL>). Detail Search_BidDetails.aspx?ID=<portal id>: fields are <span id='txt…'>, documents in #dataGridBidDocuments and amendments in #dataGridBidAmendments link AttachmentViewer.aspx?AttachmentID=…&DocType=1|2&BidID=… which downloads the file directly; #Imagebutton1 'Vendors Downloading' lists competitors (opt-in). Notification emails link only the front door: fetch searches with opportunity.json solicitation_number/title, or use --search des.wa.gov:<reference #> / des.wa.gov:ID=<portal id> / des.wa.gov:title=<words>. Only the keys below are read; selectors live in bidkit.portal.WebsPortal.",
+    "adapter": "webs",
+    "profile_dir": "../secrets/browser-profiles/webs",
+    "login_url": "https://pr-webs-vendor.des.wa.gov/",
+    "frame_name": "bottom",
+    "logged_in_marker": "Logout.aspx",
+    "_credentials": "Optional, for unattended re-login (WEBS sessions expire after ~20 idle minutes): username = the WEBS login email; the password is NEVER stored here — it is read from the environment variable named by password_env (put it in secrets/env, chmod 600) or from the OS secret store under password_keychain_service (macOS: security add-generic-password -s bidkit-webs -a <username> -w ; Linux: secret-tool store --label=bidkit service bidkit-webs account <username>). Test with: python3 -m bidkit.portal login des.wa.gov --auto",
+    "username": "TODO-webs-login-email@example.com",
+    "password_env": "WEBS_PASSWORD",
+    "password_keychain_service": "bidkit-webs"
+  },
+  "bidnetdirect.com": {
+    "adapter": "generic",
+    "profile_dir": "../secrets/browser-profiles/bidnet",
+    "logged_in_marker": "Sign Out"
+  },
+  "federalgovadvisors.com": {
+    "_comment": "Federal Government Advisors portal — SOURCING harness (bidkit.fga), grounded 2026-09-16 on the app's own API contract (services.federalgovadvisors.com/api/). Angular SPA; login form #email / #password. bidkit.fga talks to the JSON API directly with a Bearer JWT it keeps in token_file (0600, in-tree at ../secrets/) and refreshes itself; bootstrap once with `python3 -m bidkit.fga login --from-browser` (after a headed `python3 -m bidkit.portal login federalgovadvisors.com`) or `--auto` with the stored credentials below. Company criteria (NAICS/PSC) live in the criteria file passed with --criteria, never here or in code.",
+    "adapter": "generic",
+    "profile_dir": "../secrets/browser-profiles/fga",
+    "login_url": "https://portal.federalgovadvisors.com/login",
+    "logged_in_marker": "Log Out",
+    "api_url": "https://services.federalgovadvisors.com/api/",
+    "portal_url": "https://portal.federalgovadvisors.com",
+    "token_file": "../secrets/fga-tokens.json",
+    "username": "TODO-fga-login-email@example.com",
+    "password_env": "FGA_PASSWORD",
+    "password_keychain_service": "bidkit-fga"
+  }
+}

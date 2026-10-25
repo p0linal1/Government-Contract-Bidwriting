@@ -1,6 +1,10 @@
-# Fetched SAM.gov pulls — regenerate with scripts/fetch_sam_opportunities.py
+# Fetched SAM.gov pulls and agent reports — regenerate with bin/sam-research.sh
 data/
+
+# Your own vendor profile. Shared repo ships profile.example.json.
+profile.json
 
 __pycache__/
 *.pyc
 .DS_Store
+.claude/settings.local.json

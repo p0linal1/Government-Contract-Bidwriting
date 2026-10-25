@@ -1,0 +1,9 @@
+# Weekdays at 07:15 local time. Pair with bid-source.service.
+[Unit]
+Description=Run the FGA sourcing search on a schedule
+[Timer]
+OnCalendar=Mon..Fri *-*-* 07:15:00
+Persistent=true
+RandomizedDelaySec=300
+[Install]
+WantedBy=timers.target

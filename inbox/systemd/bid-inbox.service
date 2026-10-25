@@ -1,0 +1,23 @@
+# User-level systemd service for the bid inbox poller (Linux equivalent of the launchd agent).
+# Install as a USER unit so it runs with your browser profiles and ~/.config/bidkit secrets:
+#   mkdir -p ~/.config/systemd/user
+#   sed "s|%h/bid-writing|$HOME/bid-writing|g" inbox/systemd/bid-inbox.service  > ~/.config/systemd/user/bid-inbox.service
+#   cp inbox/systemd/bid-inbox.timer ~/.config/systemd/user/
+#   systemctl --user daemon-reload && systemctl --user enable --now bid-inbox.timer
+#   loginctl enable-linger "$USER"          # keep the user session alive when logged out (needed for timers)
+# Check:  systemctl --user list-timers bid-inbox.timer ; journalctl --user -u bid-inbox -n 50
+# Run now: systemctl --user start bid-inbox.service
+[Unit]
+Description=Poll the bid mailbox and file new solicitations (bidkit.inbox)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=%h/bid-writing
+ExecStart=/bin/bash %h/bid-writing/bin/bid-inbox.sh
+# Secrets: bid-inbox.sh sources ~/.config/bidkit/env (export BID_INBOX_PASSWORD=...), or use the Gmail API token.
+# Headless portal fetch needs no display; set PORTAL_AUTOFETCH=1 here to enable it for this unit only.
+Environment=PATH=/usr/local/bin:/usr/bin:/bin
+Environment=PYTHONUNBUFFERED=1
+Nice=10

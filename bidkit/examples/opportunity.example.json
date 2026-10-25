@@ -1,0 +1,89 @@
+{
+  "_comment": "Per-opportunity config for bidkit. Copy to <opportunity-id>/opportunity.json. All paths are relative to the opportunity folder (the directory containing this file) unless absolute. Keys prefixed with _ are ignored.",
+
+  "id": "EXAMPLE-000",
+  "agency": "Example City",
+  "title": "Example Records Management System RFP",
+  "solicitation_number": "EXAMPLE-000",
+  "_solicitation_number": "The agency's own number as printed on the RFP. bidkit.portal searches the portal with it when the email linked only the portal's front door; bidkit.brief uses it in research queries.",
+  "_source_types": "source.type is 'email' (filed by bidkit.inbox), 'fga' (filed by bidkit.fga file from the sourcing portal — then a `sourcing` block records the portal id/url and there is no initial-email/email.md), or 'manual'.",
+  "submission_name_prefix": "YourCo",
+
+  "format": {
+    "_comment": "Rendering + verification rules copied from the RFP's format section.",
+    "font_family_allow": ["Arial"],
+    "min_font_pt": 10,
+    "body_font_pt": 11,
+    "margin_in": 0.75,
+    "page_size": "letter",
+    "page_limit": 24,
+    "numbered_from_heading": "PART I",
+    "exclude_numbering_headings": ["Cover Letter", "Resumes"],
+    "header_footer_band_pt": 40
+  },
+
+  "fonts": {
+    "_comment": "Real TTF files for the required family. macOS Supplemental paths shown.",
+    "regular": "/System/Library/Fonts/Supplemental/Arial.ttf",
+    "bold": "/System/Library/Fonts/Supplemental/Arial Bold.ttf",
+    "italic": "/System/Library/Fonts/Supplemental/Arial Italic.ttf",
+    "bold_italic": "/System/Library/Fonts/Supplemental/Arial Bold Italic.ttf"
+  },
+
+  "workbooks": {
+    "_comment": "Requirement-style workbooks use the uniform row model (cols). control_tab/control_range give the allowed dropdown vocabulary. placeholders are template strings that must not survive in a filled copy. Form-style workbooks (label + value grids: reference/deployment/support histories) set form_style: true, need no cols, are filled with `xlsx_fill --cells`, and skip the blank-response check (completeness is a human judgment).",
+    "A1": {
+      "path": "rfp/A1 - General System Requirements.xlsx",
+      "header_row": 2,
+      "cols": {"num": 1, "req": 2, "resp": 3, "comment": 4},
+      "skip_tabs": ["Instructions", "Control", "Controller", "Drop Control"],
+      "control_tab": "Control",
+      "control_range": "A2:A20",
+      "placeholders": ["Y / N / NA", "If Yes include", "If yes explain", "If yes decribe"]
+    },
+    "A5": {
+      "path": "rfp/A5 - Vendor Reference Workbook.xlsx",
+      "header_row": 2,
+      "form_style": true,
+      "skip_tabs": ["Instructions"],
+      "placeholders": ["Y / N / NA", "If Yes include", "If yes explain", "If yes decribe", "If Yes include Price"]
+    }
+  },
+
+  "forms": {
+    "_comment": "Flat PDFs to sign. fields map a logical name to the printed label text that anchors it. page is 1-based.",
+    "A7": {
+      "path": "rfp/A7 - Certifications and Assurances Form.pdf",
+      "page": 2,
+      "fields": {
+        "printed_name": "Printed Name",
+        "company": "Company Name",
+        "signature": "Signature",
+        "date": "Date"
+      },
+      "signature_note": "(original signature on submission)"
+    }
+  },
+
+  "signer": {
+    "_comment": "Values overlaid on forms. Leave date empty until send day. signature_image optional (typed signature used if absent).",
+    "printed": "Full Name, Title",
+    "company": "Company LLC",
+    "typed_signature": "Full Name",
+    "signature_image": "",
+    "date": ""
+  },
+
+  "redact": {
+    "_comment": "Resume scrubbing. domain builds the replacement email <firstname>@<domain>.",
+    "domain": "example.com",
+    "keep_contact_for": ["Full Name"]
+  },
+
+  "folders": {
+    "extract": "deliverables/bid/extract",
+    "draft": "deliverables/bid/workbooks-draft",
+    "final": "deliverables/bid/final",
+    "submit": "../EXAMPLE-000-SUBMIT"
+  }
+}

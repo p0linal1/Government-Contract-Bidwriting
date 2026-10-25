@@ -1,0 +1,11 @@
+# Every 30 minutes, 07:00–19:30, Monday–Friday (local time). Pair with bid-inbox.service.
+[Unit]
+Description=Run the bid inbox poller on a schedule
+
+[Timer]
+OnCalendar=Mon..Fri *-*-* 07..19:00,30:00
+Persistent=true
+RandomizedDelaySec=120
+
+[Install]
+WantedBy=timers.target

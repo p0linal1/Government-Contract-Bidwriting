@@ -1,0 +1,9 @@
+# Weekdays at 07:40 local time (after bid-inbox + bid-source). Pair with bid-harness.service.
+[Unit]
+Description=Run the daily bid evaluation harness + digest on a schedule
+[Timer]
+OnCalendar=Mon..Fri *-*-* 07:40:00
+Persistent=true
+RandomizedDelaySec=300
+[Install]
+WantedBy=timers.target

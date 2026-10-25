@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  launchd agent for the DAILY evaluation harness (bidkit.harness + bidkit.digest via bin/bid-harness.sh).
+  Runs once a weekday morning, AFTER the inbox poll (com.example.bid-inbox) and the sourcing run
+  (com.example.bid-source) have filed/sourced opportunities. It evaluates the whole portfolio
+  through the gated pipeline and emails the principal the X/Y/Z digest with drafts attached.
+  Install:
+    sed "s|/Users/YOU|$HOME|g" inbox/launchd/com.example.bid-harness.plist.example \
+        > ~/Library/LaunchAgents/com.example.bid-harness.plist
+    launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.example.bid-harness.plist
+  Check:   launchctl print gui/$(id -u)/com.example.bid-harness | head -20
+  Run now: launchctl kickstart -k gui/$(id -u)/com.example.bid-harness
+  Remove:  launchctl bootout gui/$(id -u)/com.example.bid-harness
+  StartCalendarInterval below = 07:40 Mon-Fri. Logs: inbox/logs/ (per month) + inbox/logs/launchd.log.
+  First set up the Gmail SEND token once (separate from the fetch token):
+    cd bidkit && python3 -m bidkit.mail_gmail send-auth --cfg ../inbox/inbox.json
+-->
+<plist version="1.0">
+<dict>
+  <key>Label</key><string>com.example.bid-harness</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>/bin/bash</string>
+    <string>/Users/YOU/bid-writing/bin/bid-harness.sh</string>
+  </array>
+  <key>WorkingDirectory</key><string>/Users/YOU/bid-writing</string>
+  <key>StartCalendarInterval</key>
+  <array>
+    <dict><key>Weekday</key><integer>1</integer><key>Hour</key><integer>7</integer><key>Minute</key><integer>40</integer></dict>
+    <dict><key>Weekday</key><integer>2</integer><key>Hour</key><integer>7</integer><key>Minute</key><integer>40</integer></dict>
+    <dict><key>Weekday</key><integer>3</integer><key>Hour</key><integer>7</integer><key>Minute</key><integer>40</integer></dict>
+    <dict><key>Weekday</key><integer>4</integer><key>Hour</key><integer>7</integer><key>Minute</key><integer>40</integer></dict>
+    <dict><key>Weekday</key><integer>5</integer><key>Hour</key><integer>7</integer><key>Minute</key><integer>40</integer></dict>
+  </array>
+  <key>RunAtLoad</key><false/>
+  <key>StandardOutPath</key><string>/Users/YOU/bid-writing/inbox/logs/launchd.log</string>
+  <key>StandardErrorPath</key><string>/Users/YOU/bid-writing/inbox/logs/launchd.log</string>
+  <key>EnvironmentVariables</key>
+  <dict>
+    <key>PATH</key><string>/usr/local/bin:/opt/homebrew/bin:/usr/bin:/bin</string>
+  </dict>
+</dict>
+</plist>

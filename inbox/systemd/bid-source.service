@@ -1,0 +1,18 @@
+# User-level systemd service for the FGA sourcing search (Linux equivalent of the launchd agent).
+#   sed "s|%h/bid-writing|$HOME/bid-writing|g" inbox/systemd/bid-source.service > ~/.config/systemd/user/bid-source.service
+#   cp inbox/systemd/bid-source.timer ~/.config/systemd/user/
+#   systemctl --user daemon-reload && systemctl --user enable --now bid-source.timer
+# Prerequisite (once): FGA tokens in ~/.config/bidkit/fga-tokens.json —
+#   cd bidkit && python3 -m bidkit.fga --portals ../inbox/portals.json login --from-browser   (or --auto with stored credentials)
+# Check:  systemctl --user list-timers bid-source.timer ; journalctl --user -u bid-source -n 50
+[Unit]
+Description=Search the FGA portal for opportunities matching company/sourcing.json (bidkit.fga)
+After=network-online.target
+Wants=network-online.target
+[Service]
+Type=oneshot
+WorkingDirectory=%h/bid-writing
+ExecStart=/bin/bash %h/bid-writing/bin/bid-source.sh
+Environment=PATH=/usr/local/bin:/usr/bin:/bin
+Environment=PYTHONUNBUFFERED=1
+Nice=10

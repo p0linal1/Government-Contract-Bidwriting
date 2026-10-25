@@ -1,0 +1,4 @@
+# Optional extra: procurement-portal fetching with a real browser (bidkit.portal).
+# After installing, fetch the browser binary once:  python3 -m playwright install chromium
+# (Linux also needs system libs:  python3 -m playwright install-deps chromium)
+playwright==1.49.1

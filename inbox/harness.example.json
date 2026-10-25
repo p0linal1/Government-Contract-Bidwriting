@@ -1,0 +1,35 @@
+{
+  "_comment": "Copy to inbox/harness.json and edit. Config for the daily evaluation harness (bidkit.harness + bidkit.digest), run by bin/bid-harness.sh. Paths are relative to the bidkit/ working directory (that is where the modules run), matching the other inbox configs. NO SECRETS HERE: the digest recipient is config, but the Gmail SEND credentials live in secrets/ (send_token_file) just like the fetch token.",
+
+  "_autonomy": "a = notify-only (DEFAULT; evaluate + email, never write) | b = quarantine (agent writes to opportunities/<id>/<quarantine_dir>/, a human promotes) | c = full (agent writes canonical docs, gated only by the gates). Mode is config, never code. Start at 'a'; move to 'b' only once a headless agent runner exists and the gates have earned trust.",
+  "autonomy": "a",
+
+  "_agent_cli": "Path/command of a headless agent runner for modes b/c. null = none available → the harness degrades to notify-only and says so. There is no headless agent CLI on this box yet, so leave null for now.",
+  "agent_cli": null,
+
+  "quarantine_dir": "proposed",
+
+  "opportunities_dir": "../opportunities",
+  "queue": "../inbox/queue.jsonl",
+  "state": "../inbox/portfolio-state.json",
+  "log_dir": "../inbox/logs",
+
+  "_ingest": "The harness does NOT poll mail itself; bin/bid-inbox.sh and bin/bid-source.sh run first and file opportunities. Left here as a flag for a future combined entry point.",
+  "ingest": { "enabled": false },
+
+  "digest": {
+    "_comment": "The daily email. 'to' is the principal; 'org_name' is only used in the lead line/subject (kept out of library code). 'send_on_empty': false suppresses the email on a quiet day (nothing added/updated). Drafts larger than max_attachment_mb are linked by path instead of attached.",
+    "org_name": "<Your Company LLC>",
+    "to": "<principal@example.com>",
+    "from": "<sending-account@example.com>",
+    "subject": null,
+    "send_on_empty": false,
+    "max_attachment_mb": 20,
+
+    "_gmail_api": "Reuses the Gmail SEND path (bidkit.mail_gmail.send_raw). The send scope needs its own one-time consent and token, separate from the read-only fetch token: cd bidkit && python3 -m bidkit.mail_gmail send-auth --cfg ../inbox/inbox.json . send_token_file defaults to ../secrets/gmail-send-token.json.",
+    "gmail_api": {
+      "credentials_file": "~/.config/bidkit/gmail-credentials.json",
+      "send_token_file": "../secrets/gmail-send-token.json"
+    }
+  }
+}

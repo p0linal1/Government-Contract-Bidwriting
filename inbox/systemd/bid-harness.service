@@ -1,0 +1,20 @@
+# User-level systemd service for the DAILY evaluation harness (Linux equivalent of the launchd agent).
+#   sed "s|%h/bid-writing|$HOME/bid-writing|g" inbox/systemd/bid-harness.service > ~/.config/systemd/user/bid-harness.service
+#   cp inbox/systemd/bid-harness.timer ~/.config/systemd/user/
+#   systemctl --user daemon-reload && systemctl --user enable --now bid-harness.timer
+# Runs AFTER the inbox poll + sourcing have filed opportunities; evaluates the portfolio through the
+# gated pipeline and emails the X/Y/Z digest. Prerequisite (once): Gmail SEND token —
+#   cd bidkit && python3 -m bidkit.mail_gmail send-auth --cfg ../inbox/inbox.json
+# Config: inbox/harness.json (copy inbox/harness.example.json). Autonomy defaults to notify-only.
+# Check:  systemctl --user list-timers bid-harness.timer ; journalctl --user -u bid-harness -n 50
+[Unit]
+Description=Daily bid evaluation harness + digest email (bidkit.harness + bidkit.digest)
+After=network-online.target
+Wants=network-online.target
+[Service]
+Type=oneshot
+WorkingDirectory=%h/bid-writing
+ExecStart=/bin/bash %h/bid-writing/bin/bid-harness.sh
+Environment=PATH=/usr/local/bin:/usr/bin:/bin
+Environment=PYTHONUNBUFFERED=1
+Nice=10

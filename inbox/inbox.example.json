@@ -1,0 +1,54 @@
+{
+  "_comment": "Copy to inbox/inbox.json and edit. source.type picks the mail backend; keep only the block you use. NO PLAINTEXT SECRETS IN THIS FILE: the IMAP password comes from the env var named by imap.password_env (secrets/env) or (macOS) the keychain item {service: imap.password_keychain_service, account: imap.user}; the Gmail API uses an OAuth client + token file under the in-tree secrets/ dir (paths relative to bidkit/ cwd, e.g. ../secrets/…), so a zip of the repo moves everything.",
+
+  "source": {"type": "imap", "_options": "imap | gmail_api"},
+
+  "imap": {
+    "_comment": "Backend A — plain IMAP (this machine). Gmail: enable IMAP and use an App Password (Google Account -> Security -> 2-Step Verification -> App passwords).",
+    "host": "imap.gmail.com",
+    "port": 993,
+    "ssl": true,
+    "user": "bids@example.com",
+    "password_env": "BID_INBOX_PASSWORD",
+    "password_keychain_service": "bid-inbox"
+  },
+
+  "gmail_api": {
+    "_comment": "Backend B — Gmail REST API with OAuth (the machine with Google API access). One-time: download a Desktop-app OAuth client JSON from Google Cloud, save it as secrets/gmail-oauth-client.json (credentials_file); then run from the bidkit/ dir `python3 -m bidkit.mail_gmail auth --cfg ../inbox/inbox.json`, which writes token_file (chmod 600). Paths are relative to the bidkit/ working dir (../secrets/…) so the whole tree is portable. Scope is gmail.readonly unless mark_seen is true (then gmail.modify; delete the token and re-auth if you flip it). query uses Gmail search syntax; `after:` is added automatically from since_days.",
+    "credentials_file": "../secrets/gmail-oauth-client.json",
+    "token_file": "../secrets/gmail-token.json",
+    "user": "me",
+    "query": "in:inbox",
+    "label_ids": []
+  },
+
+  "folder": "INBOX",
+  "since_days": 14,
+  "mark_seen": false,
+
+  "match": {
+    "_comment": "A message is filed if (1) it is from a from_trust sender (solicitation SOURCES whose subjects lack RFP/RFQ words — WEBS, FGA, bid-notification services), OR (2) its subject contains any subject_any term as a whole word (case-insensitive), OR (3) its body contains any body_any term. from_deny always wins; if from_allow is non-empty only those senders are considered (a restrictive gate, unlike from_trust which is additive).",
+    "subject_any": ["RFP", "RFQ", "RFI", "ITB", "Request for Proposal", "Request for Quote",
+                    "Request for Qualifications", "Request for Information", "Invitation to Bid",
+                    "Solicitation", "Sources Sought", "Bid Opportunity", "Bidding Opportunity",
+                    "Bid Notice", "Addendum", "Amendment"],
+    "body_any": [],
+    "from_allow": [],
+    "from_trust": ["webscustomerservice@des.wa.gov", "federalgovadvisors.com", "supplierservices@demandstar.com"],
+    "from_deny": ["noreply@linkedin.com", "newsletter"]
+  },
+
+  "attachment_types": [".pdf", ".xlsx", ".xls", ".xlsm", ".docx", ".doc", ".zip", ".csv", ".txt", ".rtf"],
+  "max_attachment_mb": 25,
+
+  "opportunities_dir": "opportunities",
+  "template_dir": "opportunities/_template",
+  "state_file": "inbox/state.json",
+  "queue_file": "inbox/queue.jsonl",
+
+  "portal_autofetch": {
+    "_comment": "After filing a NEW opportunity, bin/bid-inbox.sh can run `bidkit.portal fetch` on its links (needs playwright + a logged-in profile; see inbox/portals.example.json). Off by default: a browser launching from cron is a bigger step than filing email. Enable here or with PORTAL_AUTOFETCH=1 in the environment.",
+    "enabled": false,
+    "headless": true
+  }
+}
