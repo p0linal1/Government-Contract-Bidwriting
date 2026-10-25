@@ -8,7 +8,7 @@ Everything the team learned on October 25, 2026, written down as of 1:00 PM so a
 - **What he wants:** an agent that finds RFPs, decides whether Cadocary can win, works out what the contract is worth, and writes the whole bid. It then asks him one question at the end: "You are a competitive applicant, here is your application, and this is how much money I expect it to be worth. Permission to send?"
 - **Today's deadlines:** the Impact Lab starter kit says the repo link and demo recording are due at 5:30 PM (confirm with the organizers). Demos are at 7:30 PM.
 - **What the reviews said:** the idea is right, but the plan is too big for tonight. Build one real Washington bid from start to finish through the real agent. Have code check every source, and keep the send button in Doug's hands.
-- **First tasks:** get an Anthropic API key, build Doug's facts sheet (`docs/fact-sheet.md`), and test the research step on three past awards Doug already knows the price of.
+- **First tasks:** build Doug's facts sheet (`docs/fact-sheet.md`) and test the research step on three past awards Doug already knows the price of. The Anthropic API key is done (see "What exists and where").
 
 ## The business
 
@@ -200,12 +200,12 @@ The full reference is `docs/managed-agents.md`. The facts that matter most:
 | Plan review page | A Claude doc Sheffield can share | Verdict, loop diagram, and the 15 decisions with a column to mark them |
 | RFP collection | Sheffield's laptop (`RFP corpus`) | 80 public RFP PDFs, 78 cataloged by type (legal, AI, portals, data, Washington) |
 | Impact Lab starter repo | Sheffield's laptop | Claude Code commands and a FastAPI and React shell. Not used for now |
-| Anthropic API key | None yet | Create one at console.anthropic.com and keep it in the team's secret manager. Never put it in the repo or the frontend |
+| Anthropic API key | Google Secret Manager: secret `anthropic-api-key` in project `finchat-495622` | Works, and Managed Agents is turned on for it (checked Oct 25). Ask Sheffield for access (role: Secret Manager Secret Accessor). If the key is replaced, the name stays the same. Never put it in the repo, a log, or the frontend |
 
 ## Suggested split of the work
 
 - **Doug and facts:** the facts sheet, the three-award research test, and the questions for Doug. Start here: `docs/fact-sheet.md`.
-- **Platform:** get the API key, create the agent and environment, set up the record tools endpoint, launch one session for one RFP.
+- **Platform:** create the agent and environment, set up the record tools endpoint, launch one session for one RFP.
 - **Checks and sourcing:** the code checks, a deadline parser with time zones, and SAM.gov (already underway in this repo).
 - **App:** connect the prototype screens (`prototype/`) to the real event feed and the finished packet.
 
