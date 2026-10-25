@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { runFacts } from '../agent/live'
+import { Steps } from '../agent/Steps'
 import { daysLeftText, firstSentence, groupRfps, rfpStatusLine, shortDate, shortTime, useLibrary, useRfp } from '../library'
 import { Facts, Mark } from '../parts'
 import { navigate } from '../router'
@@ -100,9 +101,11 @@ function worthText(worth) {
   return `${range}${likely}`
 }
 
-function recommendationText(packet, qualification) {
+function recommendationText(packet, qualification, run) {
   if (packet) return packet.recommendation === 'send' ? 'Send. The agent recommends bidding.' : 'Pass. The agent recommends not bidding.'
   if (qualification) return qualification.decision === 'pass' ? 'Pass, at the go or no-go step' : 'Pursue, still being worked'
+  // The packet reaches the library only after a finished run is saved, so until then the run says it.
+  if (run?.status === 'finished') return 'Decided in the run above. Its packet is not in the library yet.'
   return 'Not read yet'
 }
 
@@ -125,23 +128,71 @@ function Section({ title, rows, tour }) {
   )
 }
 
-function RunSteps({ run }) {
+// One run works one RFP through these stages. Each helper's own status says where it stands.
+const STAGES = [
+  { key: 'read', label: 'Read', agent: 'Reader', doing: 'is reading the RFP' },
+  { key: 'qualify', label: 'Qualify', agent: 'Qualifier', doing: 'is deciding go or no-go' },
+  { key: 'research', label: 'Research', agent: 'Researcher', doing: 'is working out what the contract is worth' },
+  { key: 'draft', label: 'Draft', agent: 'Drafter', doing: 'is writing the proposal' },
+  { key: 'packet', label: 'Packet', agent: 'Operator', doing: 'is writing the packet for Doug' },
+]
+
+// done, working, waiting, or skipped. A stage is skipped when the run was not asked for it, or
+// when the run ended without reaching it, as after a pass.
+function stageState(stage, run) {
   const running = run.status === 'running'
+  if (stage.key === 'packet') {
+    if (!running) return run.status === 'finished' ? 'done' : 'skipped'
+    return run.steps[0]?.text.includes('packet') ? 'working' : 'waiting'
+  }
+  if (run.planned.length && !run.planned.includes(stage.key)) return 'skipped'
+  const state = run.agents[stage.agent]
+  if (state === 'working' || state === 'done') return state
+  return running ? 'waiting' : 'skipped'
+}
+
+const RAIL_STATE = { done: 'done', working: 'current', skipped: 'skipped' }
+
+// What the Operator said last, which at the end of a run is what it decided.
+function operatorVerdict(run) {
+  const said = run.steps.find((step) => step.agent === 'Operator' && step.text.startsWith('Operator: '))
+  return said?.text.replace('Operator: ', '')
+}
+
+function runStatusLine(run, states, packet) {
+  const minutes = Math.round(run.active_minutes)
+  if (run.status === 'running') {
+    const working = STAGES.find((stage) => states[stage.key] === 'working')
+    return working ? `Working: the ${working.agent} ${working.doing}.` : 'Working: the Operator is deciding the next step.'
+  }
+  if (run.status === 'stopped') return `Stopped after ${minutes} min, before it finished.`
+  const verdict = packet ? `${packet.recommendation === 'send' ? 'Send' : 'Pass'}. ${firstSentence(packet.headline)}` : operatorVerdict(run)
+  return verdict ? `Finished in ${minutes} min: ${verdict}` : `Finished in ${minutes} min.`
+}
+
+function RunProgress({ run, packet }) {
+  const running = run.status === 'running'
+  const states = Object.fromEntries(STAGES.map((stage) => [stage.key, stageState(stage, run)]))
   return (
-    <section className="agent-steps" data-tour="run-steps" aria-label={running ? 'Latest steps of the run working on this RFP' : 'Last steps of the last run'}>
-      <p className="agent-steps-title">
-        {running ? 'Latest steps' : 'The last run'}: {runFacts(run)}
-      </p>
-      {run.steps.length > 0 && (
-        <ol>
-          {run.steps.map((step) => (
-            <li key={`${step.at}-${step.text}`}>
-              <time dateTime={step.at}>{shortTime(step.at)}</time>
-              <span>{step.text}</span>
-            </li>
-          ))}
-        </ol>
-      )}
+    <section className="rfp-run" aria-label="Where the run on this RFP stands" data-tour="rfp-progress">
+      <div className="agent-runbar" data-mode={running ? 'live' : 'last'} aria-live="polite">
+        <span className="agent-runbar-tag">{running ? 'Working now' : run.status === 'stopped' ? 'Stopped' : 'Finished'}</span>
+        <span className="agent-runbar-text">{runStatusLine(run, states, packet)}</span>
+        <span className="agent-runbar-aside">{runFacts(run)}</span>
+      </div>
+      <ol className="agent-rail rfp-stages" aria-label="Stages of the run">
+        {STAGES.map((stage, i) => (
+          <li key={stage.key}>
+            <span className="agent-rail-item" data-state={RAIL_STATE[states[stage.key]]}>
+              {states[stage.key] === 'working' ? <span className="pulse" /> : <span className="agent-rail-num">{i + 1}</span>}
+              <span>
+                {stage.label}
+                <span className="rfp-stage-note">{states[stage.key] === 'working' ? `${stage.agent}, working` : states[stage.key] === 'waiting' ? 'Not started' : states[stage.key] === 'skipped' ? 'Skipped' : 'Done'}</span>
+              </span>
+            </span>
+          </li>
+        ))}
+      </ol>
     </section>
   )
 }
@@ -149,25 +200,25 @@ function RunSteps({ run }) {
 function RfpBody({ rfp }) {
   const { findings, run } = rfp
   const { packet, qualification, research, summary } = findings
+  const running = run?.status === 'running'
   const headline = packet?.headline ?? qualification?.headline
+  // A run in progress outranks whatever an earlier run left in the library.
+  const intro = running
+    ? 'The agent is working on this RFP now. The tracker shows each stage as it happens, and every step below opens to show what it did.'
+    : (headline ?? (run ? operatorVerdict(run) : null) ?? 'The agent has not read this RFP yet. It is in the library, waiting its turn.')
   const deadlines = packet?.deadlines ?? []
   const reasons = qualification?.decision_reasons ?? []
 
   return (
     <div className="step-body">
       <h1 className="step-title">{rfp.title}</h1>
-      {headline ? <p className="step-intro">{headline}</p> : <p className="step-intro">The agent has not read this RFP yet. It is in the library, waiting its turn.</p>}
-      {run?.status === 'running' && (
-        <p className="step-working">
-          <span className="pulse" />
-          The agent is working on it now. This updates as it goes.
-        </p>
-      )}
+      <p className="step-intro">{intro}</p>
+      {run && <RunProgress run={run} packet={packet} />}
 
       <Facts
         tour="rfp-facts"
         rows={[
-          { label: 'Recommendation', value: recommendationText(packet, qualification) },
+          { label: 'Recommendation', value: running ? 'Not decided yet. The agent is working on it.' : recommendationText(packet, qualification, run) },
           packet && { label: 'Expected worth', value: worthText(packet.expected_worth), detail: packet.expected_worth?.basis, detailLabel: packet.expected_worth?.confidence && `Confidence ${packet.expected_worth.confidence}.` },
           research && { label: 'Research estimate', value: worthText(research.value_estimate), detail: research.value_estimate.confidence && `Confidence ${research.value_estimate.confidence}.` },
           rfp.draft_ready && { label: 'Draft', value: 'Draft ready. Doug reads it in the private workspace.' },
@@ -178,7 +229,7 @@ function RfpBody({ rfp }) {
         ].filter(Boolean)}
       />
 
-      {run && <RunSteps run={run} />}
+      {run && <Steps title={running ? 'Latest steps' : 'How the run ended'} label="Steps of the run on this RFP" steps={run.steps} tour="run-steps" />}
 
       <Section
         title="Why"
