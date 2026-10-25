@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { navigate, useRoute } from './router'
 import { LibraryProvider, useLibrary } from './library'
 import { Agent } from './screens/Agent'
@@ -7,6 +7,7 @@ import { Research } from './screens/Research'
 import { Settings } from './screens/Settings'
 import { SourceProvider } from './sources'
 import { useStore } from './store'
+import { Tour, tourStepInAddress } from './Tour'
 import { Icon } from './ui'
 
 function Toasts({ currentId }) {
@@ -51,6 +52,7 @@ function Screen({ section, id, tab }) {
 export function App() {
   const route = useRoute()
   const section = ['settings', 'today', 'agent'].includes(route.section) ? route.section : 'bids'
+  const [tourStep, setTourStep] = useState(tourStepInAddress)
 
   return (
     <LibraryProvider>
@@ -60,6 +62,10 @@ export function App() {
             Cadocary
           </button>
           <div className="topbar-actions">
+            <button className="top-button" aria-label="Start walkthrough" onClick={() => setTourStep(0)}>
+              <Icon name="play" size={20} stroke={1.8} />
+              <span>Start walkthrough</span>
+            </button>
             <button className="top-button" aria-label="Agent" aria-current={section === 'agent' ? 'page' : undefined} onClick={() => navigate('/agent')}>
               <Icon name="agent" size={20} stroke={1.8} />
               <span>Agent</span>
@@ -77,6 +83,7 @@ export function App() {
         </main>
 
         <Toasts currentId={route.id} />
+        {tourStep != null && <Tour index={tourStep} onGo={setTourStep} onClose={() => setTourStep(null)} />}
       </SourceProvider>
     </LibraryProvider>
   )
