@@ -22,8 +22,8 @@
   "skills": {
     "rfp-qualifying": {
       "id": "skill_01Xk737C2Sfe9p2CTe3W9LwR",
-      "version": "skver_01PvvrXcVyGMvB5Gdg8U6ojC",
-      "fingerprint": "de05165b16e706195fba5f060702c0916fe296aa78a91f4742ebf75883d9c592"
+      "version": "skver_01XoniCJoeCzi9t1TnB9A6b7",
+      "fingerprint": "48caecfe11e93f33fe142ca3c04dae73fcc34fa25095d6063eb94c6ec215714e"
     },
     "rfp-research": {
       "id": "skill_01LGSdbxsUEDPvrmwh8NTtmG",
@@ -55,8 +55,8 @@
     "qualifier": {
       "id": "agent_01XzDnJSx9KLfEgC1ZraTLPd",
       "name": "Cadocary Qualifier",
-      "version": 6,
-      "fingerprint": "7ffe3071d5c48ceaf1a0a70455f984788bace5aa68d4702d2b29269b73b3938c"
+      "version": 7,
+      "fingerprint": "1fcffadd0080d5eddd7842af8dee61041c1fc4e506d4600486418e709312e1f8"
     },
     "researcher": {
       "id": "agent_01X5VQBCNP6zXWqS54n1tgLk",
@@ -73,8 +73,8 @@
     "operator": {
       "id": "agent_01T6ww8wetS3NJNicgfg48Pg",
       "name": "Cadocary Operator",
-      "version": 12,
-      "fingerprint": "2fda33d95e9652ba3cf27ff30f7b34f460e6124498741b4eba7ec550c31b244e"
+      "version": 13,
+      "fingerprint": "8b795f2f83d4ae8261e3b92e46158d07d9d6031479e246c479f856fd680b8a0e"
     },
     "reader": {
       "id": "agent_01EFdc4RsT6U5vncFsErAm3W",

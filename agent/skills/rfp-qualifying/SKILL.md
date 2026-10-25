@@ -53,6 +53,16 @@ It is not a stop. Set `value_check.status` to `unknown`, and put any clues from 
 
 Never pass, even partly, on your own guess of the value. Only a value the RFP states counts against the range, and only the researcher's sourced estimate counts after that.
 
+### RFPs written for one company
+
+These are don't-bid unless Cadocary is the company named. Quote the words that show it.
+
+- **Sole-source notice:** a notice of intent to award to a named vendor, or a justification for only one source.
+- **Renewal of a named product:** a renewal, maintenance, or license purchase of a product another company makes.
+- **Brand name only:** a purchase that says "brand name only", or names a product with "or equivalent" while the specifications match only that product.
+
+When the RFP invites other sources to show they can meet the need, say so in `decision_reasons`, and treat it as a normal judgment call instead.
+
 ### Drafts, pre-solicitations, and RFIs
 
 - **A draft RFP or pre-solicitation with no proposal due date:**
