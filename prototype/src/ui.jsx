@@ -17,14 +17,6 @@ const ICON_PATHS = {
     </>
   ),
   agent: <path d="M12 3.5l1.9 5.6 5.6 1.9-5.6 1.9-1.9 5.6-1.9-5.6-5.6-1.9 5.6-1.9z" />,
-  flow: (
-    <>
-      <circle cx="12" cy="5" r="2.5" />
-      <circle cx="6" cy="19" r="2.5" />
-      <circle cx="18" cy="19" r="2.5" />
-      <path d="M12 7.5v4M6 16.5v-5h12v5" />
-    </>
-  ),
   calendar: (
     <>
       <rect x="4" y="5" width="16" height="15" rx="2" />
@@ -75,6 +67,54 @@ const ICON_PATHS = {
     <>
       <path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5z" />
       <path d="M14 3v5h5" />
+    </>
+  ),
+  packet: (
+    <>
+      <path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5z" />
+      <path d="M14 3v5h5" />
+      <path d="M9 14.5l2 2 4-4" />
+    </>
+  ),
+  play: <path d="M8 5.5v13l10.5-6.5z" />,
+  stop: <rect x="6.5" y="6.5" width="11" height="11" rx="1.5" />,
+  replay: (
+    <>
+      <path d="M5.5 12a6.5 6.5 0 1 0 2-4.7" />
+      <path d="M7 3.5v4.2h4.2" />
+    </>
+  ),
+  clock: (
+    <>
+      <circle cx="12" cy="12" r="8.5" />
+      <path d="M12 7.5V12l3 2" />
+    </>
+  ),
+  checklist: <path d="M4 7.5l2 2 3.5-3.5M4 16l2 2 3.5-3.5M13 8h7M13 16.5h7" />,
+  chip: (
+    <>
+      <rect x="7" y="7" width="10" height="10" rx="2" />
+      <path d="M10 3.5V7M14 3.5V7M10 17v3.5M14 17v3.5M3.5 10H7M3.5 14H7M17 10h3.5M17 14h3.5" />
+    </>
+  ),
+  book: (
+    <>
+      <path d="M6 4.5h11a1 1 0 0 1 1 1V19a1 1 0 0 1-1 1H8a2 2 0 0 1-2-2z" />
+      <path d="M6 18a2 2 0 0 1 2-2h10M9.5 8.5h5" />
+    </>
+  ),
+  db: (
+    <>
+      <ellipse cx="12" cy="6.5" rx="7" ry="2.75" />
+      <path d="M5 6.5v11c0 1.5 3.1 2.75 7 2.75s7-1.25 7-2.75v-11M5 12c0 1.5 3.1 2.75 7 2.75s7-1.25 7-2.75" />
+    </>
+  ),
+  gov: <path d="M3.5 9.5L12 4.5l8.5 5M5.5 10v7.5M9.8 10v7.5M14.2 10v7.5M18.5 10v7.5M3.5 20h17" />,
+  download: <path d="M12 4v11M7.5 10.5L12 15l4.5-4.5M5 19.5h14" />,
+  lock: (
+    <>
+      <rect x="5" y="10.5" width="14" height="10" rx="2" />
+      <path d="M8.5 10.5V7.5a3.5 3.5 0 0 1 7 0v3" />
     </>
   ),
 }

@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { navigate, useRoute } from './router'
+import { Agent } from './screens/Agent'
 import { Bids } from './screens/Bid'
-import { HowItWorks } from './screens/HowItWorks'
 import { Research } from './screens/Research'
 import { Settings } from './screens/Settings'
 import { SourceProvider } from './sources'
@@ -40,14 +40,14 @@ function Toasts({ currentId }) {
 
 function Screen({ section, id, tab }) {
   if (section === 'settings') return <Settings id={id} />
-  if (section === 'how') return <HowItWorks />
+  if (section === 'agent') return <Agent />
   if (id && tab === 'research') return <Research id={id} section="bids" />
   return <Bids id={id} today={section === 'today'} />
 }
 
 export function App() {
   const route = useRoute()
-  const section = ['settings', 'today', 'how'].includes(route.section) ? route.section : 'bids'
+  const section = ['settings', 'today', 'agent'].includes(route.section) ? route.section : 'bids'
 
   return (
     <SourceProvider>
@@ -56,9 +56,9 @@ export function App() {
           Cadocary
         </button>
         <div className="topbar-actions">
-          <button className="top-button" aria-label="How it works" aria-current={section === 'how' ? 'page' : undefined} onClick={() => navigate('/how')}>
-            <Icon name="flow" size={20} stroke={1.8} />
-            <span>How it works</span>
+          <button className="top-button" aria-label="Agent" aria-current={section === 'agent' ? 'page' : undefined} onClick={() => navigate('/agent')}>
+            <Icon name="agent" size={20} stroke={1.8} />
+            <span>Agent</span>
           </button>
           <button className="top-button" aria-label="Settings" aria-current={section === 'settings' ? 'page' : undefined} onClick={() => navigate('/settings')}>
             <Icon name="settings" size={20} stroke={1.8} />
@@ -68,7 +68,7 @@ export function App() {
       </header>
 
       {/* Bids keep their list mounted while switching bids, so the list does not jump back to the top. */}
-      <main className="screen" key={['settings', 'how'].includes(section) ? section : `bids/${route.tab ?? ''}`}>
+      <main className="screen" key={['settings', 'agent'].includes(section) ? section : `bids/${route.tab ?? ''}`}>
         <Screen section={section} id={route.id} tab={route.tab} />
       </main>
 
