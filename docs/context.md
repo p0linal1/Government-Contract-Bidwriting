@@ -2,6 +2,25 @@
 
 Everything the team learned on October 25, 2026, written down as of 1:00 PM so anyone can pick up the work. It comes from interviews with Doug, a mentor session, a clickable prototype, and three reviews of the plan. When this page and Doug disagree, Doug is right. Update this page when a decision gets made.
 
+## Status at submission (Oct 25, 4:30 PM)
+
+This section is the latest. Where older sections below disagree, this one wins.
+
+- **Live app:** https://cadocary-bids-875086386085.us-west1.run.app, on Cloud Run in project finchat-495622.
+  - Its Library, RFP pages, Today, and Agent page read the real RFP Library and real agent runs.
+  - "Start walkthrough" gives a 13-step guided tour.
+  - Drafts open as a document view with contact details stripped.
+  - The app is read-only: there is no button that starts runs, and no login.
+- **Agents:** an Operator plus Reader, Qualifier, Researcher, and Drafter, live on Managed Agents. Versions are in `agent/ids.json`.
+- **How to run:** `python3 agent/library.py sync` saves new SAM.gov notices, and `python3 agent/run.py <notice_id> --steps all` works one RFP.
+- **Tested today:** six real federal RFPs, all correctly "don't bid", plus one full draft. Details are in the README.
+- **Submission:** release v1.0.0, with the 47-second demo video attached.
+- **Next:**
+  - the 6 AM schedule, set up in the Claude Console as a deployment or built by a teammate
+  - a "Run now" button behind a login
+  - Washington sources (WEBS, Public Purchase)
+  - Doug approving the facts and answering `docs/questions-for-doug.md`
+
 ## The short version
 
 - **Customer:** Doug, owner of Cadocary LLC, a small Washington software company that sells legal and justice software to government.
