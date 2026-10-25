@@ -13,6 +13,7 @@ const SPOT_PAD = 8
 const CARD_GAP = 14
 const EDGE = 12
 const PHONE = '(max-width: 959px)'
+const TALL_SHARE = 0.6
 
 // `?tour=3` opens the walkthrough at step 3, for links and screenshots of one step.
 export function tourStepInAddress() {
@@ -103,7 +104,9 @@ export function Tour({ index, onGo, onClose }) {
       }
       const element = opened && step.target ? findVisible(step.target) : null
       if (element || !step.target || Date.now() - started > FIND_TIMEOUT_MS) {
-        element?.scrollIntoView({ block: 'center' })
+        // A target taller than most of the screen reads best from its top.
+        const tall = element && element.getBoundingClientRect().height > window.innerHeight * TALL_SHARE
+        element?.scrollIntoView({ block: tall ? 'start' : 'center' })
         setFound({ index, element })
         return
       }

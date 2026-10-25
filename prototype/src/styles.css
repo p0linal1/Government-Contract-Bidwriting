@@ -4632,6 +4632,11 @@ textarea:focus {
 
 /* Walkthrough: the page dims, one part stays lit, and a card explains it */
 
+/* Clears the RFP page's sticky header when a tall part scrolls to the top. */
+[data-tour] {
+  scroll-margin-top: 112px;
+}
+
 .tour-block {
   position: fixed;
   z-index: 80;
