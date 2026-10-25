@@ -196,7 +196,7 @@ The full reference is `docs/managed-agents.md`. The facts that matter most:
 | What | Where | Notes |
 | --- | --- | --- |
 | SAM.gov sourcing | This repo | Built by Alyssa and Polina |
-| Clickable prototype | Sheffield's laptop (`cadocary-prototype`, React and Vite) and a shared Claude artifact | Simulates the full autopilot flow on the real Lakewood RFP, with the live agent feed, sources on every claim, a morning brief, and a page-by-page proposal review. Not in any repo yet. It needs to be before submission |
+| Clickable prototype | `prototype/` in this repo (pull request #2). Double-click `prototype/click-through.html` | Simulates the full autopilot flow on the real Lakewood RFP, with the live agent feed, sources on every claim, a morning brief, and a page-by-page proposal review. React and Vite; see `prototype/README.md` |
 | Plan review page | A Claude doc Sheffield can share | Verdict, loop diagram, and the 15 decisions with a column to mark them |
 | RFP collection | Sheffield's laptop (`RFP corpus`) | 80 public RFP PDFs, 78 cataloged by type (legal, AI, portals, data, Washington) |
 | Impact Lab starter repo | Sheffield's laptop | Claude Code commands and a FastAPI and React shell. Not used for now |
@@ -207,7 +207,7 @@ The full reference is `docs/managed-agents.md`. The facts that matter most:
 - **Doug and facts:** the facts sheet, the three-award research test, and the questions for Doug. Start here: `docs/fact-sheet.md`.
 - **Platform:** get the API key, create the agent and environment, set up the record tools endpoint, launch one session for one RFP.
 - **Checks and sourcing:** the code checks, a deadline parser with time zones, and SAM.gov (already underway in this repo).
-- **App:** connect the prototype screens to the real event feed and the finished packet.
+- **App:** connect the prototype screens (`prototype/`) to the real event feed and the finished packet.
 
 ## Never
 
