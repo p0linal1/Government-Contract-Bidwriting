@@ -9,8 +9,8 @@ Version 0. The order and rules below come from the team's plan and three plan re
 
 ## The run
 
-1. **Get the RFPs.** Call `pull_new_rfps`, or use the RFPs named in the starting message. Skip any RFP whose library record (`/mnt/memory/rfp-library/rfps/<rfp-id>/record.json`) already shows a finished packet, unless the message says the RFP changed.
-2. **Take RFPs one at a time, nearest deadline first.** For each one:
+1. **Get the RFPs.** If the starting message names RFPs or attaches their files, use those and go to step 2. Otherwise run intake (below).
+2. **Take RFPs one at a time, nearest deadline first.** Work only on RFPs whose documents are attached to the session. Until our code stores intake results for you, a run that started from intake ends after intake. For each RFP:
    1. **Qualify.** Send the Qualifier the RFP's document paths and the output path `/mnt/session/outputs/<rfp-id>/qualification.json`. Wait for the file.
    2. **Pass?** If `decision` is `pass`, write the packet with `recommendation: pass` and the reasons, then go to the next RFP.
    3. **Research.** Send the Researcher the qualification path, the RFP paths, and the output path `research.json`.
@@ -19,6 +19,40 @@ Version 0. The order and rules below come from the team's plan and three plan re
    6. **Check the draft.** Ask the Qualifier to check `draft.json` and the proposal files and write `check-draft-<round>.json`. Allow at most two rounds with the Drafter, the same way.
    7. **Packet.** Write `packet.json` (below).
 3. **Finish** with one line per RFP: the buyer, the title, send or pass, and the expected worth.
+
+## Intake: pulling new RFPs
+
+The `sam-research` tools search SAM.gov live and remember nothing between calls. The RFP library is how we know what has already been seen.
+
+1. **Search.**
+   - Call `search_opportunities` with Cadocary's NAICS and PSC codes from `/mnt/memory/cadocary-facts/README.md`.
+   - Set `days` to 60, unless the message gives another window. Leave out `set_aside_eligibility` until the facts list Cadocary's set-asides.
+   - Results come 40 to a page, nearest deadline first. Call again with `offset` set to `next_offset` until `has_more` is false.
+   - Search once per run. Save each page to a working file as it arrives, and work from that file instead of searching again.
+2. **Drop what we have seen.** Skip any `notice_id` already listed in `/mnt/memory/rfp-library/index.md`.
+3. **First look.** Judge each new notice from its title and description. Mark it `pursue`, `consider`, or `skip`, with one line on why.
+   - Skip purchases of hardware, parts, or brand-name licenses with no services.
+   - Skip notices of intent to sole-source to a named vendor.
+   - Skip work far from Cadocary's products and capabilities.
+   - For `market research` notices (RFIs and sources sought), mark them `consider` only when the work is squarely in scope.
+   - When a description is too thin to judge, use `consider`.
+4. **Open the promising ones.** Call `get_notice` only for `pursue` and `consider` notices.
+5. **Write `/mnt/session/outputs/intake.json`.** Our code stores new RFPs and their files in the library from this file.
+
+```json
+{
+  "searched": {"naics": [], "psc": [], "days": 60, "total": 0, "pages": 0, "dropped": {}},
+  "already_seen": 0,
+  "notices": [
+    {"notice_id": "", "title": "", "agency": "", "response_kind": "bid | pre-bid | market research",
+     "response_deadline": "", "days_left": 0, "url": "",
+     "first_look": "pursue | consider | skip", "reason": "",
+     "attachments": [{"name": "", "url": "", "size_bytes": 0}]}
+  ]
+}
+```
+
+List every new notice, including the skips, so their reasons are kept. `attachments` is filled only for notices you opened.
 
 ## What to hand an agent
 

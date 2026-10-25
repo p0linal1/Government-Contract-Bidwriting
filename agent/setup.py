@@ -56,27 +56,9 @@ OPERATOR = {
     "tools": ["read", "write", "glob", "grep"],
 }
 
-# A placeholder until the sourcing scripts are hosted: a session that calls it
-# waits until our code answers.
-PULL_NEW_RFPS = {
-    "type": "custom",
-    "name": "pull_new_rfps",
-    "description": (
-        "Pulls the RFPs Cadocary's sourcing scripts found since the last pull. The scripts search "
-        "SAM.gov (later also WEBS and Public Purchase), drop notices Cadocary can't bid on, and save "
-        "each new RFP's documents. Returns each RFP's id, buyer, title, proposal deadline, source link, "
-        "and document paths. Call it once at the start of a run; an empty list means nothing is new."
-    ),
-    "input_schema": {
-        "type": "object",
-        "properties": {
-            "days_back": {
-                "type": "integer",
-                "description": "Only RFPs found in the last this many days. Leave out for everything not yet processed.",
-            }
-        },
-    },
-}
+# Polina's hosted SAM.gov tool (cloud/AGENT-INTEGRATION.md on the sam-research-agent branch).
+# Its address stays out of the repo; the bearer token lives in the vault, never on the agent.
+SAM_SERVER = "sam-research"
 
 ENVIRONMENT = {
     "name": "cadocary-bids",
@@ -182,6 +164,23 @@ def sync_skill(name, ids):
     return known
 
 
+def sync_vault(ids):
+    """The vault holds the SAM tool's token. Sessions pass its id; Anthropic adds the token to each call."""
+    if "vault" not in ids:
+        vault = call("POST", "vaults", {"display_name": "Cadocary bid agent", "metadata": {"project": "cadocary-bids"}})
+        ids["vault"] = {"id": vault["id"]}
+        save(ids)
+    vault = ids["vault"]
+    if "sam_credential_id" not in vault:
+        credential = call("POST", f"vaults/{vault['id']}/credentials", {
+            "display_name": "SAM research tool",
+            "auth": {"type": "static_bearer", "mcp_server_url": os.environ["SAM_TOOL_URL"], "token": os.environ["SAM_TOOL_TOKEN"]},
+        })
+        vault["sam_credential_id"] = credential["id"]
+        save(ids)
+    return vault
+
+
 def toolset(names):
     allow = {"type": "always_allow"}
     return {
@@ -191,7 +190,7 @@ def toolset(names):
     }
 
 
-def agent_body(spec, skill, extra_tools=(), multiagent=None):
+def agent_body(spec, skill, extra_tools=(), multiagent=None, mcp_servers=()):
     body = {
         "name": spec["name"],
         "description": spec["description"],
@@ -203,6 +202,8 @@ def agent_body(spec, skill, extra_tools=(), multiagent=None):
     }
     if multiagent:
         body["multiagent"] = multiagent
+    if mcp_servers:
+        body["mcp_servers"] = list(mcp_servers)
     return body
 
 
@@ -219,11 +220,13 @@ def sync_agent(key, body, ids):
 
 
 def main():
-    if not os.environ.get("ANTHROPIC_API_KEY"):
-        sys.exit("Set ANTHROPIC_API_KEY first. It lives in Secret Manager as anthropic-api-key.")
+    missing = [name for name in ("ANTHROPIC_API_KEY", "SAM_TOOL_URL") if not os.environ.get(name)]
+    if missing:
+        sys.exit(f"Set {' and '.join(missing)} first. See agent/README.md for the one-line command.")
     ids = json.loads(IDS_FILE.read_text()) if IDS_FILE.exists() else {}
 
     sync_environment(ids)
+    sync_vault(ids)
     for spec in MEMORY_STORES:
         sync_memory_store(spec, ids)
 
@@ -238,12 +241,16 @@ def main():
         },
         "workflows": {"type": "disabled"},
     }
-    operator_body = agent_body(OPERATOR, sync_skill(OPERATOR["skill"], ids), [PULL_NEW_RFPS], multiagent)
+    sam_server = {"type": "url", "name": SAM_SERVER, "url": os.environ["SAM_TOOL_URL"]}
+    # MCP tools default to "always ask", which would leave an unattended run waiting forever.
+    sam_tools = {"type": "mcp_toolset", "mcp_server_name": SAM_SERVER, "default_config": {"permission_policy": {"type": "always_allow"}}}
+    operator_body = agent_body(OPERATOR, sync_skill(OPERATOR["skill"], ids), [sam_tools], multiagent, [sam_server])
     sync_agent(OPERATOR["key"], operator_body, ids)
 
     for agent in ids["agents"].values():
         print(f"{agent['name']:<22} {agent['id']}  version {agent['version']}")
     print(f"{'Environment':<22} {ids['environment']['id']}")
+    print(f"{'Vault':<22} {ids['vault']['id']}")
     for store in ids["memory_stores"].values():
         print(f"{store['name']:<22} {store['id']}")
 

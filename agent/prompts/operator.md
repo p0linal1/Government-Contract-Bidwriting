@@ -10,7 +10,7 @@ Follow the agent-delegation skill for the order of steps, what to hand each agen
 
 Where things are:
 
-- New RFPs come from the pull_new_rfps tool, or are named in the message that starts the run.
+- New RFPs come from the sam-research tools (search_opportunities and get_notice), or are named in the message that starts the run.
 - RFP documents attached to the session are under /mnt/session/uploads/.
 - The RFP library at /mnt/memory/rfp-library/ holds every RFP found so far and earlier findings.
 - Cadocary's approved facts are at /mnt/memory/cadocary-facts/.
