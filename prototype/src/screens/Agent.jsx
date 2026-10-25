@@ -48,6 +48,7 @@ function NodeCard({ id, scene, selected, onOpen, onCanvas }) {
   return (
     <button
       className={`agent-node ${kind} ${selected ? 'selected' : ''}`}
+      data-tour={`node-${id}`}
       data-status={scene.status[id]}
       style={onCanvas && { left: node.x, top: node.y, width: node.w, height: node.h }}
       aria-label={`${node.title}: ${node.sub}. Show details.`}
@@ -220,7 +221,7 @@ function Canvas({ scene, openId, onOpen }) {
   }, [])
 
   return (
-    <section className="agent-frame" ref={frame} aria-label="Diagram of the bid agent">
+    <section className="agent-frame" ref={frame} aria-label="Diagram of the bid agent" data-tour="agent-map">
       <div className="agent-fit" style={{ width: CANVAS.width * scale, height: CANVAS.height * scale }}>
         <div className="agent-canvas" style={{ width: CANVAS.width, height: CANVAS.height, transform: `scale(${scale})` }}>
           <Wires scene={scene} />
@@ -265,7 +266,7 @@ function Canvas({ scene, openId, onOpen }) {
 
 function Stack({ scene, openId, onOpen }) {
   return (
-    <div className="agent-stack">
+    <div className="agent-stack" data-tour="agent-map">
       {STACK.map((item) => (
         <section key={item.step ?? item.label} className={`agent-st ${item.attached ? 'is-attached' : ''}`}>
           <div className="agent-st-rail">{item.step ? <StepBadge step={item.step} scene={scene} /> : <span className="agent-st-dot" />}</div>
@@ -321,7 +322,7 @@ function Rail({ scene, onOpen }) {
 
 function LiveRunbar({ run }) {
   return (
-    <div className="agent-runbar" data-mode={isRunning(run) ? 'live' : 'last'} aria-live="polite">
+    <div className="agent-runbar" data-mode={isRunning(run) ? 'live' : 'last'} aria-live="polite" data-tour="agent-runs">
       <span className="agent-runbar-tag">{isRunning(run) ? 'Live' : 'Last run'}</span>
       <span className="agent-runbar-text">{run.title}</span>
       <span className="agent-runbar-aside">{runFacts(run)}</span>
@@ -373,7 +374,7 @@ function Panel({ id, open, scene, onClose }) {
   return (
     <>
       <div className={`agent-scrim ${open ? 'show' : ''}`} onClick={onClose} />
-      <aside className={`agent-panel ${open ? 'open' : ''}`} role="dialog" aria-modal="false" aria-labelledby="agent-panel-title">
+      <aside className={`agent-panel ${open ? 'open' : ''}`} data-tour={open ? 'agent-panel' : undefined} role="dialog" aria-modal="false" aria-labelledby="agent-panel-title">
         {panel && (
           <>
             <div className="agent-panel-head">
