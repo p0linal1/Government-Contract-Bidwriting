@@ -44,29 +44,6 @@ More: [`docs/context.md`](docs/context.md) has the full story and decisions, and
   python3 agent/run.py <notice_id> --steps all           # run the agents on one RFP
   ```
 
-## What is real and what is not yet
-
-- **Real and tested on October 25:**
-  - the five agents and their skills
-  - the hosted SAM.gov search
-  - the RFP library of 148 open notices
-  - the run launcher
-  - the live app
-- **Six real federal RFPs worked today, with no steering.** Each got a "don't bid" decision with quoted reasons:
-  - military work
-  - an off-the-shelf product Cadocary doesn't make
-  - a veteran-owned set-aside
-  - a 10-year national contract
-  - a platform outside its products
-- **One full draft:** a Transportation Department RFI response, researched and drafted in 18 minutes for $6.38. The research estimated about $650,000 with low confidence, under Doug's $1 million floor, so the agent recommends not bidding. The draft invents no references, staff, or certifications, and marks every blank for Doug.
-- **Sample data:** only behind Settings, Demo data, and in the offline click-through.
-- **Not built yet:**
-  - the 6 AM schedule
-  - a "Run now" button and a login for the app
-  - Washington sources (WEBS, Public Purchase)
-  - watching for the buyer's reply
-  - code checks on every citation
-
 ## Team
 
 - **Sheffield Peterson:** product, the agents on Managed Agents, and the app
