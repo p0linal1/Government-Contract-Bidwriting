@@ -22,23 +22,23 @@
   "skills": {
     "rfp-qualifying": {
       "id": "skill_01Xk737C2Sfe9p2CTe3W9LwR",
-      "version": "skver_01XoniCJoeCzi9t1TnB9A6b7",
-      "fingerprint": "48caecfe11e93f33fe142ca3c04dae73fcc34fa25095d6063eb94c6ec215714e"
+      "version": "skver_011bVckRYo3NHcfzRGafdnkL",
+      "fingerprint": "709d313ca0f007a8f1d72f60a2d627ee680b708ad70ec1a079d977d1e6375811"
     },
     "rfp-research": {
       "id": "skill_01LGSdbxsUEDPvrmwh8NTtmG",
-      "version": "skver_01Bjm5T1WcEENaBszEL8yfur",
-      "fingerprint": "374f271b454997cae55e807c69ee92c25f30e716c2753473337086c57b77d89f"
+      "version": "skver_01E3EhHZftCnqRC1gTosm4rD",
+      "fingerprint": "399df51fa16904e8cb2997faf5695db9d64e8a1717d887562283b9a96207b359"
     },
     "proposal-drafting": {
       "id": "skill_01TGKG2s5xnMWD3MPmV4VqkK",
-      "version": "skver_01QrcfCA8jKeKj5zy7PpH798",
-      "fingerprint": "e0cfde9536ca77e86f4a1d05c2930f5201e39cca861ec46686baf9c0477f202b"
+      "version": "skver_015QGVafSMs6PJAr6e2osaNb",
+      "fingerprint": "892d842008ee5b88284480bcd6d9b096d41358993638063b6a80962acecd7477"
     },
     "agent-delegation": {
       "id": "skill_01E8L6koR3vMMXWFfZbzXqtr",
-      "version": "skver_01DEZD2Pg7jcMdV6kwVhiR7V",
-      "fingerprint": "a4fc7dfdba021f2d043b76cb2f14690458f76fd6c089dc4a702af20ca742c9f9"
+      "version": "skver_01GiJrUs4ZhrZzMdby4QuW7A",
+      "fingerprint": "e125bb77a48a9e40f05a7390f01f4824f22e9b85f8d5de456abe5d2fdd469c55"
     },
     "rfp-reading": {
       "id": "skill_01FF3hPdJ1nhsLuvYt5R6tyN",
@@ -55,26 +55,26 @@
     "qualifier": {
       "id": "agent_01XzDnJSx9KLfEgC1ZraTLPd",
       "name": "Cadocary Qualifier",
-      "version": 7,
-      "fingerprint": "1fcffadd0080d5eddd7842af8dee61041c1fc4e506d4600486418e709312e1f8"
+      "version": 8,
+      "fingerprint": "c7a04bab2f2951984a2b846ed3b0faf54e0b36163584a59751b0e513c7ff8719"
     },
     "researcher": {
       "id": "agent_01X5VQBCNP6zXWqS54n1tgLk",
       "name": "Cadocary Researcher",
-      "version": 2,
-      "fingerprint": "2b2e72ab35c64712ed020c1b7dd818e775fd3523916c570d17c2dc66d43f7eca"
+      "version": 3,
+      "fingerprint": "ecbcf6715e26822feb49e11fe153024c298b89b5b060c07ba2576adffa62ac3e"
     },
     "drafter": {
       "id": "agent_01EiFfsfSSps41gyUSG52L86",
       "name": "Cadocary Drafter",
-      "version": 4,
-      "fingerprint": "de2acf26e8c0995e0717b2aaf02d9c0e7428ed81eca770776807be88e8d80981"
+      "version": 5,
+      "fingerprint": "00700510f4da019cc18b0ccbf060a10ba3074a02bf48d91d9fb9b42519d5fcf0"
     },
     "operator": {
       "id": "agent_01T6ww8wetS3NJNicgfg48Pg",
       "name": "Cadocary Operator",
-      "version": 13,
-      "fingerprint": "8b795f2f83d4ae8261e3b92e46158d07d9d6031479e246c479f856fd680b8a0e"
+      "version": 14,
+      "fingerprint": "c76d703a62000399f24712a5c333bde8ecc970180f924d656b9adf51ca710c92"
     },
     "reader": {
       "id": "agent_01EFdc4RsT6U5vncFsErAm3W",
