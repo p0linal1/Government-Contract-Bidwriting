@@ -799,6 +799,35 @@ p {
   color: var(--muted);
 }
 
+.now-line {
+  display: flex;
+  gap: 10px;
+  align-items: baseline;
+  margin-top: 10px;
+  padding: 12px 14px;
+  border-left: 3px solid var(--accent);
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1.45;
+  color: var(--ink);
+}
+
+.now-line strong {
+  flex: none;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.list-item.is-working .list-text > span {
+  font-weight: 600;
+  color: var(--ink);
+}
+
 .step-working {
   display: inline-flex;
   align-items: center;

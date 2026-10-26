@@ -175,7 +175,27 @@ export function daysLeftText(days) {
 // The newest thing an agent said in a run: what it is doing, in its own words.
 export function nowLine(run) {
   const said = run?.steps.find((step) => step.text.startsWith(`${step.agent}: `))
-  return said ? shownHeadline(said.text.slice(said.agent.length + 2)) : null
+  return said ? plainNow(shownHeadline(said.text.slice(said.agent.length + 2))) : null
+}
+
+// Agents name their working files and say pass or pursue; Doug reads what those mean.
+const FILE_MEANINGS = {
+  sheet: 'the RFP sheet',
+  summary: 'the RFP summary',
+  qualification: 'the bid decision',
+  research: 'the research',
+  draft: 'the draft',
+  proposal: 'the proposal',
+  packet: "Doug's packet",
+}
+
+function plainNow(text) {
+  return text
+    .replaceAll('`', '')
+    .replace(/(?:\/mnt\/\S*\/)?\b(sheet|summary|qualification|research|draft|proposal|packet)\.(?:json|md)\b/g, (_, name) => FILE_MEANINGS[name])
+    .replace(/\/mnt\/\S+/g, 'its files')
+    .replace(/\bpass\b/g, "don't bid")
+    .replace(/\bpursue\b/g, 'bid')
 }
 
 export function rfpStatusLine(rfp) {
