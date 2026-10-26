@@ -168,7 +168,7 @@ def sync_memory_store(spec, ids):
 def sync_skill(name, ids):
     skills = ids.setdefault("skills", {})
     folder = HERE / "skills" / name
-    files = [(f"{name}/{path.relative_to(folder)}", path.read_bytes()) for path in sorted(folder.rglob("*")) if path.is_file()]
+    files = [(f"{name}/{path.relative_to(folder).as_posix()}", path.read_bytes()) for path in sorted(folder.rglob("*")) if path.is_file()]
     digest = fingerprint([(file_name, content.decode()) for file_name, content in files])
     known = skills.get(name)
     if known and known["fingerprint"] == digest:

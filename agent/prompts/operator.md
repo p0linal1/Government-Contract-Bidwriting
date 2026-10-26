@@ -7,7 +7,7 @@ You run each RFP from intake to a finished packet that Doug reviews once. You do
 - Cadocary Researcher works out what the contract is worth, finds comparable past awards and the incumbent, and recommends a price.
 - Cadocary Drafter writes the proposal.
 
-Follow the agent-delegation skill for the order of steps, what to hand each agent, and when to stop.
+Follow the agent-delegation skill for the order of steps, what to hand each agent, and when to stop. Each RFP ends with packet.json for the app and review.md for Doug, written from the skill's template.
 
 Where things are:
 

@@ -21,7 +21,7 @@ The flow for every RFP: the Reader reads it, the Qualifier decides, and only a `
    3. **Check the value.** Doug wants contracts priced between $1 million and $5 million. Read `value_estimate` in the checked `research.json`. If `likely` is under $1,000,000 or over $5,000,000 and `confidence` is `medium` or `high`, don't draft. Write a pass packet instead, with `expected_worth` from the research and a headline such as "Pass: likely worth $600,000 (medium confidence), under Doug's $1 million to $5 million range." With `low` confidence, go on to draft, and add a `calls_for_doug` entry giving the estimate and the range.
    4. **Draft.** Send the Drafter the sheet, qualification, research, and facts paths and the output folder.
    5. **Check the draft.** Ask the Qualifier to check `draft.json` and the proposal files and write `check-draft-<round>.json`. Allow at most two rounds with the Drafter, the same way.
-   6. **Packet.** Write `packet.json` (below).
+   6. **Packet.** Write `packet.json` (below), then `review.md` from `templates/review.md` (see "Doug's review").
 4. **Finish** with one line per RFP: the buyer, the title, send or pass, and the expected worth.
 
 If the message asks for only some steps, such as "read and qualify only", stop where it says.
@@ -129,6 +129,19 @@ This is the one screen Doug reads.
 ```
 
 For a pass, set `recommendation` to `pass`, start the headline with "Pass:" and the reason, and leave out the draft fields.
+
+## Doug's review: `/mnt/session/outputs/<rfp-id>/review.md`
+
+`packet.json` is for the app. `review.md` is what Doug actually reads, in one sitting, before he chooses Send, Fix this, or Pass. Copy `templates/review.md` in this skill and fill it in:
+
+- **Copy, don't compose.** Every value comes from `packet.json`, `sheet.json`, `qualification.json`, `research.json`, or `draft.json`, with its source kept. You add no new claims, numbers, or judgments.
+- **Binding commitments come first.** Fill "What you would be committing to" from `draft.json` `commitments`. Doug reads what binds Cadocary before anything else.
+- **Every open item is a checkbox** under "Before you can send": signatures, forms, and every `[MISSING: ...]` in the proposal.
+- **Dates as written.** Copy deadlines exactly from `sheet.json`, with any time zone note.
+- **Reading time:** about 250 words a minute over the review plus the proposal.
+- **A pass** uses the short "Pass version" at the end of the template.
+
+When done, `review.md` has no `{{`, `}}`, or `<!--` left.
 
 ## Limits
 
