@@ -7,7 +7,7 @@ The shell of Cadocary's bid agent on Claude Managed Agents. One operator agent h
 | Cadocary Operator | Pulls new RFPs, hands out the work, checks each result, and writes the packet Doug reads | `agent-delegation` | read, write, glob, grep, and Polina's SAM.gov tool (`search_opportunities`, `get_notice`) |
 | Cadocary Reader | Reads an RFP's attached documents, converts them to text, and fills the RFP sheet every later step works from. Runs on Sonnet 5.5 | `rfp-reading` | read, write, glob, grep, bash, web fetch |
 | Cadocary Qualifier | Decides pursue or pass from the sheet and Cadocary's facts, and checks the other agents' work | `rfp-qualifying`, `company-facts` | read, write, glob, grep |
-| Cadocary Researcher | Finds what the contract is worth, comparable past awards, the incumbent, and a price, each with a source | `rfp-research` | read, write, glob, grep, web search, web fetch |
+| Cadocary Researcher | Finds what the contract is worth, comparable past awards, the incumbent, and a price, each with a source | `rfp-research` | read, write, glob, grep, web search, web fetch. **Needs `search_federal_awards`**, not yet wired: `scripts/search_awards.py` is the implementation, and the federal lane of `rfp-research` cannot run without it, because USAspending's award search is a POST and web fetch only does GET |
 | Cadocary Drafter | Writes the proposal from the qualification, the research, and the approved facts | `proposal-drafting`, `company-facts` | read, write, edit, glob, grep |
 
 Settings on every agent:

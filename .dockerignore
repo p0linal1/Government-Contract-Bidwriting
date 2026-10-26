@@ -1,0 +1,9 @@
+# Only what the image needs: the prototype's source, the server, and the agent ids.
+*
+!agent/ids.json
+!prototype
+!server
+prototype/node_modules
+prototype/dist
+prototype/click-through.html
+**/__pycache__

@@ -189,9 +189,10 @@ The website names no people. The capability statement names only the point of co
 
 | id | fact | source | approved |
 | --- | --- | --- | --- |
-| prefs.value_range | Contracts priced between $1 million and $5 million: nothing under $1 million, nothing over $5 million. This replaces the earlier "$25,000 and up". | Doug, Oct 25 | no |
+| prefs.value_range | Contracts priced between $1 million and $5 million: nothing under $1 million, and $5 million is a hard limit. This replaces the earlier "$25,000 and up". | Doug, Oct 25 | no |
 | prefs.no_military | No military applications. | Doug, Oct 25 | no |
-| prefs.work_type | Software and IT work. | Doug, Oct 25 | no |
+| prefs.work_type | Software and IT work. Custom software contracts suit Cadocary best. | Doug, Oct 25 | no |
+| prefs.offshore_staff | Cadocary uses offshore developers, so contracts that allow them are better. A clause requiring US persons only or barring offshore access counts against a bid, and stops it if Cadocary plainly cannot meet it. | Doug, Oct 25 | no |
 | prefs.location | Washington buyers preferred. Federal buyers are allowed, since the pipeline searches SAM.gov. | Doug, Oct 25 | no |
 | prefs.response_time | At least 7 days to respond. | Doug, Oct 25 | no |
 | prefs.facts_per_bid | No standard set of facts fits every RFP. Which past projects, references, staff, and claims to use depends on the bid. | Doug, Oct 25 | no |

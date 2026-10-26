@@ -44,7 +44,17 @@ If you couldn't download or read the documents, say exactly that in your reply. 
   - award and start dates
 
   If a time zone label doesn't fit the date, such as "PST" on a date in daylight time, say so in `note`.
-- **One requirement per row.** Split "shall" lists into separate requirements, and keep the RFP's own numbering in the text where it has some.
+- **What counts as a requirement.** A requirement is something the proposal itself must contain, show, or commit to, or a rule the bidder must meet to be eligible. Use these kinds:
+  - `mandatory`: shall or must
+  - `scored`: an evaluated item, or a should
+  - `format`
+  - `form`
+  - `submission`
+- **What doesn't count:**
+  - Tasks the contractor performs after award go in `scope`, unless the proposal must answer each one.
+  - Boilerplate contract clauses, such as standard federal clauses, are left out. A clause worth Doug's attention goes in `contract_terms_to_flag`.
+- **One row per obligation the evaluators check separately.** A bulleted list the proposal answers in one place is one row, with the bullets in its text. Keep the RFP's numbering.
+- **Expect a manageable list.** A typical RFP has roughly 20 to 120 requirements. If you have more than 150, check whether work tasks or boilerplate clauses slipped in.
 
 ## What to look for, beyond the obvious
 
@@ -63,6 +73,16 @@ If you couldn't download or read the documents, say exactly that in your reply. 
   - insurance above usual limits
   - payment terms
   - termination
+
+## Also write `summary.md`
+
+Write it next to the sheet, in one page at most. The qualifier reads it first. Cover:
+
+- what is being bought, for whom, and for how long
+- the value clues
+- every deadline
+- the 10 requirements most likely to decide go or no-go, with their ids
+- anything unusual, such as a draft with no due date, an RFI, a named incumbent, a hard staffing rule, or military use
 
 ## Output: `sheet.json`
 

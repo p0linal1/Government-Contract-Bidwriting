@@ -2,7 +2,7 @@
 // and a replay of one sample run. Positions are on a fixed canvas that the page scales to fit.
 // In panel text, a name between backticks is shown as code, and an array is a bulleted list.
 
-export const CANVAS = { width: 1200, height: 728 }
+export const CANVAS = { width: 1200, height: 784 }
 
 // `ports` gives each side port's distance from the card's top. `subports` gives each bottom
 // port's key, label, and distance from the card's left edge.
@@ -55,10 +55,11 @@ export const NODES = {
     icon: 'checklist',
     title: 'Cadocary Qualifier',
     sub: 'Decides go or no-go',
-    ports: { r1: 34, r2: 68 },
+    ports: {},
     subports: [
-      ['model', 'Model', 73],
-      ['skill', 'Skill', 153],
+      ['model', 'Model', 37],
+      ['skill', 'Skill', 113],
+      ['factsSkill', 'Skill', 189],
     ],
   },
   researcher: {
@@ -71,7 +72,7 @@ export const NODES = {
     icon: 'search',
     title: 'Cadocary Researcher',
     sub: 'Researches the value',
-    ports: { l: 34 },
+    ports: {},
     subports: [
       ['model', 'Model', 37],
       ['skill', 'Skill', 113],
@@ -88,10 +89,11 @@ export const NODES = {
     icon: 'pen',
     title: 'Cadocary Drafter',
     sub: 'Writes the proposal',
-    ports: { l: 50 },
+    ports: {},
     subports: [
-      ['model', 'Model', 73],
-      ['skill', 'Skill', 153],
+      ['model', 'Model', 37],
+      ['skill', 'Skill', 113],
+      ['factsSkill', 'Skill', 189],
     ],
   },
 }
@@ -101,20 +103,22 @@ const HELPER_SUB_Y = 612
 // Round sub-nodes hang from a card's bottom ports. A helper's sit straight under their port.
 export const SUBS = {
   opModel: { parent: 'operator', port: 'model', x: 236, y: 244, r: 22, icon: 'chip', label: 'Opus 5.5', panel: 'model:opus' },
-  opSkill: { parent: 'operator', port: 'skill', x: 336, y: 244, r: 22, icon: 'book', label: 'Running a bid', panel: 'skill:agent-delegation' },
+  opSkill: { parent: 'operator', port: 'skill', x: 336, y: 244, r: 22, icon: 'book', label: 'Delegation skill', panel: 'skill:agent-delegation' },
   library: { parent: 'operator', port: 'memory', x: 436, y: 244, r: 22, icon: 'db', label: 'RFP Library', panel: 'library' },
   facts: { parent: 'operator', port: 'memory', x: 536, y: 244, r: 22, icon: 'db', label: 'Cadocary Facts', panel: 'facts' },
   sam: { parent: 'operator', port: 'tools', x: 868, y: 244, r: 22, icon: 'gov', label: 'SAM.gov search', panel: 'sam' },
   readerModel: { parent: 'reader', port: 'model', icon: 'chip', label: 'Sonnet 5.5', panel: 'model:sonnet' },
-  readerSkill: { parent: 'reader', port: 'skill', icon: 'book', label: 'Reading RFPs', panel: 'skill:rfp-reading' },
+  readerSkill: { parent: 'reader', port: 'skill', icon: 'book', label: 'Reading skill', panel: 'skill:rfp-reading' },
   readerTools: { parent: 'reader', port: 'tools', icon: 'download', label: 'Downloads, web pages', panel: 'tools:reader' },
   qualifierModel: { parent: 'qualifier', port: 'model', icon: 'chip', label: 'Opus 5.5', panel: 'model:opus' },
-  qualifierSkill: { parent: 'qualifier', port: 'skill', icon: 'book', label: 'Qualifying', panel: 'skill:rfp-qualifying' },
+  qualifierSkill: { parent: 'qualifier', port: 'skill', icon: 'book', label: 'Qualifying skill', panel: 'skill:rfp-qualifying' },
+  qualifierFactsSkill: { parent: 'qualifier', port: 'factsSkill', icon: 'book', label: 'Company facts skill', panel: 'skill:company-facts' },
   researcherModel: { parent: 'researcher', port: 'model', icon: 'chip', label: 'Opus 5.5', panel: 'model:opus' },
-  researcherSkill: { parent: 'researcher', port: 'skill', icon: 'book', label: 'Researching', panel: 'skill:rfp-research' },
+  researcherSkill: { parent: 'researcher', port: 'skill', icon: 'book', label: 'Research skill', panel: 'skill:rfp-research' },
   researcherTools: { parent: 'researcher', port: 'tools', icon: 'globe', label: 'Web search, web pages', panel: 'tools:researcher' },
   drafterModel: { parent: 'drafter', port: 'model', icon: 'chip', label: 'Opus 5.5', panel: 'model:opus' },
-  drafterSkill: { parent: 'drafter', port: 'skill', icon: 'book', label: 'Drafting', panel: 'skill:proposal-drafting' },
+  drafterSkill: { parent: 'drafter', port: 'skill', icon: 'book', label: 'Drafting skill', panel: 'skill:proposal-drafting' },
+  drafterFactsSkill: { parent: 'drafter', port: 'factsSkill', icon: 'book', label: 'Company facts skill', panel: 'skill:company-facts' },
 }
 
 const subportOffset = (node, port) => node.subports.find(([key]) => key === port)[2]
@@ -135,8 +139,8 @@ export function portPoint(id, port) {
     const sub = SUBS[id]
     return [sub.x, sub.y - sub.r]
   }
-  if (port === 'in' || port === 'l') return [node.x, node.y + node.ports[port]]
-  if (port === 'out' || port === 'r1' || port === 'r2') return [node.x + node.w, node.y + node.ports[port]]
+  if (port === 'in') return [node.x, node.y + node.ports[port]]
+  if (port === 'out') return [node.x + node.w, node.y + node.ports[port]]
   if (port === 'top') return [node.x + node.w / 2, node.y]
   return [node.x + subportOffset(node, port.slice(4)), node.y + node.h]
 }
@@ -157,6 +161,8 @@ export const PORT_LABELS = Object.values(NODES).flatMap((node) =>
 
 // The four helpers share one dashed trunk from the Tools port, which splits below the
 // Operator's own sub-nodes. Separate dashed curves from one port overlap into a blur.
+// Helpers never talk to each other: work goes out to a helper on its branch and comes back
+// up the trunk to the Operator, which is why the arrows point both ways.
 const TRUNK_END = [724, 300]
 
 function pathFor(edge) {
@@ -179,15 +185,11 @@ function pathFor(edge) {
 export const EDGES = [
   { id: 'start', from: ['runNow', 'out'], to: ['operator', 'in'], cls: 'main' },
   { id: 'deliver', from: ['operator', 'out'], to: ['packet', 'in'], cls: 'main' },
-  { id: 'trunk', d: 'M724 160L724 300', cls: 'helper' },
-  { id: 'toReader', to: ['reader', 'top'], cls: 'helper', branch: true },
-  { id: 'toQualifier', to: ['qualifier', 'top'], cls: 'helper', branch: true },
-  { id: 'toResearcher', to: ['researcher', 'top'], cls: 'helper', branch: true },
-  { id: 'toDrafter', to: ['drafter', 'top'], cls: 'helper', branch: true },
-  { id: 'checkResearchUp', d: 'M629 480C611 454 589 454 571 480', cls: 'check' },
-  { id: 'checkResearchDown', d: 'M571 480C589 506 611 506 629 480', cls: 'check' },
-  // Goes under the Researcher and its sub-nodes, so it never crosses another line.
-  { id: 'checkDraft', d: 'M571 514C590 514 600 526 600 546L600 690Q600 704 614 704L870 704Q884 704 884 690L884 520C884 505 894 496 913 496', cls: 'check both' },
+  { id: 'trunk', d: 'M724 160L724 300', cls: 'helper hand-back' },
+  { id: 'toReader', to: ['reader', 'top'], cls: 'helper hand-out', branch: true },
+  { id: 'toQualifier', to: ['qualifier', 'top'], cls: 'helper hand-out', branch: true },
+  { id: 'toResearcher', to: ['researcher', 'top'], cls: 'helper hand-out', branch: true },
+  { id: 'toDrafter', to: ['drafter', 'top'], cls: 'helper hand-out', branch: true },
   ...Object.entries(SUBS).map(([id, sub]) => ({ id: `a-${id}`, from: [sub.parent, `sub:${sub.port}`], to: [id, 'top'], cls: 'attach', attach: true })),
 ].map((edge) => ({ ...edge, d: pathFor(edge) }))
 
@@ -206,12 +208,13 @@ export const LABELS = {
   outQualifier: { x: 440, y: 412, side: 'left', rest: 'go or no-go' },
   outResearcher: { x: 760, y: 412, side: 'right', rest: 'research' },
   outDrafter: { x: 1044, y: 412, side: 'right', rest: 'proposal' },
-  gate: { x: 736, y: 360, rest: 'only after a pursue', gate: true },
+  gate: { x: 736, y: 360, rest: 'only after a bid', gate: true },
 }
 
+// Both checks travel the Qualifier's own line, so their notes stack under its card.
 export const CHECKS = {
-  check5: { step: 5, x: 600, y: 404, title: 'Checks the research', rest: 'up to 2 rounds' },
-  check7: { step: 7, x: 742, y: 704, title: 'Checks the draft', rest: 'up to 2 rounds' },
+  check5: { step: 5, x: 458, y: 700, title: 'Operator asks the Qualifier to check the research', rest: 'up to 2 rounds' },
+  check7: { step: 7, x: 458, y: 752, title: 'Operator asks the Qualifier to check the draft', rest: 'up to 2 rounds' },
 }
 
 export const NEVER_SENDS = 'The agent never sends anything.'
@@ -248,7 +251,7 @@ export const STACK = [
   { label: 'Starts the run', nodes: ['runNow', 'schedule'] },
   { step: 1, nodes: ['operator'], firstTest: true },
   { step: 2, attached: true, label: 'The Operator hands each step to a helper', nodes: ['reader'], out: ['outReader', 'handed back to the Operator'] },
-  { step: 3, attached: true, nodes: ['qualifier'], out: ['outQualifier', 'A pass ends the RFP here. A pursue goes on.'] },
+  { step: 3, attached: true, nodes: ['qualifier'], out: ['outQualifier', "A don't-bid ends the RFP here. A bid goes on."] },
   { step: 4, attached: true, nodes: ['researcher'], out: ['outResearcher', 'handed back to the Operator'] },
   { step: 5, attached: true, check: 'check5' },
   { step: 6, attached: true, nodes: ['drafter'], out: ['outDrafter', 'handed back to the Operator'] },
@@ -258,22 +261,20 @@ export const STACK = [
 
 const SKILLS = {
   'agent-delegation': {
-    owner: 'operator',
     version: 0,
-    plain: 'Running a bid',
+    plain: 'Delegation skill',
     teaches: [
-      'The order of a run: read, then qualify, and only a pursue goes on to research and drafting.',
+      'The order of a run: read, then qualify, and only a bid goes on to research and drafting.',
       'Pull new RFPs from SAM.gov once per run, and skip any already in the RFP Library.',
       'Give each helper a message that stands on its own: the RFP, the files to read, and exactly where to write.',
       'Open every result and check it before moving on. A step that fails twice ends that RFP.',
-      'At most three pursued RFPs per run, nearest deadline first.',
+      'At most three RFPs to bid on per run, nearest deadline first.',
       'Never stop to ask Doug. Take the safer option and list the call for him in the packet.',
     ],
   },
   'rfp-reading': {
-    owner: 'reader',
     version: 0,
-    plain: 'Reading RFPs',
+    plain: 'Reading skill',
     teaches: [
       'Get every file and turn it into text: PDFs, Word, Excel, and scans.',
       'Read every page, attachment, and amendment. The latest amendment wins.',
@@ -284,22 +285,20 @@ const SKILLS = {
     ],
   },
   'rfp-qualifying': {
-    owner: 'qualifier',
     version: 0,
-    plain: 'Qualifying',
+    plain: 'Qualifying skill',
     teaches: [
-      'Hard stops that mean pass: under 7 days to respond, a mandatory meeting already missed, a license or insurance level Cadocary lacks, a submission method or eligibility rule it cannot meet.',
+      "Hard stops that mean don't bid: under 7 days to respond, a mandatory meeting already missed, a license or insurance level Cadocary lacks, a submission method or eligibility rule it cannot meet.",
       'Six factors rated with fixed words: must-haves, the current vendor, past work, how bids are scored, price, and competition.',
-      'A fact the facts sheet does not cover is an unknown, not a pass.',
+      "A fact the facts sheet does not cover is an unknown, not a reason not to bid.",
       'Checking research: start fresh, open at least five sources, and confirm the quoted words are really there.',
       'Checking a draft: every requirement mapped to a page, the page limit met, every claim tied to an approved fact.',
       'Every check ends in pass, revise, or block.',
     ],
   },
   'rfp-research': {
-    owner: 'researcher',
     version: 1,
-    plain: 'Researching',
+    plain: 'Research skill',
     teaches: [
       'Comparable past awards matter most.',
       'A search result is a lead, not a source. Open the page and copy the quote from it.',
@@ -310,9 +309,8 @@ const SKILLS = {
     ],
   },
   'proposal-drafting': {
-    owner: 'drafter',
     version: 0,
-    plain: 'Drafting',
+    plain: 'Drafting skill',
     teaches: [
       "Follow the RFP's own section order, headings, and numbering.",
       "Answer every mandatory requirement in the buyer's words, and spend pages where the points are.",
@@ -320,6 +318,18 @@ const SKILLS = {
       'Never sign, certify, or attest for Doug. Those become open items.',
       'Flag contract terms Doug might object to, without accepting or rejecting them.',
       'Plain, specific language with no filler words.',
+    ],
+  },
+  'company-facts': {
+    version: 0,
+    plain: 'Company facts skill',
+    teaches: [
+      'Some facts hold for every bid: the name, registrations, and products. Past work, references, staff, and approach are chosen for each RFP.',
+      'Use the two or three past projects closest to what the buyer scores, and put the strongest where the most points are.',
+      "A client's project, result, or credential stays the client's. Never present it as Cadocary's own.",
+      'Numbers exactly as written: no rounding, no totals, and no stretching a fact.',
+      'Every claim carries the id of the fact behind it. Facts Doug has not approved are listed for him to confirm before sending.',
+      'When a needed fact is missing, leave a marked blank and ask Doug one exact question he can answer in a line.',
     ],
   },
 }
@@ -396,15 +406,15 @@ const PANELS = {
   },
   qualifier: {
     kicker: 'Helper agent',
-    lead: "Decides go or no-go from the RFP sheet and Cadocary's facts. It also checks the Researcher's and the Drafter's work, starting fresh each time and looking for what is wrong.",
+    lead: "Decides go or no-go from the RFP sheet and Cadocary's facts. When the research and the draft come back, the Operator also asks it to check them, starting fresh each time and looking for what is wrong. It reports only to the Operator.",
     rows: [
       { label: 'Model', value: 'Claude Opus 5.5, `claude-opus-5-5`, effort high' },
-      { label: 'Skill', value: '`rfp-qualifying`, version 0' },
-      { label: 'The skill teaches', value: SKILLS['rfp-qualifying'].teaches },
+      { label: 'Skills', value: '`rfp-qualifying` and `company-facts`, both version 0' },
+      { label: 'Qualifying skill teaches', value: SKILLS['rfp-qualifying'].teaches },
       { label: 'Tools', value: `Files only (${FILE_TOOLS})` },
       { label: 'Writes', value: '`qualification.json`, `check-research-<round>.json`, `check-draft-<round>.json`' },
-      { label: 'Go or no-go', value: 'A pass ends that RFP with a short packet that gives the reasons and quotes. A pursue goes on to research.' },
-      { label: 'Checks', value: 'Up to two rounds each for the research and the draft. If the work still fails, the RFP stops as "no-go, could not verify".' },
+      { label: 'Go or no-go', value: "A don't-bid ends that RFP with a short packet that gives the reasons and quotes. A bid goes on to research." },
+      { label: 'Checks', value: 'The Operator asks for up to two rounds each on the research and the draft, and sends any fixes back to the Researcher or the Drafter itself. If the work still fails, the RFP stops as "no-go, could not verify".' },
       { label: 'Open question', value: "The engineering review recommends a separate checker agent. For now the Qualifier does the checking, as in the team's plan.", tone: 'warn' },
     ],
   },
@@ -426,8 +436,8 @@ const PANELS = {
     lead: "Writes the complete proposal in the buyer's order, inside the page limit, built on the reasons Cadocary can win. When a fact it needs is not approved, it leaves it out and lists it for Doug.",
     rows: [
       { label: 'Model', value: 'Claude Opus 5.5, `claude-opus-5-5`, effort high' },
-      { label: 'Skill', value: '`proposal-drafting`, version 0' },
-      { label: 'The skill teaches', value: SKILLS['proposal-drafting'].teaches },
+      { label: 'Skills', value: '`proposal-drafting` and `company-facts`, both version 0' },
+      { label: 'Drafting skill teaches', value: SKILLS['proposal-drafting'].teaches },
       { label: 'Tools', value: 'Files (`read`, `write`, `edit`, `glob`, `grep`)' },
       { label: 'Writes', value: '`proposal.md`, `cost.md` when the price must go in a separate file, and `draft.json`' },
       { label: 'Hands back', value: 'The proposal, a table showing where each requirement is answered, the page count, and the calls and open items for Doug.' },
@@ -440,7 +450,7 @@ const PANELS = {
       {
         label: 'Contains',
         value: [
-          'Send or pass, with a one-line headline',
+          "Bid or don't bid, with a one-line headline",
           'Expected worth, low to high, with its confidence and basis',
           'Why Cadocary is competitive, and the risks, each with a source',
           'Every deadline, as the RFP wrote it',
@@ -513,9 +523,9 @@ export function panelFor(id) {
     const skill = SKILLS[key]
     return {
       ...round,
-      kicker: `Skill for ${NODES[skill.owner].title}`,
+      kicker: `Skill for ${NODES[sub.parent].title}`,
       title: skill.plain,
-      lead: 'A skill is a set of written instructions that teaches one agent one job. Doug never sees it.',
+      lead: 'A skill is a set of written instructions that teaches an agent one job. Doug never sees it.',
       rows: [
         { label: 'Skill', value: `\`${key}\`, version ${skill.version}` },
         { label: 'It teaches', value: skill.teaches },
@@ -531,41 +541,43 @@ const OPENING = [
   { step: 1, caption: 'A teammate presses Run now. The 6:00 schedule is planned and not connected, so it stays still.', status: { runNow: 'working' }, flows: { start: 'fwd' } },
   { step: 1, caption: 'The Operator starts. It reads its skill and both memories: the RFP Library and Cadocary Facts.', status: { runNow: 'done', operator: 'working' }, live: ['opModel', 'opSkill', 'library', 'facts'] },
   { step: 1, caption: 'It searches SAM.gov. These numbers are real, from the first test: 95 notices searched and 5 opened as worth a look, in 3 minutes, for 82 cents.', live: ['sam'], flows: { 'a-sam': 'fwd' }, firstTest: true },
-  { step: 2, caption: 'The Reader downloads one RFP and every attachment, and reads every page.', status: { reader: 'working' }, flows: { toReader: 'fwd' } },
-  { step: 2, caption: 'It hands back the RFP sheet: every requirement and deadline, with the page it came from.', status: { reader: 'done' }, flows: { toReader: 'back' }, labels: { outReader: 'RFP sheet' } },
-  { step: 3, caption: "The Qualifier decides go or no-go from the sheet and Cadocary's facts.", status: { qualifier: 'working' }, flows: { toQualifier: 'fwd' } },
+  { step: 2, caption: 'The Operator hands one RFP to the Reader, which downloads it with every attachment and reads every page.', status: { reader: 'working' }, flows: { toReader: 'fwd' } },
+  { step: 2, caption: 'The Reader hands the RFP sheet back to the Operator: every requirement and deadline, with the page it came from.', status: { reader: 'done' }, flows: { toReader: 'back' }, labels: { outReader: 'RFP sheet' } },
+  { step: 3, caption: "The Operator hands the sheet to the Qualifier, which decides go or no-go from it and Cadocary's facts.", status: { qualifier: 'working' }, flows: { toQualifier: 'fwd' } },
 ]
 
 export const RUNS = {
   pursue: [
     ...OPENING,
-    { step: 3, caption: 'Sample outcome: pursue. A pass would end this RFP here.', status: { qualifier: 'done' }, flows: { toQualifier: 'back' }, labels: { outQualifier: 'pursue', gate: 'only after a pursue' } },
-    { step: 4, caption: 'The Researcher looks for comparable past awards, the current vendor, and a price. Every number needs a source.', status: { researcher: 'working' }, flows: { toResearcher: 'fwd' } },
-    { step: 4, caption: 'It hands back the research: a value range, the awards it found, and how sure it is.', status: { researcher: 'done' }, flows: { toResearcher: 'back' }, labels: { outResearcher: 'research' } },
-    { step: 5, caption: 'The Qualifier checks the research, opening the sources to confirm each quote is really there.', status: { qualifier: 'working' }, flows: { checkResearchUp: 'fwd' }, checks: { check5: 'Round 1' } },
-    { step: 5, caption: 'Sample: round 1 finds a problem. The issues go back to the Researcher word for word.', status: { qualifier: 'done', researcher: 'working' }, flows: { checkResearchDown: 'fwd' }, checks: { check5: 'Round 1: revise' } },
-    { step: 5, caption: 'Round 2. Two rounds is the limit. After that, the RFP stops as "no-go, could not verify".', status: { researcher: 'done', qualifier: 'working' }, flows: { checkResearchUp: 'fwd' }, checks: { check5: 'Round 2' } },
-    { step: 5, caption: 'The research passes.', status: { qualifier: 'done' }, checks: { check5: 'Round 2: pass' } },
-    { step: 6, caption: 'The Drafter writes the whole proposal from the sheet, the research, and the approved facts.', status: { drafter: 'working' }, flows: { toDrafter: 'fwd' } },
-    { step: 6, caption: 'It hands back the draft, with a list of anything Doug still has to fill in or sign.', status: { drafter: 'done' }, flows: { toDrafter: 'back' }, labels: { outDrafter: 'proposal' } },
-    { step: 7, caption: 'The Qualifier checks the draft: every requirement answered, the page limit met, every claim backed by an approved fact.', status: { qualifier: 'working' }, flows: { checkDraft: 'back' }, checks: { check7: 'Round 1' } },
-    { step: 7, caption: 'The draft passes.', status: { qualifier: 'done' }, checks: { check7: 'Round 1: pass' } },
+    { step: 3, caption: "The Qualifier reports back to the Operator. Sample outcome: bid. A don't-bid would end this RFP here.", status: { qualifier: 'done' }, flows: { toQualifier: 'back' }, labels: { outQualifier: 'bid', gate: 'only after a bid' } },
+    { step: 4, caption: 'The Operator hands the RFP to the Researcher, which looks for comparable past awards, the current vendor, and a price. Every number needs a source.', status: { researcher: 'working' }, flows: { toResearcher: 'fwd' } },
+    { step: 4, caption: 'The Researcher hands the research back to the Operator: a value range, the awards it found, and how sure it is.', status: { researcher: 'done' }, flows: { toResearcher: 'back' }, labels: { outResearcher: 'research' } },
+    { step: 5, caption: 'The Operator asks the Qualifier to check the research. It opens the sources to confirm each quote is really there.', status: { qualifier: 'working' }, flows: { toQualifier: 'fwd' }, checks: { check5: 'Round 1' } },
+    { step: 5, caption: 'Sample: round 1 finds a problem. The Qualifier reports it back to the Operator.', status: { qualifier: 'done' }, flows: { toQualifier: 'back' }, checks: { check5: 'Round 1: revise' } },
+    { step: 5, caption: 'The Operator sends the fixes to the Researcher, word for word.', status: { researcher: 'working' }, flows: { toResearcher: 'fwd' }, checks: { check5: 'Round 1: revise' } },
+    { step: 5, caption: 'The Researcher hands the fixed research back to the Operator.', status: { researcher: 'done' }, flows: { toResearcher: 'back' }, checks: { check5: 'Round 1: revise' } },
+    { step: 5, caption: 'The Operator asks the Qualifier for round 2. Two rounds is the limit. After that, the RFP stops as "no-go, could not verify".', status: { qualifier: 'working' }, flows: { toQualifier: 'fwd' }, checks: { check5: 'Round 2' } },
+    { step: 5, caption: 'The Qualifier reports back to the Operator: the research passes.', status: { qualifier: 'done' }, flows: { toQualifier: 'back' }, checks: { check5: 'Round 2: pass' } },
+    { step: 6, caption: 'The Operator hands the Drafter the sheet, the research, and the approved facts, and it writes the whole proposal.', status: { drafter: 'working' }, flows: { toDrafter: 'fwd' } },
+    { step: 6, caption: 'The Drafter hands the draft back to the Operator, with a list of anything Doug still has to fill in or sign.', status: { drafter: 'done' }, flows: { toDrafter: 'back' }, labels: { outDrafter: 'proposal' } },
+    { step: 7, caption: 'The Operator asks the Qualifier to check the draft: every requirement answered, the page limit met, every claim backed by an approved fact.', status: { qualifier: 'working' }, flows: { toQualifier: 'fwd' }, checks: { check7: 'Round 1' } },
+    { step: 7, caption: 'The Qualifier reports back to the Operator: the draft passes. Had it failed, the Operator would send the fixes to the Drafter.', status: { qualifier: 'done' }, flows: { toQualifier: 'back' }, checks: { check7: 'Round 1: pass' } },
     { step: 8, caption: 'The Operator writes the packet for Doug.', status: { packet: 'working' }, flows: { deliver: 'fwd' } },
     { step: 8, end: true, caption: 'Done. Doug reads one packet and decides whether to send it. The agent never sends anything.', status: { packet: 'done', operator: 'done' } },
   ],
   pass: [
     ...OPENING,
-    { step: 3, caption: 'Sample outcome: pass. The RFP stops here, with the reasons and the quotes behind them.', status: { qualifier: 'done' }, flows: { toQualifier: 'back' }, labels: { outQualifier: 'pass' } },
-    { step: 4, caption: 'Research and drafting are skipped. They are the costly steps, so only a pursue reaches them.', status: { researcher: 'skipped', drafter: 'skipped' }, skip: true },
-    { step: 8, caption: 'The Operator writes a short pass packet for Doug.', status: { packet: 'working' }, flows: { deliver: 'fwd' } },
-    { step: 8, end: true, caption: 'Done. Doug sees why it was passed. Nothing was drafted or sent.', status: { packet: 'done', operator: 'done' } },
+    { step: 3, caption: "The Qualifier reports back to the Operator. Sample outcome: don't bid. The RFP stops here, with the reasons and the quotes behind them.", status: { qualifier: 'done' }, flows: { toQualifier: 'back' }, labels: { outQualifier: "don't bid" } },
+    { step: 4, caption: 'Research and drafting are skipped. They are the costly steps, so only a bid reaches them.', status: { researcher: 'skipped', drafter: 'skipped' }, skip: true },
+    { step: 8, caption: "The Operator writes a short don't-bid packet for Doug.", status: { packet: 'working' }, flows: { deliver: 'fwd' } },
+    { step: 8, end: true, caption: "Done. Doug sees why the agent says not to bid. Nothing was drafted or sent.", status: { packet: 'done', operator: 'done' } },
   ],
 }
 
 export const beatLength = (beat) => Math.min(2600, Math.max(1400, 700 + beat.caption.length * 13))
 
 const SKIPPED_STEPS = [4, 5, 6, 7]
-const SKIPPED_PARTS = ['toResearcher', 'toDrafter', 'checkResearchUp', 'checkResearchDown', 'checkDraft', 'researcherModel', 'researcherSkill', 'researcherTools', 'drafterModel', 'drafterSkill', 'outResearcher', 'outDrafter', 'gate', 'check5', 'check7']
+const SKIPPED_PARTS = ['toResearcher', 'toDrafter', 'researcherModel', 'researcherSkill', 'researcherTools', 'drafterModel', 'drafterSkill', 'drafterFactsSkill', 'outResearcher', 'outDrafter', 'gate', 'check5', 'check7']
 
 // Where the replay stands after a beat. Statuses, labels, and check rounds carry over from
 // earlier beats. Moving lines and lit parts belong to the beat itself. A beat of -1 is the
@@ -610,6 +622,29 @@ export function sceneAt(outcome, beat) {
     dimmed: new Set(skipped ? SKIPPED_PARTS : []),
     skippedSteps: new Set(skipped ? SKIPPED_STEPS : []),
   }
+}
+
+// A real run from the server, drawn with the same parts as the replay. Each agent's status comes
+// from its thread, and the line to every helper at work moves. `mode` says it is not the replay.
+const LIVE_STATUS = { working: 'working', done: 'done', 'not started': 'idle' }
+const HELPER_LINES = { reader: 'toReader', qualifier: 'toQualifier', researcher: 'toResearcher', drafter: 'toDrafter' }
+const OPERATOR_PARTS = ['opModel', 'opSkill', 'library', 'facts']
+
+export function liveScene(run) {
+  const scene = sceneAt('pursue', -1)
+  const running = run.status === 'running'
+  scene.status.runNow = 'done'
+  for (const [agent, state] of Object.entries(run.agents)) scene.status[agent.toLowerCase()] = LIVE_STATUS[state] ?? 'idle'
+  if (run.status === 'finished') scene.status.packet = 'done'
+
+  for (const [id, line] of Object.entries(HELPER_LINES)) {
+    if (scene.status[id] !== 'working') continue
+    scene.flows[line] = 'fwd'
+    scene.flows.trunk = 'fwd'
+    for (const sub of subsOf(id)) scene.live.add(sub)
+  }
+  if (scene.status.operator === 'working') for (const sub of OPERATOR_PARTS) scene.live.add(sub)
+  return { ...scene, started: true, mode: running ? 'live' : 'last' }
 }
 
 export function stepState(step, scene) {

@@ -9,5 +9,12 @@ __pycache__/
 .DS_Store
 .claude/settings.local.json
 
+# Doug's facts sheet: his prices, references, and insurance. Shared repo ships facts.example.json.
+facts.json
+
+# Doug's real past bids and proposals. Private: never commit.
+*Proposal*.pdf
+*proposal*.pdf
+
 # Cadocary facts that must stay out of the public repo: contacts and the street address.
 agent/memory/cadocary-facts/private.md

@@ -13,8 +13,8 @@ The flow for every RFP: the Reader reads it, the Qualifier decides, and only a `
 
 1. **Get the RFPs.** If the starting message names RFPs or attaches their files, use those. Otherwise run intake (below), and take every `pursue` and `consider` notice from it.
 2. **Read every RFP, then qualify every RFP.** Both steps are cheap.
-   1. **Read.** Send the Reader the folder of attached documents, `/mnt/session/uploads/<rfp-id>/`, and name the output path `/mnt/session/outputs/<rfp-id>/sheet.json`. Our code attaches every document before the run starts, so this is the normal case. Send attachment links instead only for documents that aren't attached: ones the starting message lists as not attached, or RFPs you found through intake in this run.
-   2. **Qualify.** Send the Qualifier the sheet path and the output path `qualification.json`. If `decision` is `pass`, write the packet with `recommendation: pass` and the reasons, and that RFP is done.
+   1. **Read.** Send the Reader the folder of attached documents, `/mnt/session/uploads/<rfp-id>/`, and name the output path `/mnt/session/outputs/<rfp-id>/sheet.json`. The Reader also writes `summary.md` next to it. Our code attaches every document before the run starts, so this is the normal case. Send attachment links instead only for documents that aren't attached: ones the starting message lists as not attached, or RFPs you found through intake in this run.
+   2. **Qualify.** Send the Qualifier the summary and sheet paths and the output path `qualification.json`. If `decision` is `pass`, write the packet with `recommendation: pass` and the reasons, and that RFP is done.
 3. **Work the pursued RFPs, one at a time, nearest deadline first.** Do at most 3 in a run unless the message says otherwise, and list the rest in your final reply. For each one:
    1. **Research.** Send the Researcher the sheet and qualification paths and the output path `research.json`.
    2. **Check the research.** Ask the Qualifier to check `research.json` and write `check-research-<round>.json`. On `revise`, send the issue list, word for word, back to the Researcher. Allow at most two rounds. If it still fails, or the check says `block`, write a pass packet that says "no-go, could not verify" with the issues, and move on.
@@ -80,6 +80,14 @@ Read: /mnt/session/outputs/wa-example-001/sheet.json and /mnt/memory/cadocary-fa
 Qualify it and write /mnt/session/outputs/wa-example-001/qualification.json
 in the format under "Output" in your skill.
 ```
+
+## Wait for the reply
+
+After you hand work to a helper, stop and wait for its reply message. Reading a long RFP takes minutes.
+
+- **A missing file before the reply arrives is not a failure.** Don't check for the file until the helper says it is done.
+- **Report only what a helper actually said,** in its own words. Never describe a reply you haven't received, and never fill in its details.
+- **If no reply comes** after the helper's thread goes idle, ask it once what happened, and act on its answer.
 
 ## Before moving to the next step
 
