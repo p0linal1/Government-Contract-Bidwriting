@@ -172,10 +172,14 @@ export function daysLeftText(days) {
 }
 
 // The line under an RFP's name in the list: what the agent is doing, or where it stands.
-// The newest thing an agent said in a run: what it is doing, in its own words.
+const AGENT_SAID = /^(Operator|Reader|Qualifier|Researcher|Drafter): /
+
+// The newest thing an agent said in a run, or failing that its newest step, in plain words.
 export function nowLine(run) {
-  const said = run?.steps.find((step) => step.text.startsWith(`${step.agent}: `))
-  return said ? plainNow(shownHeadline(said.text.slice(said.agent.length + 2))) : null
+  const said = run?.steps.find((step) => AGENT_SAID.test(step.text))
+  if (said) return plainNow(shownHeadline(said.text.replace(AGENT_SAID, '')))
+  const latest = run?.steps[0]?.text
+  return latest ? plainNow(latest) : null
 }
 
 // Agents name their working files and say pass or pursue; Doug reads what those mean.
@@ -199,7 +203,7 @@ function plainNow(text) {
 }
 
 export function rfpStatusLine(rfp) {
-  if (isRunning(rfp)) return `Now: ${nowLine(rfp.run) ?? rfp.run.steps[0]?.text ?? 'the agent is working on it'}`
+  if (isRunning(rfp)) return `Now: ${nowLine(rfp.run) ?? 'the agent is working on it'}`
   if (rfp.status === 'passed' && rfp.headline) return firstSentence(rfp.headline)
   if (rfp.status === 'ready_for_doug') return 'Packet ready. Read it and decide.'
   if (!rfp.deadline) return 'No deadline given'
