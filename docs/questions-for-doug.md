@@ -8,7 +8,7 @@ Doug answered the six questions under "Also ask Doug" in `docs/fact-sheet.md` on
 
 Public records answered part of this list on Oct 28: the founding date, the Washington business license number, who signs, that the SAM.gov registration is active, and that Cadocary holds no SBA certifications. Those answers are in the facts file, and Doug only needs to confirm them. `docs/context-tracker.md` tracks how close we are on every kind of context.
 
-Doug answers on a private page the team shares with him, and the answers are copied into the facts from there. Keep the answers that are prices, rates, or private contacts out of git. They go in the gitignored facts file that `docs/fact-sheet.md` describes.
+Doug answers on the app, through a private link, mostly with one tap per question. The answers are copied into the facts from there. Keep the answers that are prices, rates, or private contacts out of git. They go in the gitignored facts file that `docs/fact-sheet.md` describes.
 
 ## How Doug decides
 
