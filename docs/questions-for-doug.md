@@ -8,7 +8,7 @@ Doug answered the six questions under "Also ask Doug" in `docs/fact-sheet.md` on
 
 Public records answered part of this list on Oct 28: the founding date, the Washington business license number, who signs, that the SAM.gov registration is active, and that Cadocary holds no SBA certifications. Those answers are in the facts file, and Doug only needs to confirm them. `docs/context-tracker.md` tracks how close we are on every kind of context.
 
-Keep the answers that are prices, rates, or private contacts out of git. They go in the gitignored facts file that `docs/fact-sheet.md` describes.
+Doug answers on a private page the team shares with him, and the answers are copied into the facts from there. Keep the answers that are prices, rates, or private contacts out of git. They go in the gitignored facts file that `docs/fact-sheet.md` describes.
 
 ## How Doug decides
 
@@ -17,9 +17,10 @@ These matter most. They teach the agent his judgment, and none of them is in pub
 - **Past RFPs.** For 5 to 10 RFPs you have seen: did you bid or pass, and why? Start with the recent ones in `docs/wa-bid-portals.md`: Bothell's legal case system (IT-26-001), Kennewick's police and jail records system (26-013), the King County Prosecutor's KC001265, and the courts office's open juvenile detention request (RFI 20261020).
 - **Past bids.** Which bids have you submitted, which did you win or lose, and can we have the proposals?
 - **Debriefs.** Did any buyer tell you why you lost, or share the scores?
-- **Partners.** Would you team with or resell for a bigger vendor on a deal you can't win alone?
+- **Partners.** Would you team with or resell for a bigger vendor, such as Karpel, Journal Technologies, or Tyler, on a deal you can't win alone?
 - **Competitors.** Who do you usually lose to, or worry about?
 - **Relationships.** Which buyers already know you, and what deals have you heard are coming?
+- **bidkit.** Can the team have bidkit's code, without the saved logins? Are you already registered on WEBS and Public Purchase through it, and which inbox gets your bid alerts?
 
 ## To qualify a bid
 
