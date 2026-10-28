@@ -12,12 +12,21 @@ import urllib.error
 from pathlib import Path
 
 from fastapi import FastAPI, HTTPException
+from fastapi.responses import PlainTextResponse
 from fastapi.staticfiles import StaticFiles
 
 import live
 import rfp_library
 
-APP_BUILD = Path(__file__).resolve().parent.parent / "prototype" / "dist"
+REPO = Path(__file__).resolve().parent.parent
+APP_BUILD = REPO / "prototype" / "dist"
+
+# The files the Facts page shows. Only these: private.md, with prices and contacts, never leaves the team.
+FACT_FILES = {
+    "facts": REPO / "agent" / "memory" / "cadocary-facts" / "README.md",
+    "questions": REPO / "docs" / "questions-for-doug.md",
+    "tracker": REPO / "docs" / "context-tracker.md",
+}
 
 app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None)
 
@@ -64,6 +73,14 @@ def proposal(rfp_id: str):
     if not found:
         raise HTTPException(404, "No draft for that RFP in the library")
     return found
+
+
+@app.get("/api/facts/{name}", response_class=PlainTextResponse)
+def facts(name: str):
+    path = FACT_FILES.get(name)
+    if path is None:
+        raise HTTPException(404, "No such facts file")
+    return path.read_text()
 
 
 app.mount("/", StaticFiles(directory=APP_BUILD, html=True), name="app")

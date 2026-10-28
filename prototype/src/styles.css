@@ -4738,6 +4738,35 @@ textarea:focus {
   font-size: 0.9em;
 }
 
+.bid-doc .md-task {
+  display: flex;
+  gap: 8px;
+  margin-left: -22px;
+  list-style: none;
+}
+
+.bid-doc .md-box {
+  flex: none;
+  width: 14px;
+  height: 14px;
+  margin-top: 5px;
+  border: 1.5px solid #8f8b82;
+  border-radius: 3px;
+}
+
+.bid-doc .md-task.is-done .md-box {
+  border-color: #2f6b4f;
+  background: #2f6b4f;
+  box-shadow: inset 0 0 0 2px #ffffff;
+}
+
+/* The fact files have wide tables. On a phone they scroll sideways inside the page. */
+.facts-doc {
+  overflow-x: auto;
+  min-height: 0;
+  margin-top: 20px;
+}
+
 .bid-needed {
   padding: 0 2px;
   border-radius: 2px;

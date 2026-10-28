@@ -13,6 +13,8 @@ WORKDIR /srv
 COPY server/requirements.txt server/
 RUN pip install --no-cache-dir -r server/requirements.txt
 COPY agent/ids.json agent/
+COPY agent/memory/cadocary-facts/README.md agent/memory/cadocary-facts/
+COPY docs/questions-for-doug.md docs/context-tracker.md docs/
 COPY server/ server/
 COPY --from=app /build/prototype/dist prototype/dist
 CMD ["sh", "-c", "exec uvicorn main:app --app-dir server --host 0.0.0.0 --port ${PORT:-8080}"]
