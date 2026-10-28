@@ -11,10 +11,12 @@ import re
 import urllib.error
 from pathlib import Path
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, Header, HTTPException
 from fastapi.responses import PlainTextResponse
 from fastapi.staticfiles import StaticFiles
+from pydantic import BaseModel, Field
 
+import answers
 import live
 import rfp_library
 
@@ -34,6 +36,7 @@ app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None)
 # A SAM.gov notice id, which is also the RFP's id in the library.
 RFP_ID = re.compile(r"[0-9a-f]{32}")
 SESSION_ID = re.compile(r"sesn_\w+")
+QUESTION_ID = re.compile(r"[a-z0-9-]{1,40}")
 
 
 def answer(read):
@@ -81,6 +84,43 @@ def facts(name: str):
     if path is None:
         raise HTTPException(404, "No such facts file")
     return path.read_text()
+
+
+class Answer(BaseModel):
+    choice: str = Field("", max_length=200)
+    choices: list[str] = Field(default_factory=list, max_length=20)
+    rows: dict[str, str] = Field(default_factory=dict, max_length=20)
+    text: str = Field("", max_length=5000)
+    note: str = Field("", max_length=5000)
+    skipped: bool = False
+
+
+def answers_allowed(code):
+    if not answers.configured():
+        raise HTTPException(503, "Answers are not set up on this server")
+    if not answers.code_matches(code):
+        raise HTTPException(403, "Open the private link to see or change the answers")
+
+
+@app.get("/api/answers")
+def doug_answers(x_answers_code: str = Header("")):
+    answers_allowed(x_answers_code)
+    try:
+        saved, _ = answers.read()
+    except (urllib.error.URLError, TimeoutError) as error:
+        raise HTTPException(502, f"Could not read the answers: {error}") from error
+    return {"answers": saved}
+
+
+@app.put("/api/answers/{question_id}")
+def save_answer(question_id: str, answer: Answer, x_answers_code: str = Header("")):
+    answers_allowed(x_answers_code)
+    if not QUESTION_ID.fullmatch(question_id):
+        raise HTTPException(404, "No such question")
+    try:
+        return {"savedAt": answers.save(question_id, answer.model_dump())}
+    except (urllib.error.URLError, TimeoutError) as error:
+        raise HTTPException(502, f"Could not save the answer: {error}") from error
 
 
 app.mount("/", StaticFiles(directory=APP_BUILD, html=True), name="app")
