@@ -12,6 +12,7 @@ Sources:
 - **Capability statement:** Doug's one-page PDF, "Cadocary LLC.pdf", cited by page. It is not in the repo because it holds personal contact details.
 - **Registration:** the team's sourcing profile, from Cadocary's SAM.gov registration.
 - **Doug:** what he told the team.
+- **Bid records:** Cadocary's private bid workspace, read October 28, 2026: the bids Doug submitted and signed, the buyers' replies, and his company profile. Every fact from it is in `private.md`.
 - **Public records:** read October 28, 2026. The Washington Secretary of State business record, the SBA Small Business Search profile (which mirrors Cadocary's SAM.gov registration), USAspending, data.wa.gov, and the council records of seven Washington governments.
 
 Each fact has:
@@ -21,7 +22,7 @@ Each fact has:
 - its source
 - whether Doug has approved it
 
-`private.md` holds what must stay out of the public repo: prices, the street address, and the personal and client contact details. Agents get it in the same memory store when it exists.
+`private.md` holds what must stay out of the public repo: prices, the street address, the EIN, personal, client, and buyer contact details, and everything from the bid records, including the bids Doug submitted, the team, the delivery model, registrations, and insurance. Agents get it in the same memory store when it exists. Its ids are listed under "Facts kept in private.md" below.
 
 Until a fact is approved, the agents may use it for qualifying and research, but the drafter lists it for Doug's confirmation before relying on it. No fact is approved yet.
 
@@ -193,7 +194,7 @@ Neither source gives dates, contract values, or team size for any of them. The c
 
 ## Team
 
-The website names no people. The capability statement names only the point of contact (in `private.md`). Neither gives staff, roles, resumes, or headcount, so treat staff as unknown.
+The website names no people, and the capability statement names only the point of contact. The bid records name the team, in `private.md` (`team.*` and `staff.*`). Naming a person in a bid is a binding staffing commitment.
 
 ## Doug's preferences
 
@@ -207,18 +208,29 @@ The website names no people. The capability statement names only the point of co
 | prefs.response_time | At least 7 days to respond. | Doug, Oct 25 | no |
 | prefs.facts_per_bid | No standard set of facts fits every RFP. Which past projects, references, staff, and claims to use depends on the bid. | Doug, Oct 25 | no |
 
+## Facts kept in private.md
+
+These ids are in `private.md`, which only the agents and the team can read. Cite them the same way.
+
+- Company: `company.address`, `company.principal_location`, `company.ein`, `company.bid_history`
+- Products and past work: `product.docketbot.users`, `work.spendlogic.deployment`, `work.purlpal.scale`, `work.dates`, `work.sdot`
+- People: `contact.*` (client contacts), `team.*`, `staff.*`, `buyer.*` (buyer contacts)
+- Bids: `bid.*` (the submitted bids and the passes), `price.*` (what each bid charged, and the pricing method)
+- Operations: `delivery.*` (hosting, ownership, AI use, support, criminal justice data security), `accounts.*` (bid portals and the bid inbox), `insurance.status`
+- Preferences: `prefs.value_range_test`
+
 ## Not known yet
 
 Treat each of these as unknown. Never guess any of them.
 
-- insurance: types, limits, carriers, and expiry dates
-- Washington OMWBE certification, SOC 2, and FedRAMP. The OMWBE directory needs a person to pass a robot check, so it is unchecked. The FedRAMP version in `work.spendlogic.built` is SpendLogic's product, not a Cadocary authorization.
-- CJIS readiness, background checks, and where hosted work would run
+- insurance carriers, limits, and cost: none is in force (`insurance.status`)
+- SOC 2 and FedRAMP: none on record. The FedRAMP version in `work.spendlogic.built` is SpendLogic's product, not a Cadocary authorization. The OMWBE directory itself is unchecked.
+- whether anyone has passed a fingerprint background check for criminal justice data (`delivery.cjis_approach` is a written approach, not a completed check)
 - the SAM.gov expiry date
-- past government work that public records would not show, such as subcontracts, and confirmation that there is none
-- dates, values, and permission to name the client for the SpendLogic, Hotels4Truckers, and PURLPal work. The client contacts in `private.md` are not references until they agree.
-- how many offices or attorneys use DocketBot and ClientCheck, and which ones may be named
-- references and their permission to be named
-- staff, roles, and resumes, and whether anyone besides Doug may sign
-- prices and rates. The only prices on the site are the $30/month DocketBot and ClientCheck licenses, which are not a bid price list.
-- WEBS and Public Purchase registration. WEBS registration was started on October 26 and paused at step 1.
+- contract values and durations for SpendLogic, Hotels4Truckers, and PURLPal, and Hotels4Truckers' dates
+- whether ClientCheck has paying users, and which DocketBot users may be named
+- permission from each reference to be named
+- each developer's hours a week and years with Cadocary
+- whether anyone besides Doug may sign
+- the outcomes of the submitted bids
+- a pricing floor and a standard price list. Past bid prices (`price.*`) show the method, not a list. The $30/month licenses on the site are not a bid price list.
