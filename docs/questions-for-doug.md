@@ -14,7 +14,7 @@ Keep the answers that are prices, rates, or private contacts out of git. They go
 
 These matter most. They teach the agent his judgment, and none of them is in public records, so they need a conversation, about an hour.
 
-- **Past RFPs.** For 5 to 10 RFPs you have seen: did you bid or pass, and why?
+- **Past RFPs.** For 5 to 10 RFPs you have seen: did you bid or pass, and why? Start with the recent ones in `docs/wa-bid-portals.md`: Bothell's legal case system (IT-26-001), Kennewick's police and jail records system (26-013), the King County Prosecutor's KC001265, and the courts office's open juvenile detention request (RFI 20261020).
 - **Past bids.** Which bids have you submitted, which did you win or lose, and can we have the proposals?
 - **Debriefs.** Did any buyer tell you why you lost, or share the scores?
 - **Partners.** Would you team with or resell for a bigger vendor on a deal you can't win alone?

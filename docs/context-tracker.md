@@ -12,14 +12,14 @@ As of October 28, 2026, after round 1.
 | --- | --- | --- | --- | --- |
 | 1 | Doug's facts | 41% | Insurance, references, and prices | Doug's files and inbox, then Doug confirms |
 | 2 | Doug's judgment | 17% | Bid or pass, and why, on real RFPs | Only Doug, in conversation |
-| 3 | Every open RFP in his lane | 14% | Washington portals, which need a vendor account | Doug registers, then the agent reads the alerts |
+| 3 | Every open RFP in his lane | 38% | Registration on WEBS and Public Purchase | Doug registers, then the agent reads the alerts |
 | 4 | The buyer's history | 40% | The big counties beyond King and Snohomish | Us, from public records |
 | 5 | The competition | 33% | Who else bid, and how they scored | Us, by records request that Doug signs |
 | 6 | What the buyer cares about | 50% | Staff reports for each target buyer | Us, from public records |
 | 7 | What's coming | 50% | Which offices still run JustWare | Us, from public records |
 | 8 | Doug's winning content | 50% | His past proposals | Doug's files |
 
-Overall: 37%, the average of the eight.
+Overall: 40%, the average of the eight.
 
 ## Checklists
 
@@ -65,14 +65,15 @@ How Doug decides. This is what lets the agent steer like him.
 Washington courts, prosecutors, public defense, jails, and probation, including every change to a posting.
 
 - [x] Federal notices from SAM.gov, through Polina's tool
-- [ ] A map of which Washington buyers post where
-- [ ] WEBS, the state's vendor portal
-- [ ] Public Purchase
-- [ ] Other county and city portals
-- [ ] Court and public defense agency postings
+- [x] A map of where each big Washington buyer posts, in `docs/wa-bid-portals.md`
+- [x] The courts office and Office of Public Defense pages, both readable without an account
+- [ ] County websites with public lists, read on a schedule: Clark, Thurston, Kitsap, Yakima, Whatcom, and Benton
+- [ ] WEBS registration
+- [ ] Public Purchase registration
+- [ ] Other portal accounts: OpenGov (Seattle, Pierce County), ProcureWare (Snohomish County, City of Spokane), King County, and Bonfire (Vancouver)
 - [ ] An inbox the agent can read for bid alerts
 
-1 of 7.
+3 of 8.
 
 ### 4. The buyer's history
 
@@ -145,3 +146,6 @@ What each buyer runs today, what it paid, and when the contract ends.
 - Found that SAM.gov lists codes such as janitorial and landscaping, beyond what the capability statement says. Added a question for Doug.
 - Found the statewide court system move, which narrows Doug's market to prosecutors, public defense, jails, and probation, and may affect his products. Added to piece 7.
 - Could not check the state's women- and minority-owned directory: it needs a person to pass a robot check.
+- Mapped where 15 big Washington counties and cities, the courts office, and the Office of Public Defense post bids (`docs/wa-bid-portals.md`). Piece 3 went from 1 of 7 to 3 of 8.
+- Found one open opportunity in Doug's lane: the courts office's information request for a statewide juvenile referral and detention system, due January 4, 2027. Also found three recent RFPs in his lane: Bothell (prosecutor case system), Kennewick (police and jail records), and the King County Prosecutor. These are good cases to walk Doug through for piece 2.
+- Learned that DocketBot and ClientCheck can't be run here: they are Windows apps that need a Washington court login.
