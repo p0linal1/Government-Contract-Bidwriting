@@ -1,6 +1,6 @@
 # Cadocary facts
 
-As of October 25, 2026.
+As of October 28, 2026.
 
 The facts about Cadocary LLC that the agents may use. Nothing about Cadocary may be claimed unless it is here or in `private.md` beside it. Our code writes both files into the memory store, and the agents only read them.
 
@@ -12,6 +12,7 @@ Sources:
 - **Capability statement:** Doug's one-page PDF, "Cadocary LLC.pdf", cited by page. It is not in the repo because it holds personal contact details.
 - **Registration:** the team's sourcing profile, from Cadocary's SAM.gov registration.
 - **Doug:** what he told the team.
+- **Public records:** read October 28, 2026. The Washington Secretary of State business record, the SBA Small Business Search profile (which mirrors Cadocary's SAM.gov registration), USAspending, data.wa.gov, and the council records of seven Washington governments.
 
 Each fact has:
 
@@ -48,6 +49,14 @@ No single set of facts fits every RFP. Which past work, references, staff, and c
 | company.offer | "We design and build custom software end to end, plus productized tools for real workflows. Install, authenticate, and click." | https://cadocary.com/ | no |
 | company.what_we_build | "Web apps, desktop and mobile UIs, secure cloud hosting, and large-scale data processing and workflow automation. Designed and shipped end to end, with white glove service and support." | https://cadocary.com/ | no |
 | company.how_to_engage | "Send an email describing what you want built and your rough budget. No forms, no calls, no decks required." | https://cadocary.com/services/ | no |
+| company.ubi | Washington business license (UBI) number 605 623 739 | Washington Secretary of State business search, read Oct 28, 2026 | no |
+| company.formed | Formed as a Washington limited liability company on October 10, 2024. Status active. The next annual renewal is due by October 31, 2027. | Washington Secretary of State business search, read Oct 28, 2026 | no |
+| company.governor | Doug is the only governor on the state record, so he signs for the company unless he authorizes someone else. His full name is in `private.md`. | Washington Secretary of State business search, read Oct 28, 2026 | no |
+| company.sam_status | SAM.gov registration active. The profile was last updated August 5, 2026, and gives 2024 as the year established. The expiry date is not public. | SBA Small Business Search, profile KMG3ZA6PAPK3, read Oct 28, 2026 | no |
+| company.size | Small under every NAICS code the registration lists. | SBA Small Business Search, read Oct 28, 2026 | no |
+| company.sba_certifications | "This firm does not have any active or former SBA certifications." So no 8(a), HUBZone, women-owned, or veteran-owned set-asides. No non-federal certifications are listed either. | SBA Small Business Search, read Oct 28, 2026 | no |
+| company.sam_naics | The SAM.gov registration lists more codes than the capability statement: primary 513210 (Software Publishers), plus 334413, 518210, 541330, 541511, 541512, 541519, 541611, 541690, 541715, 561720 (Janitorial), 561730 (Landscaping), and 611420. | SBA Small Business Search, read Oct 28, 2026 | no |
+| company.public_contract_history | Public records show no government contracts: no federal awards on USAspending, no Washington state agency contracts or statewide contract sales on data.wa.gov, and no council matters naming Cadocary or DocketBot in King County, Seattle, Snohomish County, Tacoma, Bellevue, Whatcom County, or Olympia. | Each source, searched Oct 28, 2026 | no |
 
 ## Capabilities
 
@@ -72,6 +81,7 @@ Doug's own claims, from the capability statement. They describe the products' de
 | id | fact | source | approved |
 | --- | --- | --- | --- |
 | product.lineup | The site lists three products of Cadocary's own, DocketBot, ClientCheck, and Highlighter: "Cadocary's own product offerings; ready-to-use software that you can try today." | https://cadocary.com/products/ | no |
+| product.launch | Both demo videos went up on Cadocary's YouTube channel in January 2026: ClientCheck on January 22 and DocketBot on January 24. That is the earliest public date for either product. | https://www.youtube.com/watch?v=Wvhi2yohWAE, https://www.youtube.com/watch?v=LYVsVklt92I, read Oct 28, 2026 | no |
 
 ### DocketBot
 
@@ -202,14 +212,13 @@ The website names no people. The capability statement names only the point of co
 Treat each of these as unknown. Never guess any of them.
 
 - insurance: types, limits, carriers, and expiry dates
-- certifications, including small business, OMWBE, SOC 2, and FedRAMP. The FedRAMP version in `work.spendlogic.built` is SpendLogic's product, not a Cadocary authorization.
+- Washington OMWBE certification, SOC 2, and FedRAMP. The OMWBE directory needs a person to pass a robot check, so it is unchecked. The FedRAMP version in `work.spendlogic.built` is SpendLogic's product, not a Cadocary authorization.
 - CJIS readiness, background checks, and where hosted work would run
-- set-aside eligibility
-- past government contracts, their buyers, dates, and values
+- the SAM.gov expiry date
+- past government work that public records would not show, such as subcontracts, and confirmation that there is none
 - dates, values, and permission to name the client for the SpendLogic, Hotels4Truckers, and PURLPal work. The client contacts in `private.md` are not references until they agree.
 - how many offices or attorneys use DocketBot and ClientCheck, and which ones may be named
 - references and their permission to be named
-- staff, roles, and resumes, and who may sign bids
-- years in business
+- staff, roles, and resumes, and whether anyone besides Doug may sign
 - prices and rates. The only prices on the site are the $30/month DocketBot and ClientCheck licenses, which are not a bid price list.
-- registrations other than SAM.gov, such as WEBS, Public Purchase, and the Washington business license
+- WEBS and Public Purchase registration. WEBS registration was started on October 26 and paused at step 1.
