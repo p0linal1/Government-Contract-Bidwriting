@@ -20,7 +20,7 @@ This section is the latest. Where older sections below disagree, this one wins.
   - a "Run now" button behind a login
   - Washington sources (WEBS, Public Purchase)
   - Doug approving the facts and answering `docs/questions-for-doug.md`
-  - closing the context gaps in `docs/context-tracker.md` (40% on Oct 28)
+  - closing the context gaps in `docs/context-tracker.md` (49% on Oct 28)
 
 ## The short version
 
@@ -230,6 +230,7 @@ The full reference is `docs/managed-agents.md`. The facts that matter most:
 | Context tracker | `docs/context-tracker.md` | The eight kinds of context the agent needs to work like Doug, a checklist and percentage for each, who can close each gap, and a log of each round of the loop |
 | Washington market findings | `docs/wa-market-findings.md` | 12 comparable Washington justice-software contracts with prices and terms, what they mean for Doug, and the public sources that work |
 | Washington bid portals | `docs/wa-bid-portals.md` | Open and recent RFPs in Doug's lane, where 15 big counties and cities post bids, and which sites Doug should register on first |
+| Washington buyers | `docs/wa-buyers.md` | Who runs which justice system in the ten biggest counties and the Tri-Cities, what it cost, when the contract ends, who won the recent prosecutor RFPs, and the best openings for Doug |
 
 ## Suggested split of the work
 

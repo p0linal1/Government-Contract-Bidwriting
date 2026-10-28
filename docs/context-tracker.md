@@ -6,20 +6,26 @@ Each piece has a checklist, and its percentage is the share of items checked. It
 
 ## Where we are
 
-As of October 28, 2026, after round 1.
+As of October 28, 2026, after round 2.
 
 | # | Piece | Done | Biggest gap | Who can close it |
 | --- | --- | --- | --- | --- |
 | 1 | Doug's facts | 41% | Insurance, references, and prices | Doug's files and inbox, then Doug confirms |
 | 2 | Doug's judgment | 17% | Bid or pass, and why, on real RFPs | Only Doug, in conversation |
-| 3 | Every open RFP in his lane | 38% | Registration on WEBS and Public Purchase | Doug registers, then the agent reads the alerts |
-| 4 | The buyer's history | 40% | The big counties beyond King and Snohomish | Us, from public records |
-| 5 | The competition | 33% | Who else bid, and how they scored | Us, by records request that Doug signs |
-| 6 | What the buyer cares about | 50% | Staff reports for each target buyer | Us, from public records |
-| 7 | What's coming | 50% | Which offices still run JustWare | Us, from public records |
+| 3 | Every open RFP in his lane | 38% | bidkit's code, which already reads his bid alerts and logs into WEBS and Public Purchase | Doug shares bidkit |
+| 4 | The buyer's history | 50% | Prices and contract end dates for half the offices | Us, by records request |
+| 5 | The competition | 57% | Scores and winning proposals | Us, by records request |
+| 6 | What the buyer cares about | 60% | Staff reports for each target buyer | Us, from public records |
+| 7 | What's coming | 75% | Watching council agendas for new projects | Us, once it's connected to the agent |
 | 8 | Doug's winning content | 50% | His past proposals | Doug's files |
 
-Overall: 40%, the average of the eight.
+Overall: 49%, the average of the eight.
+
+## When the loop is done
+
+The agent is ready when it passes a backtest. It gets past Washington RFPs whose results are public, with the results hidden: Kitsap 2022-114, Whatcom 22-09, Lewis County 2021, Snohomish County's 2026 court system, and King County's 2018 jail system. For each, it predicts who won and roughly at what price, and says whether Cadocary could have competed. We score it against what really happened. Research rounds stop when the score stops improving.
+
+Doug still decides what is true about Cadocary and how much risk he takes. Market judgment is the agent's job, and it can know more there than any one person tracks.
 
 ## Checklists
 
@@ -71,7 +77,7 @@ Washington courts, prosecutors, public defense, jails, and probation, including 
 - [ ] WEBS registration
 - [ ] Public Purchase registration
 - [ ] Other portal accounts: OpenGov (Seattle, Pierce County), ProcureWare (Snohomish County, City of Spokane), King County, and Bonfire (Vancouver)
-- [ ] An inbox the agent can read for bid alerts
+- [ ] bidkit's code. Doug's own pipeline already reads his bid-alert inbox and logs into WEBS and Public Purchase, so he is probably registered on both already.
 
 3 of 8.
 
@@ -81,44 +87,47 @@ What each buyer runs today, what it paid, and when the contract ends.
 
 - [x] 12 comparable Washington contracts with prices, in `docs/wa-market-findings.md`
 - [x] The public sources that work: council records, county and state contract lists, and the Office of Public Defense
-- [ ] The same for the other big counties: Pierce, Spokane, Clark, Thurston, Kitsap, Yakima, and Benton
-- [ ] Current system, vendor, and contract end date for each target buyer
+- [x] Current system and vendor for most justice offices in the ten biggest counties and the Tri-Cities, in `docs/wa-buyers.md`
+- [ ] Price and contract end date for each. About half are found.
+- [ ] Pierce and Spokane counties in detail. Their sites block automated reads.
 - [ ] Connected to the agent as a research tool
 
-2 of 5.
+3 of 6.
 
 ### 5. The competition
 
-- [x] Who wins in Washington: Tyler, Journal Technologies, Karpel, Pine Technologies, Concourse Tech, GxP Partners, LegalServer, and Tribridge
-- [x] Prices for 11 of those 12 contracts
-- [ ] Who else bid on each
-- [ ] How each bid was scored
+- [x] Who wins in Washington: Karpel takes prosecutor systems, with Journal Technologies second. Also Tyler, Pine Technologies, Concourse Tech, GxP Partners, LegalServer, EIS, and Tribridge
+- [x] Prices for about 25 contracts, in `docs/wa-market-findings.md` and `docs/wa-buyers.md`
+- [x] Who bid on the recent prosecutor systems: Kitsap and Whatcom drew Karpel and Journal, Pend Oreille drew nobody
+- [x] One full score sheet: Kitsap, Karpel 4.29 to Journal 3.81
+- [ ] Scores for the rest
 - [ ] The winning proposals
-- [ ] A records request sent. One is drafted for Snohomish County's court system award, not sent.
+- [ ] Records requests sent. One is drafted for Snohomish County; Kitsap, Whatcom, Lewis, and the Clark County Prosecutor are next. Waiting on whose name they go under.
 
-2 of 6.
+4 of 7.
 
 ### 6. What the buyer cares about
 
 - [x] The agent reads each RFP's scoring
 - [x] One buyer's reasons on record: King County picked its jail system on 10-year cost and fit to more than 900 requirements, not the lowest upfront price
+- [x] Scoring weights for four more: Kitsap (cost 25 of 100), King County's KC001265 (demos 30 and price 22 of 130), Bothell, and the state courts office's juvenile request, which asks for off-the-shelf fit and similar customers
 - [ ] Staff reports for each target buyer
 - [ ] Connected to the researcher
 
-2 of 4.
+3 of 5.
 
 ### 7. What's coming
 
-- [x] JustWare hosting ends in 2027, so every office on it has to move
+- [x] JustWare: the vendor ended support in June 2021. "Hosting ends in 2027" comes only from Snohomish County's papers. Prosecutors leaving it mostly go to Pine Technologies
 - [x] Washington's public defender caseload limits started in January 2026
-- [x] State public defense grants can pay for case management systems
+- [x] State public defense grants can pay for defender-only case systems. Kitsap used its 2024 money on case management tools, and six more counties planned technology spending for 2025
 - [x] District and city courts are moving to one statewide Tyler system, with all of them planned to be live in 2027. Those courts will not buy their own case systems, and DocketBot and ClientCheck read the old court sites the new system replaces.
-- [ ] Which Washington offices still run JustWare
-- [ ] Contract end dates at target buyers
+- [x] Which Washington offices still run JustWare: Snohomish County until July 2027, and probably Yakima County's prosecutor and assigned counsel
+- [x] Contract end dates for the next openings: Kitsap's jail (November 30, 2026), Benton's juvenile center (December 31, 2026), Benton's public defense (January 31, 2027), Benton's prosecutor (April 30, 2027), and Kitsap's public defense (April 2027)
 - [ ] Council agendas and budget votes watched for new projects
 - [ ] Connected to the agent
 
-4 of 8.
+6 of 8.
 
 ### 8. Doug's winning content
 
@@ -149,3 +158,13 @@ What each buyer runs today, what it paid, and when the contract ends.
 - Mapped where 15 big Washington counties and cities, the courts office, and the Office of Public Defense post bids (`docs/wa-bid-portals.md`). Piece 3 went from 1 of 7 to 3 of 8.
 - Found one open opportunity in Doug's lane: the courts office's information request for a statewide juvenile referral and detention system, due January 4, 2027. Also found three recent RFPs in his lane: Bothell (prosecutor case system), Kennewick (police and jail records), and the King County Prosecutor. These are good cases to walk Doug through for piece 2.
 - Learned that DocketBot and ClientCheck can't be run here: they are Windows apps that need a Washington court login.
+
+### Round 2, October 28, 2026
+
+- Four research helpers covered who runs what in the ten biggest counties and the Tri-Cities, who won the recent prosecutor RFPs, and where JustWare is still used. The results are in `docs/wa-buyers.md`.
+- The biggest finding: most of Doug's lane is under his $1 million floor. Prosecutor and defender systems in mid-size counties cost $80,000 to $500,000. Only jail systems and the biggest counties pass $1 million. His answer to question C1 decides how much of the market is open.
+- Best openings: Kitsap County's jail system (contract ends November 30, 2026), Clark County's 1990s prosecutor system, Yakima County's offices still on JustWare, and Benton County's prosecutor and juvenile center.
+- Corrected the JustWare dates in piece 7.
+- Learned that Doug's own bid pipeline, bidkit, already reads his bid alerts and logs into WEBS and Public Purchase. Asked for its code (question B7 on his answer page).
+- Set the finish line: a backtest on five past Washington RFPs with known results.
+- Overall went from 40% to 49%.

@@ -23,7 +23,7 @@ Gathered on October 26, 2026 from free public sources. Every figure below comes 
 
 - **Size depends on the county.** A large county like King County spends $2 million to $3.5 million on a court or prosecutor system, inside Doug's range. A mid-size county like Snohomish spends $300,000 to $450,000 over 5 years, under his $1 million floor. The floor targets big-county deals and skips mid-size ones.
 - **Contracts due for replacement.** King County's prosecutor contract with Karpel ended in 2022, and its court contracts with Journal Technologies ran to 2021. Check whether they were renewed or rebid.
-- **A migration wave.** JustWare stops hosting in 2027, so every office still on it has to move. Snohomish chose Pine Technologies by sole source.
+- **A migration wave.** The vendor ended JustWare support in June 2021, and Snohomish County's papers say its hosting ends in 2027. Offices still on it have to move. Snohomish chose Pine Technologies by sole source. Who else is on it is in `docs/wa-buyers.md`.
 - **Funding.** Washington's public defense grant (RCW 10.101) lists case management systems as an allowed use. Each county's application must say whether its attorneys keep a case reporting and case management system.
 - **Demand.** Washington's new public defender caseload limits start in January 2026, so counties need caseload tracking.
 - **Why vendors win.** King County scored total cost over 10 years and fit to more than 900 requirements, not the lowest upfront price.
@@ -42,4 +42,3 @@ Washington governments on Legistar: King County, Seattle, Snohomish County, Taco
 ## Not available from public data
 
 - Evaluation scores and losing bids. These need a public records request.
-- Who uses JustWare today. Web search found nothing, so it needs county-by-county records.
