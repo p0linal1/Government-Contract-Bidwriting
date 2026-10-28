@@ -39,7 +39,7 @@ These decide pursue or pass. Without them, many RFPs stop at "unknown".
 These are what a proposal claims. Without them, the drafter leaves marked blanks.
 
 9. **Past government contracts.** Public records show none. Is that right? List any, including subcontracts: buyer, years, dollar value, and one line on the work. Which may we name?
-10. **Product users.** How many public defense offices or attorneys use DocketBot and ClientCheck today, and may we name any?
+10. **Product users.** How many public defense offices or attorneys use DocketBot and ClientCheck today, and may we name any? Do both still work for courts already on the new statewide court system, such as Tacoma Municipal Court?
 11. **Client projects.** For SpendLogic, Hotels4Truckers, and PURLPal: what years, roughly what contract value, and may a government bid name the client?
 12. **References.** Your capability statement lists a contact at SpendLogic, Hotels4Truckers, and PURLPal. Has each agreed to be a named reference, and who else, especially at a government buyer, will speak for you?
 13. **Staff.** Who would work on a bid: name, role, years of experience, and hours a week available? Can we have each resume?
