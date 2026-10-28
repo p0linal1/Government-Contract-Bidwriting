@@ -3,9 +3,6 @@ import { Markdown } from '../markdown'
 import { navigate } from '../router'
 import { Icon } from '../ui'
 
-// A private claude.ai page where Doug answers the questions. It opens only for the people it is shared with.
-const ANSWER_PAGE = 'https://claude.ai/artifact/Qp4Jy1q2iq7DGRrvLsfTm5'
-
 const PAGES = [
   {
     id: 'facts',
@@ -17,7 +14,7 @@ const PAGES = [
     id: 'questions',
     title: 'Questions for Doug',
     note: 'What the agent still needs from Doug',
-    intro: 'Until Doug answers these, the agent marks each gap in a bid instead of guessing.',
+    intro: 'Doug answers these on this site, mostly with one tap each. Until he does, the agent marks each gap in a bid instead of guessing.',
   },
   {
     id: 'tracker',
@@ -48,9 +45,9 @@ function Document({ page }) {
       <p className="step-intro">{page.intro}</p>
       {page.id === 'questions' && (
         <div className="alternates">
-          <a className="btn btn-secondary" href={ANSWER_PAGE} target="_blank" rel="noreferrer">
-            Open Doug's answer page
-          </a>
+          <button className="btn btn-primary" onClick={() => navigate('/answer')}>
+            Answer the questions
+          </button>
         </div>
       )}
       {failed && <p className="step-intro">This file can't be loaded here. It loads on the live app, which reads it from the repo.</p>}

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { navigate, useRoute } from './router'
 import { LibraryProvider, useLibrary } from './library'
 import { Agent } from './screens/Agent'
+import { Answer } from './screens/Answer'
 import { Bids } from './screens/Bid'
 import { Facts } from './screens/Facts'
 import { Research } from './screens/Research'
@@ -47,13 +48,14 @@ function Screen({ section, id, tab }) {
   if (section === 'settings') return <Settings id={id} />
   if (section === 'agent') return <Agent sessionId={id} />
   if (section === 'facts') return <Facts id={id} />
+  if (section === 'answer') return <Answer code={id} />
   if (id && tab === 'research') return <Research id={id} section="bids" />
   return <Bids id={id} today={section === 'today'} />
 }
 
 export function App() {
   const route = useRoute()
-  const section = ['settings', 'today', 'agent', 'facts'].includes(route.section) ? route.section : 'bids'
+  const section = ['settings', 'today', 'agent', 'facts', 'answer'].includes(route.section) ? route.section : 'bids'
   const [tourStep, setTourStep] = useState(tourStepInAddress)
 
   return (
@@ -84,7 +86,7 @@ export function App() {
         </header>
 
         {/* Bids keep their list mounted while switching bids, so the list does not jump back to the top. */}
-        <main className="screen" key={['settings', 'agent', 'facts'].includes(section) ? section : `bids/${route.tab ?? ''}`}>
+        <main className="screen" key={['settings', 'agent', 'facts', 'answer'].includes(section) ? section : `bids/${route.tab ?? ''}`}>
           <Screen section={section} id={route.id} tab={route.tab} />
         </main>
 

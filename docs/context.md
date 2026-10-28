@@ -231,6 +231,7 @@ The full reference is `docs/managed-agents.md`. The facts that matter most:
 | Washington market findings | `docs/wa-market-findings.md` | 12 comparable Washington justice-software contracts with prices and terms, what they mean for Doug, and the public sources that work |
 | Washington bid portals | `docs/wa-bid-portals.md` | Open and recent RFPs in Doug's lane, where 15 big counties and cities post bids, and which sites Doug should register on first |
 | Washington buyers | `docs/wa-buyers.md` | Who runs which justice system in the ten biggest counties and the Tri-Cities, what it cost, when the contract ends, who won the recent prosecutor RFPs, and the best openings for Doug |
+| Doug's answers | The app's Facts page, then "Answer the questions". Saved in the private Cloud Storage bucket `cadocary-doug-answers` (project `finchat-495622`) | Doug opens his private link, `#/answer/<code>`, and answers one question per screen. The code is in Secret Manager as `doug-answers-code`; without it the server shows no answers. Questions live in `prototype/src/questions.js` |
 
 ## Suggested split of the work
 
