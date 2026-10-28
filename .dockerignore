@@ -1,6 +1,10 @@
-# Only what the image needs: the prototype's source, the server, and the agent ids.
+# Only what the image needs: the prototype's source, the server, the agent ids, and the files the
+# Facts page shows. Never private.md.
 *
 !agent/ids.json
+!agent/memory/cadocary-facts/README.md
+!docs/questions-for-doug.md
+!docs/context-tracker.md
 !prototype
 !server
 prototype/node_modules

@@ -1,8 +1,10 @@
-// Just enough markdown for the Drafter's proposals: headings, paragraphs, lists, tables, rules,
-// bold, italics, and code. Rendering it as React elements keeps every word escaped. The blanks the
+// Just enough markdown for the Drafter's proposals and the team's fact files: headings, paragraphs,
+// lists, checklists, tables, rules, bold, italics, and code. Rendering it as React elements keeps every word escaped. The blanks the
 // Drafter leaves for Doug are marked so they stand out.
 
 const NEEDED = /(\[NEEDED FROM DOUG[^\]]*\])/
+// A checklist item, as the context tracker writes them: "- [x] done" or "- [ ] not yet".
+const TASK = /^\[([ xX])\]\s+(.*)/
 const EMPHASIS = /(\*\*[^*]+\*\*|`[^`]+`|\*[^*\s][^*]*\*)/
 
 function emphasis(text, keyPrefix) {
@@ -87,7 +89,7 @@ function blocks(markdown) {
       endParagraph()
       const ordered = /\d/.test(item[1])
       if (last?.kind === 'list' && last.ordered === ordered) last.items.push(item[2])
-      else found.push({ kind: 'list', ordered, items: [item[2]] })
+      else found.push({ kind: 'list', ordered, start: ordered ? parseInt(item[1], 10) : undefined, items: [item[2]] })
     } else paragraph.push(line.trim())
   }
   endParagraph()
@@ -105,10 +107,18 @@ export function Markdown({ text }) {
     if (block.kind === 'list') {
       const List = block.ordered ? 'ol' : 'ul'
       return (
-        <List key={i}>
-          {block.items.map((item, j) => (
-            <li key={j}>{inline(item)}</li>
-          ))}
+        <List key={i} start={block.start}>
+          {block.items.map((item, j) => {
+            const task = item.match(TASK)
+            if (!task) return <li key={j}>{inline(item)}</li>
+            const done = task[1] !== ' '
+            return (
+              <li key={j} className={`md-task ${done ? 'is-done' : ''}`}>
+                <span className="md-box" role="img" aria-label={done ? 'Done' : 'Not done'} />
+                <span>{inline(task[2])}</span>
+              </li>
+            )
+          })}
         </List>
       )
     }
